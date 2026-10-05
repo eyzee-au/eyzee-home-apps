@@ -1,0 +1,743 @@
+title: Manage My Rooms
+
+views:
+  - title: Manage My Rooms
+    path: house-builder
+    icon: mdi:home-edit
+    type: sections
+    max_columns: 1
+
+    sections:
+      # ============================================================
+      # INTRODUCTION
+      # ============================================================
+      - type: grid
+        cards:
+          - type: heading
+            heading: Manage My Rooms
+            heading_style: title
+            icon: mdi:home-edit
+
+          - type: markdown
+            content: |
+              **Create and manage the rooms and areas in your home.**
+
+              Enter the quantity for each room type. 
+              Use **Custom Rooms** for names such as **Theatre**, **Alfresco**, or **Study Nook**.
+
+              When you have finished, scroll down and select **Save My Rooms**.
+            card_mod:
+              style: |
+                ha-card { border-radius:16px; }
+
+      # ============================================================
+      # CURRENT ROOMS
+      # ============================================================
+      - type: grid
+        cards:
+          - type: heading
+            heading: Current Rooms
+            heading_style: title
+            icon: mdi:format-list-checks
+
+          - type: markdown
+            title: Rooms in My Home
+            content: |
+              {% set rooms = state_attr('sensor.eyzee_current_rooms', 'rooms') or [] %}
+              {% set floor_names = {
+                'One': 'Ground Floor',
+                'Two': 'First Floor',
+                'Three': 'Second Floor',
+                'Four': 'Third Floor',
+                'Five': 'Fourth Floor'
+              } %}
+
+              {% if rooms %}
+                {% for room in rooms %}
+                  {% if room.group | default('') | lower == 'outdoor' %}
+                    {% set location = 'Outdoor Areas' %}
+                  {% else %}
+                    {% set location = floor_names.get(
+                      room.floor | default('One'),
+                      room.floor | default('Ground Floor')
+                    ) %}
+                  {% endif %}
+              ✓ **{{ room.label }}** — {{ location }}
+                {% endfor %}
+              {% else %}
+              No rooms have been created yet.
+              {% endif %}
+            card_mod:
+              style: |
+                ha-card { border-radius:16px; }
+
+      # ============================================================
+      # ROOMS TO ADD
+      # ============================================================
+      - type: grid
+        cards:
+          - type: heading
+            heading: Rooms to Add
+            heading_style: title
+            icon: mdi:floor-plan
+
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - entity: input_select.eyzee_kitchen
+                name: Kitchen
+              - entity: input_select.eyzee_dining
+                name: Dining Room
+              - entity: input_select.eyzee_entrance
+                name: Entrance
+              - entity: input_select.eyzee_hallway
+                name: Hallway
+              - entity: input_select.eyzee_living
+                name: Living Room
+              - entity: input_select.eyzee_bedrooms
+                name: Bedrooms
+              - entity: input_select.eyzee_bathrooms
+                name: Bathroom
+              - entity: input_select.eyzee_ensuite
+                name: Ensuite
+              - entity: input_select.eyzee_media
+                name: Media Room
+              - entity: input_select.eyzee_garage
+                name: Garage
+              - entity: input_select.eyzee_laundry
+                name: Laundry
+              - entity: input_select.eyzee_mud_room
+                name: Mud Room
+            card_mod:
+              style: |
+                ha-card { border-radius:16px; }
+
+      # ============================================================
+      # OUTDOOR AREAS
+      # ============================================================
+      - type: grid
+        cards:
+          - type: heading
+            heading: Outdoor Areas
+            heading_style: title
+            icon: mdi:tree
+
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - entity: input_boolean.eyzee_outdoor_pool
+                name: Pool
+              - entity: input_boolean.eyzee_outdoor_patio
+                name: Patio
+              - entity: input_boolean.eyzee_outdoor_yard
+                name: Yard
+            card_mod:
+              style: |
+                ha-card { border-radius:16px; }
+
+      # ============================================================
+      # UPDATE ROOMS
+      # ============================================================
+      - type: grid
+        cards:
+          - type: heading
+            heading: Save My Rooms
+            heading_style: title
+            icon: mdi:content-save-outline
+
+          - type: grid
+            columns: 1
+            square: false
+            cards:
+              - type: tile
+                entity: input_text.eyzee_project_name
+                name: SAVE - My Rooms
+                icon: mdi:content-save
+                hide_state: true
+                vertical: true
+                tap_action:
+                  action: perform-action
+                  perform_action: script.turn_on
+                  target:
+                    entity_id: script.eyzee_build_house_from_helpers
+                card_mod:
+                  style: |
+                    ha-card {
+                      height: 136px !important;
+                      min-height: 136px;
+                      border: 1px solid #B8941F;
+                      background: #D6AD60 !important;
+                      background-color: #D6AD60 !important;
+                      border-radius: 16px;
+
+                      --primary-text-color: #000000;
+                      --secondary-text-color: #000000;
+                      --state-icon-color: #000000;
+                      --tile-color: #000000;
+                    }
+
+                    ha-state-icon {
+                      color: #000000 !important;
+                    }
+
+              - type: conditional
+                conditions:
+                  - condition: state
+                    entity: sensor.eyzee_room_update_status
+                    state: updating
+                card:
+                  type: markdown
+                  content: |
+                    <div style="font-size:17px; font-weight:600; color:#D6AD60; padding:4px 2px;">
+                      ⏳ Updating your rooms…
+                    </div>
+                  card_mod:
+                    style: |
+                      ha-card {
+                        border-radius:16px;
+                        border:1px solid rgba(214,173,96,0.42);
+                        background:rgba(214,173,96,0.08);
+                      }
+
+              - type: conditional
+                conditions:
+                  - condition: state
+                    entity: sensor.eyzee_room_update_status
+                    state: success
+                card:
+                  type: markdown
+                  content: |
+                    <div style="font-size:17px; font-weight:700; color:#2E8B57; padding:4px 2px;">
+                      ✅ Your rooms have been saved and updated.
+                    </div>
+                  card_mod:
+                    style: |
+                      ha-card {
+                        border-radius:16px;
+                        border:1px solid rgba(46,139,87,0.45);
+                        background:rgba(46,139,87,0.08);
+                      }
+
+              - type: conditional
+                conditions:
+                  - condition: state
+                    entity: sensor.eyzee_room_update_status
+                    state: error
+                card:
+                  type: markdown
+                  content: |
+                    <div style="font-size:17px; font-weight:700; color:#DC5050; padding:4px 2px;">
+                      ⚠️ Your rooms could not be updated. Please try again.
+                    </div>
+                  card_mod:
+                    style: |
+                      ha-card {
+                        border-radius:16px;
+                        border:1px solid rgba(220,80,80,0.50);
+                        background:rgba(220,80,80,0.08);
+                      }
+
+      # ============================================================
+      # ADD A CUSTOM ROOM
+      # ============================================================
+      - type: grid
+        cards:
+          - type: heading
+            heading: Add a Custom Room Name
+            heading_style: title
+            icon: mdi:home-plus
+
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - entity: input_text.eyzee_custom_room_name
+                name: Insert Custom Room Name
+            card_mod:
+              style: |
+                ha-card { border-radius:16px; }
+
+          - type: grid
+            columns: 1
+            square: false
+            cards:
+              - type: tile
+                entity: input_text.eyzee_custom_room_name
+                name: SAVE - Custom Room
+                icon: mdi:content-save-check
+                hide_state: true
+                vertical: false
+                tap_action:
+                  action: call-service
+                  service: eyzee_dashboard.add_custom_room
+                card_mod:
+                  style: |
+                    ha-card {
+                      min-height: 68px;
+                      border-radius: 16px;
+                    }
+                    ha-state-icon {
+                      color: #D6AD60 !important;
+                    }
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.eyzee_custom_room_status
+                state: adding
+            card:
+              type: markdown
+              content: |
+                <div style="font-size:17px; font-weight:600; color:#D6AD60;">
+                  ⏳ Adding your custom room…
+                </div>
+
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.eyzee_custom_room_status
+                state: success
+            card:
+              type: markdown
+              content: |
+                <div style="font-size:17px; font-weight:700; color:#2E8B57;">
+                  ✅ Your custom room has been added.
+                </div>
+              card_mod:
+                style: |
+                  ha-card {
+                    border-radius:16px;
+                    border:1px solid rgba(46,139,87,0.45);
+                    background:rgba(46,139,87,0.08);
+                  }
+
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.eyzee_custom_room_status
+                state: error
+            card:
+              type: markdown
+              content: |
+                <div style="font-size:17px; font-weight:700; color:#DC5050;">
+                  ⚠️ Your custom room could not be added.
+                </div>
+              card_mod:
+                style: |
+                  ha-card {
+                    border-radius:16px;
+                    border:1px solid rgba(220,80,80,0.50);
+                    background:rgba(220,80,80,0.08);
+                  }
+
+      # ============================================================
+      # MORE ROOM TOOLS
+      # ============================================================
+      - type: grid
+        cards:
+          - type: grid
+            columns: 1
+            square: false
+            cards:
+              - type: tile
+                entity: input_text.eyzee_project_name
+                name: More Tools | Levels - Remove - Restore >
+                icon: mdi:tools
+                hide_state: true
+                vertical: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-house-builder/room-tools
+                card_mod:
+                  style: |
+                    ha-card { min-height:68px; border-radius:16px; }
+                    ha-state-icon { color:#D6AD60 !important; }
+
+      # ============================================================
+      # STANDARD NAVIGATION
+      # ============================================================
+      - type: grid
+        cards:
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: button
+                name: Back
+                icon: mdi:arrow-left
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/manage
+
+              - type: button
+                name: Home
+                icon: mdi:home-heart
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+
+              - type: button
+                name: Help
+                icon: mdi:help-circle-outline
+                show_state: false
+                tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/manage-my-rooms/
+
+      # ============================================================
+      # BRAND FOOTER
+      # ============================================================
+      - type: grid
+        cards:
+          - type: markdown
+            content: |
+              <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">
+                EyZEE® • Making Smart Easy™
+              </div>
+            card_mod:
+              style: |
+                ha-card { background:transparent; border:none; box-shadow:none; }
+
+  # ============================================================
+  # MORE ROOM TOOLS
+  # ============================================================
+  - title: More Room Tools
+    path: room-tools
+    icon: mdi:tools
+    subview: true
+    type: sections
+    max_columns: 1
+
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: More Room Tools
+            heading_style: title
+            icon: mdi:tools
+
+          - type: markdown
+            content: |
+              Manage floor levels, locations, remove rooms or use the recovery tools.
+            card_mod:
+              style: |
+                ha-card { border-radius:16px; }
+
+          - type: grid
+            columns: 1
+            square: false
+            cards:
+              - type: tile
+                entity: input_text.eyzee_project_name
+                name: Add Floor Levels & Set Locations
+                icon: mdi:stairs
+                hide_state: true
+                vertical: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-house-builder/room-locations
+                card_mod:
+                  style: |
+                    ha-card { min-height:68px; border-radius:16px; }
+                    ha-state-icon { color:#D6AD60 !important; }
+
+          - type: heading
+            heading: Remove a Room
+            heading_style: title
+            icon: mdi:delete-outline
+
+          - type: grid
+            columns: 1
+            square: false
+            cards:
+              - type: tile
+                entity: input_select.eyzee_room_to_remove
+                name: UPDATE - Room List
+                icon: mdi:refresh
+                hide_state: true
+                vertical: false
+                tap_action:
+                  action: call-service
+                  service: eyzee_dashboard.populate_room_dropdown
+                  data:
+                    dropdown_entity: input_select.eyzee_room_to_remove
+                card_mod:
+                  style: |
+                    ha-card { min-height:68px; border-radius:16px; }
+                    ha-state-icon { color:#D6AD60 !important; }
+
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - entity: input_select.eyzee_room_to_remove
+                name: SELECT - Room to Remove
+            card_mod:
+              style: |
+                ha-card { border-radius:16px; }
+
+          - type: grid
+            columns: 1
+            square: false
+            cards:
+              - type: tile
+                entity: input_select.eyzee_room_to_remove
+                name: REMOVE - Selected Room
+                icon: mdi:delete-outline
+                hide_state: true
+                vertical: false
+                tap_action:
+                  action: call-service
+                  confirmation:
+                    text: Remove the selected room from EyZEE Home?
+                  service: eyzee_dashboard.remove_room
+                card_mod:
+                  style: |
+                    ha-card { min-height:68px; border-radius:16px; }
+
+          - type: heading
+            heading: Room Housekeeping
+            heading_style: title
+            icon: mdi:backup-restore
+
+          - type: grid
+            columns: 1
+            square: false
+            cards:
+              - type: tile
+                entity: input_text.eyzee_project_name
+                name: Restore Last Room Backup
+                icon: mdi:backup-restore
+                hide_state: true
+                vertical: false
+                tap_action:
+                  action: call-service
+                  confirmation:
+                    text: Restore the previous room backup?
+                  service: eyzee_dashboard.restore_rooms_backup
+
+              - type: tile
+                entity: input_text.eyzee_project_name
+                name: Delete All Rooms
+                icon: mdi:delete-alert
+                hide_state: true
+                vertical: false
+                tap_action:
+                  action: call-service
+                  confirmation:
+                    text: Delete all rooms and start over? This cannot be undone.
+                  service: eyzee_dashboard.clear_rooms
+                  data:
+                    confirm: DELETE
+                card_mod:
+                  style: |
+                    ha-card {
+                      border:1px solid rgba(220,80,80,0.50);
+                      background:rgba(220,80,80,0.08);
+                      border-radius:16px;
+                    }
+                    ha-state-icon { color:#DC5050 !important; }
+
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: button
+                name: Back
+                icon: mdi:arrow-left
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-house-builder/house-builder
+              - type: button
+                name: Home
+                icon: mdi:home-heart
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: button
+                name: Help
+                icon: mdi:help-circle-outline
+                show_state: false
+                tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/manage-my-rooms/
+
+          - type: markdown
+            content: |
+              <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">
+                EyZEE® • Making Smart Easy™
+              </div>
+            card_mod:
+              style: |
+                ha-card { background:transparent; border:none; box-shadow:none; }
+
+  # ============================================================
+  # SET ROOM LOCATIONS
+  # ============================================================
+  - title: Add Floor Level & Locations
+    path: room-locations
+    icon: mdi:stairs
+    subview: true
+    type: sections
+    max_columns: 1
+
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Add Floor Levels – Set Locations
+            heading_style: title
+            icon: mdi:stairs
+
+          - type: markdown
+            content: |
+              **SELECT** the number of levels in your home, then **ASSIGN** each room to its correct **LEVEL** or **LOCATION**.
+            card_mod:
+              style: |
+                ha-card { border-radius:16px; }
+
+          - type: heading
+            heading: Home Levels
+            heading_style: title
+            icon: mdi:home-floor-1
+
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - entity: input_select.eyzee_floors
+                name: SELECT - Number of Floor Levels
+            card_mod:
+              style: |
+                ha-card { border-radius:16px; }
+
+          - type: grid
+            columns: 1
+            square: false
+            cards:
+              - type: tile
+                entity: input_select.eyzee_room_for_location
+                name: SAVE - FLOOR LEVEL SELECTION
+                icon: mdi:content-save-check
+                hide_state: true
+                vertical: false
+                tap_action:
+                  action: call-service
+                  service: eyzee_dashboard.populate_room_location_dropdowns
+                card_mod:
+                  style: |
+                    ha-card { min-height:68px; border-radius:16px; }
+                    ha-state-icon { color:#D6AD60 !important; }
+
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - entity: input_select.eyzee_room_for_location
+                name: SELECT - Room to Assign
+            card_mod:
+              style: |
+                ha-card { border-radius:16px; }
+
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - entity: input_select.eyzee_room_location
+                name: SELECT - Location
+            card_mod:
+              style: |
+                ha-card { border-radius:16px; }
+
+          - type: grid
+            columns: 1
+            square: false
+            cards:
+              - type: tile
+                entity: input_select.eyzee_room_location
+                name: SAVE - ROOM LOCATION 
+                icon: mdi:content-save
+                hide_state: true
+                vertical: false
+                tap_action:
+                  action: call-service
+                  service: eyzee_dashboard.save_room_location
+                card_mod:
+                  style: |
+                    ha-card {
+                      min-height:86px;
+                      border:1px solid rgba(214,173,96,0.45);
+                      border-radius:16px;
+                    }
+                    ha-state-icon { color:#D6AD60 !important; }
+
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.eyzee_room_location_status
+                state: success
+            card:
+              type: markdown
+              content: |
+                <div style="font-size:17px; font-weight:700; color:#2E8B57;">
+                  ✅ The room location has been saved.
+                </div>
+              card_mod:
+                style: |
+                  ha-card {
+                    border-radius:16px;
+                    border:1px solid rgba(46,139,87,0.45);
+                    background:rgba(46,139,87,0.08);
+                  }
+
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.eyzee_room_location_status
+                state: error
+            card:
+              type: markdown
+              content: |
+                <div style="font-size:17px; font-weight:700; color:#DC5050;">
+                  ⚠️ The room location could not be saved.
+                </div>
+              card_mod:
+                style: |
+                  ha-card {
+                    border-radius:16px;
+                    border:1px solid rgba(220,80,80,0.50);
+                    background:rgba(220,80,80,0.08);
+                  }
+
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: button
+                name: Back
+                icon: mdi:arrow-left
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-house-builder/room-tools
+              - type: button
+                name: Home
+                icon: mdi:home-heart
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: button
+                name: Help
+                icon: mdi:help-circle-outline
+                show_state: false
+                tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/manage-my-rooms/
+
+          - type: markdown
+            content: |
+              <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">
+                EyZEE® • Making Smart Easy™
+              </div>
+            card_mod:
+              style: |
+                ha-card { background:transparent; border:none; box-shadow:none; }

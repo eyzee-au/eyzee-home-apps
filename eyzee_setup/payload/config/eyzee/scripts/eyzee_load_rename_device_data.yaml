@@ -1,0 +1,10 @@
+eyzee_load_rename_device_data:
+  alias: "EyZEE: Load Rename Device Data"
+  mode: single
+  sequence:
+    - service: eyzee_dashboard.populate_registered_devices
+      data: {}
+
+    - service: eyzee_dashboard.populate_room_dropdown
+      data:
+        dropdown_entity: input_select.eyzee_registered_room

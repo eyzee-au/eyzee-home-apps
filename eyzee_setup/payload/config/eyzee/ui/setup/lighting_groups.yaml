@@ -1,0 +1,388 @@
+title: Group My Lights
+
+views:
+  - title: Group My Lights
+    path: lighting-groups
+    icon: mdi:lightbulb-group
+    type: sections
+    max_columns: 1
+
+    sections:
+      # ============================================================
+      # INTRODUCTION
+      # ============================================================
+      - type: grid
+        cards:
+          - type: heading
+            heading: Group My Lights
+            heading_style: title
+            icon: mdi:lightbulb-group
+
+          - type: markdown
+            content: |
+              Create a lighting group so the lights in a room can work together as one.
+
+              You can add or remove lights whenever your home changes.
+
+              **Create Group > Save Group > Choose Light Group > Choose Lights > Add to Group**
+            card_mod:
+              style: |
+                ha-card { border-radius:16px; }
+
+          - type: grid
+            columns: 1
+            square: false
+            cards:
+              - type: tile
+                entity: input_select.eyzee_lighting_group
+                name: Refresh Group Lists
+                icon: mdi:refresh
+                hide_state: true
+                vertical: false
+                tap_action:
+                  action: call-service
+                  service: eyzee_dashboard.populate_lighting_group_dropdowns
+
+      # ============================================================
+      # CREATE OR UPDATE A GROUP
+      # ============================================================
+      - type: grid
+        cards:
+          - type: heading
+            heading: Create a Lighting Group
+            heading_style: title
+            icon: mdi:lightbulb-group-outline
+
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - entity: input_select.eyzee_lighting_group_room
+                name: Room
+              - entity: input_text.eyzee_lighting_group_name
+                name: Group Name
+            card_mod:
+              style: |
+                ha-card { border-radius:16px; }
+
+          - type: grid
+            columns: 1
+            square: false
+            cards:
+              - type: tile
+                entity: input_text.eyzee_lighting_group_name
+                name: Save Lighting Group
+                icon: mdi:content-save
+                hide_state: true
+                vertical: true
+                tap_action:
+                  action: call-service
+                  service: eyzee_dashboard.create_lighting_group
+
+      # ============================================================
+      # ADD OR REMOVE LIGHTS
+      # ============================================================
+      - type: grid
+        cards:
+          - type: heading
+            heading: Choose the Lights
+            heading_style: title
+            icon: mdi:lightbulb-multiple-outline
+
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - entity: input_select.eyzee_lighting_group
+                name: Lighting Group
+              - entity: input_select.eyzee_lighting_group_member
+                name: Light
+            card_mod:
+              style: |
+                ha-card { border-radius:16px; }
+
+          - type: grid
+            columns: 1
+            square: false
+            cards:
+              - type: tile
+                entity: input_select.eyzee_lighting_group_member
+                name: Add Light to Group
+                icon: mdi:plus-circle
+                hide_state: true
+                vertical: false
+                tap_action:
+                  action: call-service
+                  service: eyzee_dashboard.add_lighting_group_member
+
+              - type: tile
+                entity: input_select.eyzee_lighting_group_member
+                name: Remove Light from Group
+                icon: mdi:minus-circle
+                hide_state: true
+                vertical: false
+                tap_action:
+                  action: call-service
+                  confirmation:
+                    text: Remove the selected light from this group?
+                  service: eyzee_dashboard.remove_lighting_group_member
+
+      # ============================================================
+      # APPLY GROUP CHANGES
+      # ============================================================
+      - type: grid
+        cards:
+          - type: heading
+            heading: Apply Group Changes
+            heading_style: title
+            icon: mdi:check-circle-outline
+
+          - type: markdown
+            content: |
+              After adding or removing lights, select **Apply Group Changes** so the lights work together.
+            card_mod:
+              style: |
+                ha-card { border-radius:16px; }
+
+          - type: grid
+            columns: 1
+            square: false
+            cards:
+              - type: tile
+                entity: input_select.eyzee_lighting_group
+                name: Apply Group Changes
+                icon: mdi:check-circle
+                hide_state: true
+                vertical: true
+                tap_action:
+                  action: call-service
+                  service: eyzee_dashboard.sync_z2m_lighting_group
+
+      # ============================================================
+      # CURRENT GROUPS AND STATUS
+      # ============================================================
+      - type: grid
+        cards:
+          - type: heading
+            heading: Current Lighting Groups
+            heading_style: title
+            icon: mdi:format-list-checks
+
+          - type: markdown
+            content: |
+              {{ state_attr('sensor.eyzee_lighting_groups', 'summary') or 'No lighting groups yet.' }}
+            card_mod:
+              style: |
+                ha-card { border-radius:16px; }
+
+          - type: markdown
+            title: Status
+            content: |
+              {{ states('sensor.eyzee_lighting_group_status') }}
+            card_mod:
+              style: |
+                ha-card { border-radius:16px; }
+
+      # ============================================================
+      # WHOLE-HOME AURA COLOUR
+      # ============================================================
+      - type: grid
+        cards:
+          - type: heading
+            heading: Personalise My Lights
+            heading_style: title
+            icon: mdi:palette
+
+          - type: button
+            name: Set Aura Colour
+            icon: mdi:palette-outline
+            tap_action:
+              action: navigate
+              navigation_path: /eyzee-lighting-groups/aura-colour
+            grid_options:
+              columns: 12
+              rows: 2
+
+      # ============================================================
+      # STANDARD NAVIGATION
+      # ============================================================
+      - type: grid
+        cards:
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: button
+                name: Back
+                icon: mdi:arrow-left
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/lights-switches
+
+              - type: button
+                name: Home
+                icon: mdi:home-heart
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+
+              - type: button
+                name: Help
+                icon: mdi:help-circle-outline
+                show_state: false
+                tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/group-my-lights/
+
+          # ======================================================
+          # DELETE A LIGHTING GROUP
+          # ======================================================
+          - type: heading
+            heading: Delete a Lighting Group
+            heading_style: title
+            icon: mdi:delete-outline
+
+          - type: grid
+            columns: 1
+            square: false
+            cards:
+              - type: tile
+                entity: input_select.eyzee_lighting_group
+                name: Refresh Group Selector 
+                icon: mdi:refresh
+                hide_state: true
+                vertical: false
+                tap_action:
+                  action: call-service
+                  service: eyzee_dashboard.populate_lighting_group_dropdowns
+
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - entity: input_select.eyzee_lighting_group
+                name: Select Group to Delete
+
+          - type: grid
+            columns: 1
+            square: false
+            cards:
+              - type: tile
+                entity: input_select.eyzee_lighting_group
+                name: Delete Selected Lighting Group
+                icon: mdi:delete-outline
+                hide_state: false
+                vertical: false
+                tap_action:
+                  action: call-service
+                  confirmation:
+                    text: Delete the selected lighting group? This cannot be undone.
+                  service: eyzee_dashboard.delete_lighting_group
+                card_mod:
+                  style: |
+                    ha-card {
+                      border: 1px solid rgba(220, 80, 80, 0.50);
+                      background: rgba(220, 80, 80, 0.08);
+                      border-radius: 16px;
+                    }
+                    ha-state-icon {
+                      color: #DC5050 !important;
+                    }
+
+          - type: markdown
+            content: |
+              <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">
+                EyZEE® • Making Smart Easy™
+              </div>
+            card_mod:
+              style: |
+                ha-card { background:transparent; border:none; box-shadow:none; }
+
+  - title: Aura Colour
+    path: aura-colour
+    icon: mdi:palette
+    subview: true
+    type: sections
+    max_columns: 1
+
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Set Aura Colour
+            heading_style: title
+            icon: mdi:palette
+
+          - type: markdown
+            content: |
+              **Aura** is your favourite colour for the whole home.
+
+              1. Open a lighting group in **My Rooms** and choose your favourite colour.
+              2. Return here and select that lighting group.
+              3. Save its current colour as Aura.
+            card_mod:
+              style: |
+                ha-card { border-radius:16px; }
+
+          - type: entities
+            title: Choose Colour From
+            show_header_toggle: false
+            entities:
+              - entity: input_select.eyzee_aura_source_group
+                name: Lighting group
+
+          - type: button
+            name: Save Current Colour as Aura
+            icon: mdi:palette-outline
+            tap_action:
+              action: perform-action
+              perform_action: eyzee_dashboard.save_current_colour_as_aura
+              confirmation:
+                text: Save this lighting group's current colour as Aura?
+            grid_options:
+              columns: 12
+              rows: 2
+
+          - type: markdown
+            title: Status
+            content: |
+              {{ states('sensor.eyzee_lighting_group_status') }}
+            card_mod:
+              style: |
+                ha-card { border-radius:16px; }
+
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: button
+                name: Back
+                icon: mdi:arrow-left
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-lighting-groups/lighting-groups
+
+              - type: button
+                name: Home
+                icon: mdi:home-heart
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+
+              - type: button
+                name: Help
+                icon: mdi:help-circle-outline
+                show_state: false
+                tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/group-my-lights/
+
+          - type: markdown
+            content: |
+              <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">
+                EyZEE® • Making Smart Easy™
+              </div>
+            card_mod:
+              style: |
+                ha-card { background:transparent; border:none; box-shadow:none; }

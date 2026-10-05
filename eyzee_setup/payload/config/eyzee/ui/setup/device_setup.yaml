@@ -1,0 +1,21 @@
+title: Device Setup
+views:
+- title: Device Setup
+  path: setup
+  type: sections
+  max_columns: 1
+  sections:
+  - type: grid
+    cards:
+    - type: markdown
+      content: Choose a device from Locate & Set Up Devices first.
+    - type: button
+      name: Back
+      tap_action:
+        action: navigate
+        navigation_path: /eyzee-add-device-new/setup-devices
+    - type: button
+      name: Home
+      tap_action:
+        action: navigate
+        navigation_path: /eyzee-main-menu/home

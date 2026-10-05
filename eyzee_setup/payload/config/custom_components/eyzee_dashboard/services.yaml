@@ -1,0 +1,277 @@
+populate_z2m_dropdown:
+  name: Populate Z2M dropdown
+  description: Populate the Z2M friendly-name dropdown from zigbee2mqtt/bridge/devices (Coordinator excluded).
+  fields:
+    dropdown_entity:
+      name: Dropdown entity
+      description: Input select to populate.
+      example: input_select.z2m_device_friendly_name
+
+    base_topic:
+      name: Zigbee2MQTT base topic
+      description: Zigbee2MQTT base topic.
+      example: zigbee2mqtt
+
+bind_virtual_multiway:
+  name: Bind virtual multi-way
+  description: Link two switch/light entities so their ON/OFF states stay synchronised.
+  fields:
+    master:
+      name: Master entity
+      description: Main switch or light entity.
+      example: switch.office_door_switch_l1
+
+    slave:
+      name: Slave entity
+      description: Second switch or light entity to mirror the master.
+      example: switch.hallway_switch_l1
+
+    confirm:
+      name: Confirm
+      description: Must be true to create the link.
+      example: true
+
+unbind_virtual_multiway:
+  name: Unbind virtual multi-way
+  description: Remove a virtual multi-way link.
+  fields:
+    master:
+      name: Master entity
+      description: Main switch or light entity.
+      example: switch.office_door_switch_l1
+
+    slave:
+      name: Slave entity
+      description: Optional. If blank, removes all slaves from this master.
+      example: switch.hallway_switch_l1
+
+    confirm:
+      name: Confirm
+      description: Must be true to remove the link.
+      example: true
+
+populate_registered_devices:
+  name: Populate Registered Devices
+  description: Loads registered EyZEE devices into the edit-device dropdown.
+
+load_registered_device:
+  name: Load Registered Device
+  description: Loads a registered EyZEE device and its controls into edit fields.
+  fields:
+    registry_id:
+      required: false
+      selector:
+        text:
+
+update_registered_device_names:
+  name: Update Registered Device Names
+  description: Updates EyZEE registry device and control display names.
+  fields:
+    registry_id:
+      required: false
+      selector:
+        text:
+    device_name:
+      required: false
+      selector:
+        text:
+    control_1_name:
+      required: false
+      selector:
+        text:
+    control_2_name:
+      required: false
+      selector:
+        text:
+    control_3_name:
+      required: false
+      selector:
+        text:
+    control_4_name:
+      required: false
+      selector:
+        text:
+    control_5_name:
+      required: false
+      selector:
+        text:
+    control_6_name:
+      required: false
+      selector:
+        text:
+
+populate_lighting_group_dropdowns:
+  name: Populate Lighting Group Dropdowns
+  description: Loads lighting groups, rooms, and available controls into dropdowns.
+
+create_lighting_group:
+  name: Create Lighting Group
+  description: Creates or updates an EyZEE lighting group.
+  fields:
+    group_name:
+      required: false
+      selector:
+        text:
+    room:
+      required: false
+      selector:
+        text:
+
+add_lighting_group_member:
+  name: Add Lighting Group Member
+  description: Adds a control to a lighting group.
+  fields:
+    group_id:
+      required: false
+      selector:
+        text:
+    entity_id:
+      required: false
+      selector:
+        text:
+
+remove_lighting_group_member:
+  name: Remove Lighting Group Member
+  description: Removes a control from a lighting group.
+  fields:
+    group_id:
+      required: false
+      selector:
+        text:
+    entity_id:
+      required: false
+      selector:
+        text:
+
+delete_lighting_group:
+  name: Delete Lighting Group
+  description: Deletes an EyZEE lighting group.
+  fields:
+    group_id:
+      required: false
+      selector:
+        text:
+
+populate_remove_device_dropdown:
+  name: Populate Remove Device Dropdown
+  description: Loads registered EyZEE devices into the remove device dropdown.
+  fields:
+    dropdown_entity:
+      required: false
+      selector:
+        entity:
+
+remove_device:
+  name: Remove Device
+  description: Removes a device from EyZEE records and optionally requests Zigbee2MQTT network removal.
+  fields:
+    registry_id:
+      required: false
+      selector:
+        text:
+    remove_from_network:
+      required: false
+      selector:
+        boolean:
+    confirm:
+      required: true
+      selector:
+        boolean:
+
+start_z2m_pairing:
+  name: Start Zigbee2MQTT Pairing
+  description: Enables Zigbee2MQTT permit join for pairing new Zigbee devices.
+  fields:
+    time:
+      required: false
+      selector:
+        number:
+          min: 1
+          max: 254
+          mode: box
+
+stop_z2m_pairing:
+  name: Stop Zigbee2MQTT Pairing
+  description: Disables Zigbee2MQTT permit join.
+
+build_room_views:
+  name: Build Room Views
+  description: Rebuilds the EyZEE room dashboards from the device registry and lighting groups.
+
+save_current_colour_as_aura:
+  name: Save Current Colour as Aura
+  description: Saves the selected lighting group's current colour as the whole-home Aura preset.
+  fields:
+    group_id:
+      name: Lighting Group ID
+      description: Optional lighting group ID. Leave blank to use the selected lighting group.
+      required: false
+      selector:
+        text:
+
+add_custom_room:
+  name: Add Custom Room
+  description: Add a custom room to EyZEE Home.
+
+identify_device:
+  name: Identify Device
+  description: Briefly toggles a light or switch so the physical device can be identified, then restores its original state.
+  fields:
+    device_id:
+      name: Home Assistant Device ID
+      description: Stable Home Assistant device ID from EyZEE discovery.
+      required: true
+      example: f6c34afdf42ae6aaab8c377b94355fd3
+      selector:
+        text:
+
+    duration:
+      name: Identification Duration
+      description: Number of seconds before restoring the device to its original state.
+      required: false
+      default: 2
+      selector:
+        number:
+          min: 0.5
+          max: 10
+          step: 0.5
+          unit_of_measurement: seconds
+          mode: slider
+
+identify_mg24:
+  name: Identify MG24
+  description: Discover EyZEE MG24 network devices or identify one MG24 by IP address.
+  fields:
+    ip_address:
+      name: IP Address
+      description: Optional IP address of a specific MG24. Leave blank to automatically discover MG24 devices.
+      required: false
+      example: 192.168.68.65
+      selector:
+        text:
+
+find_mg24_by_mac:
+  name: Find MG24 by MAC
+  description: Rediscover a specific MG24 using its physical Ethernet MAC address.
+  fields:
+    mac_address:
+      name: MAC Address
+      description: Ethernet MAC address of the MG24 to rediscover.
+      required: true
+      example: E0:8C:FE:62:5A:73
+      selector:
+        text:
+
+convert_zigbee_gateway:
+  name: Convert Zigbee Gateway
+  description: Convert a discovered EyZEE Zigbee Gateway into a Zigbee Extender.
+  fields:
+    slot:
+      name: Gateway Slot
+      description: Discovered Zigbee Gateway slot to convert.
+      required: true
+      selector:
+        number:
+          min: 1
+          max: 4
+          mode: box

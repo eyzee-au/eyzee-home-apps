@@ -1,0 +1,32 @@
+eyzee_assign_device:
+  alias: Assign Device to Room
+  mode: single
+  icon: mdi:check-circle
+  fields:
+    room:
+      description: Room slug/name
+      example: kitchen
+    device_type:
+      description: Type of device
+      example: light
+    device_name:
+      description: Optional label
+      example: Kitchen Downlights
+    z2m_from:
+      description: Zigbee2MQTT friendly name to rename (optional)
+      example: 11871832227863199009
+    custom_friendly_name:
+      description: Target friendly name (optional)
+      example: kitchen_light_main
+    confirm_rename:
+      description: Must be true to perform rename
+      example: true
+  sequence:
+  - service: eyzee_dashboard.add_device
+    data:
+      room: '{{ room }}'
+      device_type: '{{ device_type }}'
+      device_name: '{{ device_name | default(room ~ ''_'' ~ device_type, true) }}'
+      z2m_from: '{{ z2m_from | default('''', true) }}'
+      custom_friendly_name: '{{ custom_friendly_name | default('''', true) }}'
+      confirm_rename: '{{ confirm_rename | default(false, true) }}'

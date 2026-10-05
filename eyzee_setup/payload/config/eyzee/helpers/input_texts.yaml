@@ -1,0 +1,93 @@
+eyzee_project_name:
+  name: "Home Name"
+  initial: "My Smart Home"
+
+z2m_custom_friendly_name:
+  name: "Z2M Custom Friendly Name"
+  initial: ""
+  max: 64
+
+eyzee_wizard_device_friendly_name:
+  name: "Device Friendly Name"
+  initial: ""
+  max: 64
+
+eyzee_wizard_control_1_name:
+  name: "Button / Control 1 Label"
+  initial: ""
+  max: 64
+
+eyzee_wizard_control_2_name:
+  name: "Button / Control 2 Label"
+  initial: ""
+  max: 64
+
+eyzee_wizard_control_3_name:
+  name: "Button / Control 3 Label"
+  initial: ""
+  max: 64
+
+eyzee_wizard_control_4_name:
+  name: "Button / Control 4 Label"
+  initial: ""
+  max: 64
+
+eyzee_wizard_control_5_name:
+  name: "Button / Control 5 Label"
+  initial: ""
+  max: 64
+
+eyzee_wizard_control_6_name:
+  name: "Button / Control 6 Label"
+  initial: ""
+  max: 64
+
+eyzee_existing_device_name:
+  name: Device Name
+  initial: ""
+  max: 60
+  icon: mdi:pencil
+
+eyzee_registered_device_name:
+  name: "EyZEE Registered Device Name"
+
+eyzee_registered_room_name:
+  name: "EyZEE Registered Room Name"
+
+eyzee_registered_control_1_name:
+  name: "EyZEE Control 1 Name"
+
+eyzee_registered_control_2_name:
+  name: "EyZEE Control 2 Name"
+
+eyzee_registered_control_3_name:
+  name: "EyZEE Control 3 Name"
+
+eyzee_registered_control_4_name:
+  name: "EyZEE Control 4 Name"
+
+eyzee_registered_control_5_name:
+  name: "EyZEE Control 5 Name"
+
+eyzee_registered_control_6_name:
+  name: "EyZEE Control 6 Name"
+
+eyzee_lighting_group_name:
+  name: "Lighting Group Name"
+  initial: ""
+  max: 64
+
+eyzee_custom_room_name:
+  name: Custom Room Name
+  icon: mdi:home-plus
+
+############################################################
+# Smart Behavi helper
+############################################################
+
+eyzee_behaviour_name:
+  name: Behaviour Name
+  icon: mdi:creation-text
+  initial: ""
+  min: 0
+  max: 64

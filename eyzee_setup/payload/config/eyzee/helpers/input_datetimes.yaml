@@ -1,0 +1,16 @@
+eyzee_rule_start:
+  name: "Rule Start"
+  has_date: false
+  has_time: true
+
+eyzee_rule_end:
+  name: "Rule End"
+  has_date: false
+  has_time: true
+
+eyzee_rule_trigger_time:
+  name: Trigger Time
+  icon: mdi:clock-outline
+  has_date: false
+  has_time: true
+  initial: "07:00:00"

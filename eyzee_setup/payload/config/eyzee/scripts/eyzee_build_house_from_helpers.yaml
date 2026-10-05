@@ -1,0 +1,58 @@
+eyzee_build_house_from_helpers:
+  alias: "EyZEE - Add rooms from dropdowns"
+  mode: single
+  sequence:
+    - service: eyzee_dashboard.build_house
+      data:
+        project_name: "{{ states('input_text.eyzee_project_name') | default('My Home', true) }}"
+        floors: "{{ states('input_select.eyzee_floors') | int(1) }}"
+        counts:
+          kitchen: "{{ states('input_select.eyzee_kitchen') | int(0) }}"
+          dining: "{{ states('input_select.eyzee_dining') | int(0) }}"
+          entrance: "{{ states('input_select.eyzee_entrance') | int(0) }}"
+          hallway: "{{ states('input_select.eyzee_hallway') | int(0) }}"
+          living: "{{ states('input_select.eyzee_living') | int(0) }}"
+          bedrooms: "{{ states('input_select.eyzee_bedrooms') | int(0) }}"
+          bathrooms: "{{ states('input_select.eyzee_bathrooms') | int(0) }}"
+          ensuite: "{{ states('input_select.eyzee_ensuite') | int(0) }}"
+          media: "{{ states('input_select.eyzee_media') | int(0) }}"
+          garage: "{{ states('input_select.eyzee_garage') | int(0) }}"
+          laundry: "{{ states('input_select.eyzee_laundry') | int(0) }}"
+          mud_room: "{{ states('input_select.eyzee_mud_room') | int(0) }}"
+        outdoor: >-
+          {% set areas = [] %}
+          {% if is_state('input_boolean.eyzee_outdoor_pool', 'on') %}
+            {% set areas = areas + ['Pool'] %}
+          {% endif %}
+          {% if is_state('input_boolean.eyzee_outdoor_patio', 'on') %}
+            {% set areas = areas + ['Patio'] %}
+          {% endif %}
+          {% if is_state('input_boolean.eyzee_outdoor_yard', 'on') %}
+            {% set areas = areas + ['Yard'] %}
+          {% endif %}
+          {{ areas }}
+        features_default:
+          - lights
+
+    # Rebuild the room index and individual room-control pages.
+    - service: eyzee_dashboard.build_room_views
+
+    # Clear only the room quantities after a successful update.
+    # Floor Levels and Outdoor Areas remain unchanged.
+    - service: input_select.select_option
+      target:
+        entity_id:
+          - input_select.eyzee_kitchen
+          - input_select.eyzee_dining
+          - input_select.eyzee_entrance
+          - input_select.eyzee_hallway
+          - input_select.eyzee_living
+          - input_select.eyzee_bedrooms
+          - input_select.eyzee_bathrooms
+          - input_select.eyzee_ensuite
+          - input_select.eyzee_media
+          - input_select.eyzee_garage
+          - input_select.eyzee_laundry
+          - input_select.eyzee_mud_room
+      data:
+        option: "0"

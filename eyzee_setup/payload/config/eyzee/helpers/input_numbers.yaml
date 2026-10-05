@@ -1,0 +1,148 @@
+# EyZEE Home — room and floor count helpers
+
+eyzee_floors:
+  name: Floor Levels
+  icon: mdi:stairs
+  min: 1
+  max: 5
+  step: 1
+  mode: box
+
+eyzee_kitchen:
+  name: Kitchens
+  icon: mdi:countertop-outline
+  min: 0
+  max: 10
+  step: 1
+  mode: box
+
+eyzee_dining:
+  name: Dining Rooms
+  icon: mdi:table-chair
+  min: 0
+  max: 10
+  step: 1
+  mode: box
+
+eyzee_entrance:
+  name: Entrances
+  icon: mdi:door-open
+  min: 0
+  max: 10
+  step: 1
+  mode: box
+
+eyzee_hallway:
+  name: Hallways
+  icon: mdi:door-open
+  min: 0
+  max: 10
+  step: 1
+  mode: box
+
+eyzee_living:
+  name: Living Rooms
+  icon: mdi:sofa
+  min: 0
+  max: 10
+  step: 1
+  mode: box
+
+eyzee_bedrooms:
+  name: Bedrooms
+  icon: mdi:bed
+  min: 0
+  max: 20
+  step: 1
+  mode: box
+
+eyzee_bathrooms:
+  name: Bathrooms
+  icon: mdi:shower
+  min: 0
+  max: 10
+  step: 1
+  mode: box
+
+eyzee_ensuite:
+  name: Ensuites
+  icon: mdi:shower-head
+  min: 0
+  max: 10
+  step: 1
+  mode: box
+
+eyzee_media:
+  name: Media Rooms
+  icon: mdi:television
+  min: 0
+  max: 10
+  step: 1
+  mode: box
+
+eyzee_garage:
+  name: Garages
+  icon: mdi:garage
+  min: 0
+  max: 5
+  step: 1
+  mode: box
+
+eyzee_laundry:
+  name: Laundries
+  icon: mdi:washing-machine
+  min: 0
+  max: 5
+  step: 1
+  mode: box
+
+eyzee_mud_room:
+  name: Mud Rooms
+  icon: mdi:shoe-print
+  min: 0
+  max: 5
+  step: 1
+  mode: box
+
+############################################################
+# Smart Behaviours numeric settings
+############################################################
+
+eyzee_rule_brightness:
+  name: Custom Brightness
+  icon: mdi:brightness-percent
+  min: 1
+  max: 100
+  step: 1
+  initial: 35
+  mode: box
+  unit_of_measurement: "%"
+
+eyzee_rule_trigger_threshold:
+  name: Trigger Value
+  icon: mdi:thermometer
+  min: -50
+  max: 100
+  step: 0.5
+  initial: 25
+  mode: box
+
+eyzee_rule_trigger_duration:
+  name: Trigger Duration
+  icon: mdi:timer-outline
+  min: 0
+  max: 120
+  step: 1
+  initial: 0
+  mode: box
+  unit_of_measurement: min
+
+eyzee_rule_sun_offset_minutes:
+  name: Sun Offset
+  icon: mdi:timer-sand
+  min: 0
+  max: 180
+  step: 5
+  initial: 0
+  mode: box
+  unit_of_measurement: min

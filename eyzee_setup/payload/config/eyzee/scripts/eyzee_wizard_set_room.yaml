@@ -1,0 +1,9 @@
+eyzee_wizard_set_room:
+  alias: "EyZEE Wizard - Set Room"
+  mode: single
+  sequence:
+    - service: input_select.select_option
+      target:
+        entity_id: input_select.eyzee_wizard_room
+      data:
+        option: "{{ room }}"

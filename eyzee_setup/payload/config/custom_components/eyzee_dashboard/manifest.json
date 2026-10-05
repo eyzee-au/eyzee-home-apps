@@ -1,0 +1,10 @@
+{
+  "domain": "eyzee_dashboard",
+  "name": "EyZEE Dashboard Generator",
+  "version": "1.0.0",
+  "documentation": "https://eyzee.local/docs",
+  "requirements": [],
+  "codeowners": [],
+  "iot_class": "local_push",
+  "loggers": ["custom_components.eyzee_dashboard"]
+}

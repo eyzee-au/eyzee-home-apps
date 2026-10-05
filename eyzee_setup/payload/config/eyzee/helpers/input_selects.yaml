@@ -1,0 +1,344 @@
+eyzee_multiway_main:
+  name: "Main Switch"
+  options:
+    - none
+  initial: none
+
+eyzee_multiway_linked:
+  name: "Linked Switch"
+  options:
+    - none
+  initial: none
+
+eyzee_wizard_room:
+  name: "EyZEE Wizard Room"
+  options:
+    - none
+  initial: none
+
+z2m_device_friendly_name:
+  name: "Zigbee2MQTT Device"
+  options:
+    - none
+  initial: none
+
+eyzee_wizard_device_type:
+  name: "Device Type"
+  options:
+    - Light
+    - Switch
+    - Dimmer
+    - Fan
+    - Fan Light
+    - Power Point
+    - Sensor
+    - Contact Sensor
+    - Motion Sensor
+    - Presence Sensor
+    - Temperature Sensor
+    - Water Sensor
+    - Lock
+    - Blind
+    - Other
+  initial: Light
+
+eyzee_registered_device:
+  name: "EyZEE Registered Device"
+  options:
+    - none
+  initial: none
+
+eyzee_registered_room:
+  name: "EyZEE Registered Room"
+  options:
+    - none
+  initial: none
+
+eyzee_lighting_group:
+  name: "Lighting Group"
+  options:
+    - none
+  initial: none
+
+eyzee_aura_source_group:
+  name: "Choose Colour From"
+  icon: mdi:palette
+  options:
+    - none
+  initial: none
+
+eyzee_lighting_group_room:
+  name: "Lighting Group Room"
+  options:
+    - none
+  initial: none
+
+eyzee_lighting_group_member:
+  name: "Lighting Group Member"
+  options:
+    - none
+  initial: none
+
+eyzee_remove_device:
+  name: "EyZEE Remove Device"
+  options:
+    - none
+  initial: none
+
+eyzee_discovery_filter:
+  name: "Discovery Filter"
+  options:
+    - Z2M only
+    - All devices
+  initial: Z2M only
+  icon: mdi:filter-variant
+
+eyzee_add_device_method:
+  name: "EyZEE Add Device Method"
+  options:
+    - Zigbee2MQTT
+    - ZHA
+    - Home Assistant Device
+  initial: Zigbee2MQTT
+
+eyzee_zigbee_pairing_time:
+  name: "EyZEE Zigbee Pairing Time"
+  options:
+    - "60"
+    - "240"
+    - "600"
+    - "254"
+  initial: "240"
+
+############################################################
+# House Builder — room and floor selectors
+############################################################
+
+eyzee_floors:
+  name: Floor Levels
+  icon: mdi:stairs
+  options:
+    - "1"
+    - "2"
+    - "3"
+    - "4"
+    - "5"
+  initial: "1"
+
+eyzee_kitchen:
+  name: Kitchens
+  icon: mdi:countertop-outline
+  options: &room_count_0_10
+    - "0"
+    - "1"
+    - "2"
+    - "3"
+    - "4"
+    - "5"
+    - "6"
+    - "7"
+    - "8"
+    - "9"
+    - "10"
+  initial: "0"
+
+eyzee_dining:
+  name: Dining Rooms
+  icon: mdi:table-chair
+  options: *room_count_0_10
+  initial: "0"
+
+eyzee_entrance:
+  name: Entrances
+  icon: mdi:door-open
+  options: *room_count_0_10
+  initial: "0"
+
+eyzee_hallway:
+  name: Hallways
+  icon: mdi:door-open
+  options: *room_count_0_10
+  initial: "0"
+
+eyzee_living:
+  name: Living Rooms
+  icon: mdi:sofa
+  options: *room_count_0_10
+  initial: "0"
+
+eyzee_bedrooms:
+  name: Bedrooms
+  icon: mdi:bed
+  options:
+    - "0"
+    - "1"
+    - "2"
+    - "3"
+    - "4"
+    - "5"
+    - "6"
+    - "7"
+    - "8"
+    - "9"
+    - "10"
+    - "11"
+    - "12"
+    - "13"
+    - "14"
+    - "15"
+    - "16"
+    - "17"
+    - "18"
+    - "19"
+    - "20"
+  initial: "0"
+
+eyzee_bathrooms:
+  name: Bathrooms
+  icon: mdi:shower
+  options: *room_count_0_10
+  initial: "0"
+
+eyzee_ensuite:
+  name: Ensuites
+  icon: mdi:shower-head
+  options: *room_count_0_10
+  initial: "0"
+
+eyzee_media:
+  name: Media Rooms
+  icon: mdi:television
+  options: *room_count_0_10
+  initial: "0"
+
+eyzee_garage:
+  name: Garages
+  icon: mdi:garage
+  options: &room_count_0_5
+    - "0"
+    - "1"
+    - "2"
+    - "3"
+    - "4"
+    - "5"
+  initial: "0"
+
+eyzee_laundry:
+  name: Laundries
+  icon: mdi:washing-machine
+  options: *room_count_0_5
+  initial: "0"
+
+eyzee_mud_room:
+  name: Mud Rooms
+  icon: mdi:shoe-print
+  options: *room_count_0_5
+  initial: "0"
+
+eyzee_room_to_remove:
+  name: Room to Remove
+  options:
+    - none
+  icon: mdi:door
+
+eyzee_existing_device:
+  name: Existing Device
+  options:
+    - none
+  icon: mdi:devices
+
+eyzee_room_for_location:
+  name: Room
+  options:
+    - none
+  initial: none
+  icon: mdi:door
+
+eyzee_room_location:
+  name: Room Location
+  options:
+    - Ground Floor
+    - Outdoor Areas
+  initial: Ground Floor
+  icon: mdi:stairs
+
+############################################################
+# Smart Behaviours
+############################################################
+
+eyzee_rule_trigger_device:
+  name: Behaviour Trigger
+  icon: mdi:gesture-tap
+  options:
+    - none
+  initial: none
+
+eyzee_rule_trigger_event:
+  name: Trigger Event
+  icon: mdi:lightning-bolt
+  options:
+    - none
+  initial: none
+
+eyzee_rule_action_device:
+  name: Behaviour Target
+  icon: mdi:target
+  options:
+    - none
+  initial: none
+
+eyzee_rule_action_type:
+  name: Target Action
+  icon: mdi:play-circle-outline
+  options:
+    - none
+  initial: none
+
+eyzee_rule_brightness_preset:
+  name: Brightness
+  icon: mdi:brightness-6
+  options:
+    - Keep current brightness
+    - Low – 1%
+    - Soft – 35%
+    - Bright – 70%
+    - Maximum – 100%
+    - Custom
+  initial: Keep current brightness
+
+eyzee_rule_colour_preset:
+  name: Light Colour
+  icon: mdi:palette
+  options:
+    - Keep current colour
+    - Warm – 2700 K
+    - Natural – 4000 K
+    - Cool – 6000 K
+    - Aura
+  initial: Keep current colour
+  
+eyzee_saved_behaviour:
+  name: Select Behaviour
+  icon: mdi:format-list-bulleted
+  options:
+    - none
+  initial: none
+
+eyzee_rule_trigger_type:
+  name: Choose when
+  icon: mdi:ray-start-arrow
+  options:
+    - A device changes
+    - It is a set time
+    - It is sunrise
+    - It is sunset
+  initial: A device changes
+
+eyzee_rule_sun_offset_direction:
+  name: Sun Timing
+  icon: mdi:sun-clock
+  options:
+    - At
+    - Before
+    - After
+  initial: At

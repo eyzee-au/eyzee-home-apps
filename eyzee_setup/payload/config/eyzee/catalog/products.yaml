@@ -1,0 +1,519 @@
+version: 1
+
+meta:
+  vendor: EyZEE
+  catalog_type: global_products
+  zigbee_stack: zigbee2mqtt
+  converter_dir: /config/zigbee2mqtt/external_converters
+  operational_rules:
+    - "Install converter, restart Zigbee2MQTT, then pair device"
+    - "If paired before converter, remove device and re-pair"
+
+products:
+
+  #
+  # -------------------------
+  # WALL SWITCHES (TS0601)
+  # -------------------------
+  #
+
+  # 1-gang dimmer (KNOWN WORKING)
+  eyzee.switch.1gang.dimmer.generic:
+    display_name: "EyZEE 1-Gang Smart Dimmer"
+    category: wall_switch
+    subcategory: dimmer
+    icon: mdi:light-switch
+    status: stable
+
+    zigbee:
+      model_id: TS0601
+      z2m_model: TS0601_TZE200_1gang_dimmer
+      fingerprints:
+        - manufacturer: _TZE200_6fjev1mn
+
+    converter:
+      required: true
+      file: eyzee_tuya_ts0601_1gang_dimmer.js
+
+    channels: { count: 1, type: dimmer }
+
+    entities:
+      light: { platform: light, features: [on_off, brightness, min_brightness, max_brightness] }
+      power: { platform: sensor, device_class: power, unit: W }
+      voltage: { platform: sensor, device_class: voltage, unit: V }
+      current: { platform: sensor, device_class: current, unit: A }
+      child_lock: { platform: switch }
+      backlight: { platform: switch, ui_label: "Backlight LED" }
+
+    feature_flags:
+      requires_external_converter: true
+      power_monitoring: true
+      child_lock: true
+
+  # Split dimmer into leading/trailing as SKUs (details TBD)
+  eyzee.switch.1gang.dimmer.leading_edge:
+    display_name: "EyZEE 1-Gang Dimmer (Leading Edge)"
+    category: wall_switch
+    subcategory: dimmer
+    icon: mdi:light-switch
+    status: needs_fingerprints
+    derived_from: eyzee.switch.1gang.dimmer.generic
+    notes:
+      - "Add fingerprints/z2m_model when confirmed for leading-edge hardware batch."
+
+  eyzee.switch.1gang.dimmer.trailing_edge:
+    display_name: "EyZEE 1-Gang Dimmer (Trailing Edge)"
+    category: wall_switch
+    subcategory: dimmer
+    icon: mdi:light-switch
+    status: needs_fingerprints
+    derived_from: eyzee.switch.1gang.dimmer.generic
+    notes:
+      - "Add fingerprints/z2m_model when confirmed for trailing-edge hardware batch."
+
+  # Regular touch switches (1–6 gang) — use a consistent schema
+  # (6-gang KNOWN WORKING)
+  eyzee.switch.touch.regular.6gang:
+    display_name: "EyZEE 6-Gang Touch Switch"
+    category: wall_switch
+    subcategory: relay
+    icon: mdi:light-switch-multiple
+    status: stable
+
+    zigbee:
+      model_id: TS0601
+      z2m_model: TS0601_6gang_switch
+      fingerprints:
+        - manufacturer: _TZE204_jgujzjwh
+        - manufacturer: _TZE204_ez0byyqa
+
+    converter:
+      required: true
+      file: eyzee_tuya_ts0601_6gang_switch.js
+
+    channels: { count: 6, type: relay }
+
+    entities:
+      switches: { count: 6, platform: switch }
+      timers: { count: 6, platform: number, unit: s }
+      indicator_mode: { platform: select, values: [off, on, previous], ui_hidden: true }
+      power_on_behavior: { per_channel: true, platform: select, values: [off, on, previous] }
+
+    feature_flags:
+      requires_external_converter: true
+      decoupled_mode:
+        supported: true
+        implemented_via: indicator_mode
+        enable_value: previous
+        ui_abstraction: true
+
+  # Regular touch 1–5 gang: derived shells (need fingerprints + converter filenames if different)
+  eyzee.switch.touch.regular.1gang:
+    display_name: "EyZEE 1-Gang Touch Switch"
+    category: wall_switch
+    subcategory: relay
+    icon: mdi:light-switch
+    status: needs_fingerprints
+    derived_from: eyzee.switch.touch.regular.6gang
+    channels: { count: 1, type: relay }
+
+  eyzee.switch.touch.regular.2gang:
+    display_name: "EyZEE 2-Gang Touch Switch"
+    category: wall_switch
+    subcategory: relay
+    icon: mdi:light-switch
+    status: needs_fingerprints
+    derived_from: eyzee.switch.touch.regular.6gang
+    channels: { count: 2, type: relay }
+
+  eyzee.switch.touch.regular.3gang:
+    display_name: "EyZEE 3-Gang Touch Switch"
+    category: wall_switch
+    subcategory: relay
+    icon: mdi:light-switch
+    status: needs_fingerprints
+    derived_from: eyzee.switch.touch.regular.6gang
+    channels: { count: 3, type: relay }
+
+  eyzee.switch.touch.regular.4gang:
+    display_name: "EyZEE 4-Gang Touch Switch"
+    category: wall_switch
+    subcategory: relay
+    icon: mdi:light-switch-multiple
+    status: needs_fingerprints
+    derived_from: eyzee.switch.touch.regular.6gang
+    channels: { count: 4, type: relay }
+
+  eyzee.switch.touch.regular.5gang:
+    display_name: "EyZEE 5-Gang Touch Switch"
+    category: wall_switch
+    subcategory: relay
+    icon: mdi:light-switch-multiple
+    status: needs_fingerprints
+    derived_from: eyzee.switch.touch.regular.6gang
+    channels: { count: 5, type: relay }
+
+  # Decoupler touch switches (1–6 gang)
+  # (5-gang KNOWN WORKING decoupler)
+  eyzee.switch.touch.decoupler.5gang:
+    display_name: "EyZEE 5-Gang Touch Switch (Decoupler)"
+    category: wall_switch
+    subcategory: relay
+    icon: mdi:light-switch-multiple
+    status: stable
+
+    zigbee:
+      model_id: TS0601
+      z2m_model: TS0601_5gang_decoupler
+      fingerprints:
+        - manufacturer: _TZE200_0kihjsys
+
+    converter:
+      required: true
+      file: eyzee_tuya_ts0601_5gang_decoupler.js
+
+    channels: { count: 5, type: relay }
+
+    entities:
+      switches: { count: 5, platform: switch }
+      timers: { count: 5, platform: number, unit: s }
+      indicator_mode: { platform: select, values: [off, on, previous], ui_hidden: true }
+      power_on_behavior: { per_channel: true, platform: select, values: [off, on, previous] }
+
+    feature_flags:
+      requires_external_converter: true
+      decoupled_mode:
+        supported: true
+        implemented_via: indicator_mode
+        enable_value: previous
+        ui_abstraction: true
+
+  # Decoupler 1–4 + 6 gang: derived shells (need fingerprints)
+  eyzee.switch.touch.decoupler.1gang:
+    display_name: "EyZEE 1-Gang Touch Switch (Decoupler)"
+    category: wall_switch
+    subcategory: relay
+    icon: mdi:light-switch
+    status: needs_fingerprints
+    derived_from: eyzee.switch.touch.decoupler.5gang
+    channels: { count: 1, type: relay }
+
+  eyzee.switch.touch.decoupler.2gang:
+    display_name: "EyZEE 2-Gang Touch Switch (Decoupler)"
+    category: wall_switch
+    subcategory: relay
+    icon: mdi:light-switch
+    status: needs_fingerprints
+    derived_from: eyzee.switch.touch.decoupler.5gang
+    channels: { count: 2, type: relay }
+
+  eyzee.switch.touch.decoupler.3gang:
+    display_name: "EyZEE 3-Gang Touch Switch (Decoupler)"
+    category: wall_switch
+    subcategory: relay
+    icon: mdi:light-switch
+    status: needs_fingerprints
+    derived_from: eyzee.switch.touch.decoupler.5gang
+    channels: { count: 3, type: relay }
+
+  eyzee.switch.touch.decoupler.4gang:
+    display_name: "EyZEE 4-Gang Touch Switch (Decoupler)"
+    category: wall_switch
+    subcategory: relay
+    icon: mdi:light-switch-multiple
+    status: needs_fingerprints
+    derived_from: eyzee.switch.touch.decoupler.5gang
+    channels: { count: 4, type: relay }
+
+  eyzee.switch.touch.decoupler.6gang:
+    display_name: "EyZEE 6-Gang Touch Switch (Decoupler)"
+    category: wall_switch
+    subcategory: relay
+    icon: mdi:light-switch-multiple
+    status: needs_fingerprints
+    derived_from: eyzee.switch.touch.regular.6gang
+    notes:
+      - "If decoupler 6-gang uses same converter quirk (indicator_mode=previous), keep same feature_flags."
+    channels: { count: 6, type: relay }
+
+
+  #
+  # -------------------------
+  # GPO / POWERPOINTS (ZIGBEE)
+  # -------------------------
+  #
+
+  eyzee.gpo.double:
+    display_name: "EyZEE Double GPO"
+    category: power
+    subcategory: gpo
+    icon: mdi:power-socket-au
+    status: needs_fingerprints
+    zigbee: { model_id: "TBD", fingerprints: [] }
+    converter: { required: "tbd", file: "tbd" }
+    outlets: { count: 2 }
+    entities:
+      outlet_1: { platform: switch }
+      outlet_2: { platform: switch }
+    feature_flags:
+      power_monitoring: tbd
+
+  eyzee.gpo.double_with_switch:
+    display_name: "EyZEE Double GPO + Light Switch"
+    category: power
+    subcategory: gpo_combo
+    icon: mdi:power-socket-au
+    status: needs_fingerprints
+    zigbee: { model_id: "TBD", fingerprints: [] }
+    converter: { required: "tbd", file: "tbd" }
+    outlets: { count: 2 }
+    switch_channels: { count: 1 }
+    entities:
+      outlet_1: { platform: switch }
+      outlet_2: { platform: switch }
+      switch_1: { platform: switch }
+
+  eyzee.gpo.double_with_usb:
+    display_name: "EyZEE Double GPO + USB"
+    category: power
+    subcategory: gpo_usb
+    icon: mdi:power-socket-au
+    status: needs_fingerprints
+    zigbee: { model_id: "TBD", fingerprints: [] }
+    converter: { required: "tbd", file: "tbd" }
+    outlets: { count: 2 }
+    usb_ports: { count: 2, notes: ["USB may not be controllable; often always-on."] }
+    entities:
+      outlet_1: { platform: switch }
+      outlet_2: { platform: switch }
+
+  eyzee.gpo.double_with_switch.new_model:
+    display_name: "EyZEE Double GPO + Light Switch (New Model)"
+    category: power
+    subcategory: gpo_combo
+    icon: mdi:power-socket-au
+    status: coming_soon
+    notes: ["Awaiting fingerprints/model_id/converter confirmation."]
+
+  eyzee.gpo.double_with_usb.new_model:
+    display_name: "EyZEE Double GPO + USB (New Model)"
+    category: power
+    subcategory: gpo_usb
+    icon: mdi:power-socket-au
+    status: coming_soon
+    notes: ["Awaiting fingerprints/model_id/converter confirmation."]
+
+
+#
+# -------------------------
+# FAN + LIGHT WALL UNIT (ZIGBEE)
+# -------------------------
+#
+
+eyzee.fanlight.wallcontroller.4gang_formfactor:
+  display_name: "EyZEE Fan + Light Touch Switch (4-Gang Form Factor)"
+  category: fan
+  subcategory: fan_light_controller
+  icon: mdi:ceiling-fan-light
+  status: defined_from_field
+
+  zigbee:
+    model_id: "TBD"
+    fingerprints: []
+
+  converter:
+    required: "tbd"
+    file: "tbd"
+
+  channels:
+    fan_speeds: 3
+    light_channels: 1   # typical 4th gang
+
+  entities:
+    fan_low:
+      platform: light
+      role: fan_speed
+    fan_medium:
+      platform: light
+      role: fan_speed
+    fan_high:
+      platform: light
+      role: fan_speed
+    light_1:
+      platform: light
+      role: light_channel
+      optional: true
+
+  abstractions:
+    fan_template:
+      preset_modes: [low, medium, high]
+      default_on: medium
+      speed_map:
+        low: fan_low
+        medium: fan_medium
+        high: fan_high
+      behavior:
+        turn_off_all_speeds: true
+
+
+
+  #
+  # -------------------------
+  # DOOR LOCKS (ZIGBEE TUYA)
+  # -------------------------
+  #
+
+  eyzee.lock.tuya.f2:
+    display_name: "EyZEE Zigbee Tuya Door Lock (F2)"
+    category: security
+    subcategory: lock
+    icon: mdi:lock
+    status: needs_fingerprints
+    zigbee:
+      model_id: "TBD"
+      fingerprints: []
+    converter:
+      required: "tbd"
+      file: "tbd"
+    entities:
+      lock: { platform: lock }
+      battery: { platform: sensor, device_class: battery, unit: "%" }
+    feature_flags:
+      pin_codes: tbd
+      jam_detect: tbd
+      tamper: tbd
+
+  eyzee.lock.tuya.f5:
+    display_name: "EyZEE Zigbee Tuya Door Lock (F5)"
+    category: security
+    subcategory: lock
+    icon: mdi:lock
+    status: needs_fingerprints
+    zigbee:
+      model_id: "TBD"
+      fingerprints: []
+    converter:
+      required: "tbd"
+      file: "tbd"
+    entities:
+      lock: { platform: lock }
+      battery: { platform: sensor, device_class: battery, unit: "%" }
+    feature_flags:
+      pin_codes: tbd
+      jam_detect: tbd
+      tamper: tbd
+
+
+
+  #
+  # -------------------------
+  # DOWNLIGHTS (ZIGBEE)
+  # -------------------------
+  #
+
+  eyzee.light.downlight.70mm:
+    display_name: "EyZEE Zigbee Downlight (70mm)"
+    category: lighting
+    subcategory: downlight
+    icon: mdi:downlight
+    status: needs_fingerprints
+    zigbee: { model_id: "TBD", fingerprints: [] }
+    converter: { required: "tbd", file: "tbd" }
+    entities:
+      light: { platform: light, features: [on_off, brightness, color_temp] }
+
+  eyzee.light.downlight.90mm:
+    display_name: "EyZEE Zigbee Downlight (90mm)"
+    category: lighting
+    subcategory: downlight
+    icon: mdi:downlight
+    status: needs_fingerprints
+    zigbee: { model_id: "TBD", fingerprints: [] }
+    converter: { required: "tbd", file: "tbd" }
+    entities:
+      light: { platform: light, features: [on_off, brightness, color_temp] }
+
+  eyzee.light.downlight.90mm_gimbal:
+    display_name: "EyZEE Zigbee Downlight (90mm Gimbal)"
+    category: lighting
+    subcategory: downlight
+    icon: mdi:downlight
+    status: coming_soon
+    notes: ["Awaiting fingerprints/model_id feature set (likely same as 90mm)."]
+
+
+  #
+  # -------------------------
+  # SENSORS (ZIGBEE)
+  # -------------------------
+  #
+
+  eyzee.sensor.pir:
+    display_name: "EyZEE PIR Motion Sensor"
+    category: sensor
+    subcategory: motion
+    icon: mdi:motion-sensor
+    status: needs_fingerprints
+    zigbee: { model_id: "TBD", fingerprints: [] }
+    converter: { required: false }
+    entities:
+      motion: { platform: binary_sensor, device_class: motion }
+      battery: { platform: sensor, device_class: battery, unit: "%" }
+
+  eyzee.sensor.mmwave:
+    display_name: "EyZEE mmWave Presence Sensor"
+    category: sensor
+    subcategory: presence
+    icon: mdi:radar
+    status: needs_fingerprints
+    zigbee: { model_id: "TBD", fingerprints: [] }
+    converter: { required: "tbd", file: "tbd" }
+    entities:
+      presence: { platform: binary_sensor, device_class: occupancy }
+      # Typical mmWave extras (fill in once confirmed):
+      distance: { platform: sensor, unit: "m", optional: true }
+      sensitivity: { platform: number, optional: true }
+
+  eyzee.sensor.contact:
+    display_name: "EyZEE Contact Sensor"
+    category: sensor
+    subcategory: contact
+    icon: mdi:door
+    status: needs_fingerprints
+    zigbee: { model_id: "TBD", fingerprints: [] }
+    converter: { required: false }
+    entities:
+      contact: { platform: binary_sensor, device_class: door }
+      battery: { platform: sensor, device_class: battery, unit: "%" }
+
+  eyzee.sensor.temp_humidity:
+    display_name: "EyZEE Temperature & Humidity Sensor"
+    category: sensor
+    subcategory: climate
+    icon: mdi:thermometer
+    status: needs_fingerprints
+    zigbee: { model_id: "TBD", fingerprints: [] }
+    converter: { required: false }
+    entities:
+      temperature: { platform: sensor, device_class: temperature, unit: "°C" }
+      humidity: { platform: sensor, device_class: humidity, unit: "%" }
+      battery: { platform: sensor, device_class: battery, unit: "%" }
+
+
+  #
+  # -------------------------
+  # WIFI DEVICES (NOT ZIGBEE)
+  # Keep them in catalog, but your Z2M intake should ignore by category.
+  # -------------------------
+  #
+
+  eyzee.wifi.fan_controller:
+    display_name: "EyZEE WiFi Ceiling Fan Controller"
+    category: wifi_device
+    subcategory: fan_controller
+    icon: mdi:wifi
+    status: defined
+    integration:
+      type: wifi
+      notes:
+        - "Not Zigbee; handled via separate integration path (not Z2M)."

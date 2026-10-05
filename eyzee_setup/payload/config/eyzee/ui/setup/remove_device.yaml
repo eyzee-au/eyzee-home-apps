@@ -1,0 +1,228 @@
+title: Remove a Device
+
+views:
+  - title: Remove a Device
+    path: remove-device
+    icon: mdi:delete-outline
+    type: sections
+    max_columns: 1
+
+    sections:
+      # ============================================================
+      # REMOVE A DEVICE
+      # ============================================================
+      - type: grid
+        cards:
+          - type: heading
+            heading: Remove a Device
+            heading_style: title
+            icon: mdi:delete-outline
+
+          - type: markdown
+            content: |
+              <div style="padding:4px 2px; line-height:1.5;">
+                <b style="color:#DC5050;">Removing a device cannot be undone.</b><br>
+                Choose the device carefully before continuing.
+              </div>
+            card_mod:
+              style: |
+                ha-card {
+                  border: 1px solid rgba(220, 80, 80, 0.40);
+                  background: rgba(220, 80, 80, 0.06);
+                  border-radius: 16px;
+                }
+
+          - type: button
+            name: Refresh Device List
+            icon: mdi:refresh
+            show_state: false
+            grid_options:
+              columns: 12
+              rows: 2
+            tap_action:
+              action: call-service
+              service: eyzee_dashboard.populate_remove_device_dropdown
+            card_mod:
+              style: |
+                ha-card {
+                  min-height: 76px;
+                  border-radius: 16px;
+                }
+                ha-state-icon {
+                  color: #D6AD60 !important;
+                }
+
+          - type: entities
+            title: Choose a Device
+            show_header_toggle: false
+            entities:
+              - entity: input_select.eyzee_remove_device
+                name: Device
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 16px;
+                }
+
+          - type: markdown
+            content: |
+              **Remove from EyZEE Home**  
+              Removes the device from your EyZEE® menus, room controls, light groups and linked switches. The device remains joined to the Zigbee network.
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 16px;
+                }
+
+          - type: button
+            name: Remove from EyZEE Home
+            icon: mdi:database-remove-outline
+            show_state: false
+            grid_options:
+              columns: 12
+              rows: 2
+            tap_action:
+              action: call-service
+              confirmation:
+                text: Remove this device from EyZEE Home?
+              service: eyzee_dashboard.remove_device
+              data:
+                confirm: true
+                remove_from_network: false
+            card_mod:
+              style: |
+                ha-card {
+                  min-height: 82px;
+                  border: 1px solid rgba(220, 80, 80, 0.40);
+                  background: rgba(220, 80, 80, 0.06);
+                  border-radius: 16px;
+                }
+                ha-state-icon {
+                  color: #DC5050 !important;
+                }
+
+          - type: markdown
+            content: |
+              **Remove Completely**  
+              Removes the device from EyZEE® Home and also requests its removal from the Zigbee network.
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 16px;
+                }
+
+          - type: button
+            name: Remove Completely
+            icon: mdi:delete-forever-outline
+            show_state: false
+            grid_options:
+              columns: 12
+              rows: 2
+            tap_action:
+              action: call-service
+              confirmation:
+                text: Permanently remove this device from EyZEE Home and the Zigbee network?
+              service: eyzee_dashboard.remove_device
+              data:
+                confirm: true
+                remove_from_network: true
+            card_mod:
+              style: |
+                ha-card {
+                  min-height: 82px;
+                  border: 1px solid rgba(220, 80, 80, 0.65);
+                  background: rgba(220, 80, 80, 0.12);
+                  border-radius: 16px;
+                }
+                ha-state-icon {
+                  color: #DC5050 !important;
+                }
+
+          - type: markdown
+            title: Removal Status
+            content: |
+              {{ states('sensor.eyzee_remove_device_status') }}
+
+              **Device:**  
+              {{ state_attr('sensor.eyzee_remove_device_status', 'device') or '-' }}
+
+              **Network message:**  
+              {{ state_attr('sensor.eyzee_remove_device_status', 'network_message') or '-' }}
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 16px;
+                }
+
+      # ============================================================
+      # STANDARD NAVIGATION
+      # ============================================================
+      - type: grid
+        cards:
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: button
+                name: Back
+                icon: mdi:arrow-left
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/devices
+                card_mod:
+                  style: |
+                    ha-card {
+                      min-height: 76px;
+                      border-radius: 16px;
+                    }
+                    ha-state-icon {
+                      color: #D6AD60 !important;
+                    }
+
+              - type: button
+                name: Home
+                icon: mdi:home-heart
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+                card_mod:
+                  style: |
+                    ha-card {
+                      min-height: 76px;
+                      border-radius: 16px;
+                    }
+                    ha-state-icon {
+                      color: #D6AD60 !important;
+                    }
+
+              - type: button
+                name: Help
+                icon: mdi:help-circle-outline
+                show_state: false
+                tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/remove-a-device/
+                card_mod:
+                  style: |
+                    ha-card {
+                      min-height: 76px;
+                      border-radius: 16px;
+                    }
+                    ha-state-icon {
+                      color: #D6AD60 !important;
+                    }
+
+          - type: markdown
+            content: |
+              <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">
+                EyZEE® • Making Smart Easy™
+              </div>
+            card_mod:
+              style: |
+                ha-card {
+                  background: transparent;
+                  border: none;
+                  box-shadow: none;
+                }

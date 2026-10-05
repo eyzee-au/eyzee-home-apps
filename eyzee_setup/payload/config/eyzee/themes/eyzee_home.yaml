@@ -1,0 +1,28 @@
+EyZEE Home:
+  primary-color: "#D6AD60"
+  accent-color: "#D6AD60"
+
+  app-header-background-color: "#000000"
+  app-header-text-color: "#FFFFFF"
+
+  primary-background-color: "#FFFFFF"
+  secondary-background-color: "#F7F7F7"
+  card-background-color: "#FFFFFF"
+
+  primary-text-color: "#111111"
+  secondary-text-color: "#555555"
+  disabled-text-color: "#999999"
+
+  divider-color: "#E6E6E6"
+
+  paper-item-icon-color: "#111111"
+  paper-item-icon-active-color: "#D6AD60"
+
+  state-icon-color: "#111111"
+  state-icon-active-color: "#D6AD60"
+
+  ha-card-border-radius: "18px"
+  ha-card-box-shadow: "0 2px 10px rgba(0,0,0,0.08)"
+
+  mdc-theme-primary: "#D6AD60"
+  mdc-theme-secondary: "#D6AD60"

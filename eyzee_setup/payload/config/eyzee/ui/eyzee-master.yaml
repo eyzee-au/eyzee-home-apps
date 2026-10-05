@@ -1,0 +1,14 @@
+title: EyZEE Home
+views:
+- title: EyZEE Home
+  path: home
+  type: sections
+  max_columns: 1
+  sections:
+  - type: grid
+    cards:
+    - type: button
+      name: Home
+      tap_action:
+        action: navigate
+        navigation_path: /eyzee-main-menu/home

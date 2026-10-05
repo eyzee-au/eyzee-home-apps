@@ -1,0 +1,12 @@
+eyzee_wizard_assign_device:
+  alias: "EyZEE Wizard - Assign Device"
+  mode: single
+  sequence:
+    - service: eyzee_dashboard.add_device
+      data:
+        room: "{{ states('input_select.eyzee_wizard_room') }}"
+        device_type: "{{ states('input_text.eyzee_wizard_device_type') }}"
+        device_name: "{{ states('input_text.eyzee_wizard_device_name') }}"
+        z2m_from: "{{ states('input_select.z2m_device_friendly_name') }}"
+        custom_friendly_name: "{{ states('input_text.z2m_custom_friendly_name') }}"
+        confirm_rename: true

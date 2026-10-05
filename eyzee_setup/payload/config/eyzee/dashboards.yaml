@@ -1,0 +1,73 @@
+eyzee-main-menu:
+  mode: yaml
+  title: EyZEE® Home
+  icon: mdi:home-heart
+  show_in_sidebar: true
+  require_admin: false
+  filename: eyzee/ui/living/eyzee-main-menu.yaml
+eyzee-rooms:
+  mode: yaml
+  title: EyZEE Rooms
+  icon: mdi:floor-plan
+  show_in_sidebar: false
+  filename: eyzee/ui/eyzee-room.yaml
+eyzee-setup:
+  mode: yaml
+  title: EyZEE Setup
+  icon: mdi:tools
+  show_in_sidebar: false
+  filename: eyzee/ui/setup/eyzee-setup.yaml
+eyzee-house-builder:
+  mode: yaml
+  title: House Builder
+  icon: mdi:home-edit
+  show_in_sidebar: false
+  filename: eyzee/ui/eyzee-onboarding.yaml
+eyzee-multiway:
+  mode: yaml
+  title: Link Switches
+  icon: mdi:link-variant
+  show_in_sidebar: false
+  filename: eyzee/ui/setup/multiway.yaml
+eyzee-automate:
+  mode: yaml
+  title: Automate
+  icon: mdi:robot
+  show_in_sidebar: false
+  filename: eyzee/ui/automate/automate.yaml
+eyzee-device-setup:
+  mode: yaml
+  title: Device Setup
+  icon: mdi:tag
+  show_in_sidebar: false
+  filename: eyzee/ui/setup/device_setup.yaml
+eyzee-rename-device:
+  mode: yaml
+  title: Rename Device
+  icon: mdi:pencil
+  show_in_sidebar: false
+  filename: eyzee/ui/setup/rename_device.yaml
+eyzee-lighting-groups:
+  mode: yaml
+  title: Lighting Groups
+  icon: mdi:lightbulb-group
+  show_in_sidebar: false
+  filename: eyzee/ui/setup/lighting_groups.yaml
+eyzee-add-device-new:
+  mode: yaml
+  title: Add Device
+  icon: mdi:plus-circle
+  show_in_sidebar: false
+  filename: eyzee/ui/setup/add_device.yaml
+eyzee-remove-device:
+  mode: yaml
+  title: Remove Device
+  icon: mdi:delete
+  show_in_sidebar: false
+  filename: eyzee/ui/setup/remove_device.yaml
+eyzee-existing-device:
+  mode: yaml
+  title: Existing Device
+  icon: mdi:devices
+  show_in_sidebar: false
+  filename: eyzee/ui/setup/existing_device.yaml

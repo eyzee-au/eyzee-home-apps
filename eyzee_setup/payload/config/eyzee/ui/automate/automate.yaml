@@ -1,0 +1,335 @@
+title: EyZEE Automate
+path: eyzee-automate
+icon: mdi:creation
+views:
+  - title: Smart Automations
+    path: automate
+    icon: mdi:creation
+    type: sections
+
+    sections:
+
+      # =========================================================
+      # HEADER
+      # =========================================================
+      - type: grid
+        cards:
+          - type: heading
+            heading: "Smart Behaviours/Automations"
+            heading_style: title
+            icon: mdi:creation
+
+          - type: markdown
+            content: >
+              **Make your home respond automatically with Smart Behaviours**
+
+      # =========================================================
+      # CREATE RULE
+      # =========================================================
+      - type: grid
+        cards:
+          - type: heading
+            heading: "Create a Smart Behaviour"
+            icon: mdi:plus-circle
+
+          - type: markdown
+            content: >
+              Give your behaviour a **unique name**, **choose** when it happens, then **choose** what EyZEE Home should do.
+
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - entity: input_text.eyzee_behaviour_name
+                name: "Behaviour Unique Name"
+
+          - type: entities
+            title: "This happens WHEN..."
+            show_header_toggle: false
+            entities:
+              - entity: input_select.eyzee_rule_trigger_type
+                name: "Choose when"
+
+              - type: conditional
+                conditions:
+                  - condition: state
+                    entity: input_select.eyzee_rule_trigger_type
+                    state: A device changes
+                row:
+                  entity: input_select.eyzee_rule_trigger_device
+                  name: "Device"
+
+              - type: conditional
+                conditions:
+                  - condition: state
+                    entity: input_select.eyzee_rule_trigger_type
+                    state: A device changes
+                row:
+                  entity: input_select.eyzee_rule_trigger_event
+                  name: "Event"
+
+              - type: conditional
+                conditions:
+                  - condition: state
+                    entity: input_select.eyzee_rule_trigger_type
+                    state: It is a set time
+                row:
+                  entity: input_datetime.eyzee_rule_trigger_time
+                  name: "Time"
+
+              - type: conditional
+                conditions:
+                  - condition: state
+                    entity: input_select.eyzee_rule_trigger_type
+                    state: It is sunrise
+                row:
+                  entity: input_select.eyzee_rule_sun_offset_direction
+                  name: "Timing"
+
+              - type: conditional
+                conditions:
+                  - condition: state
+                    entity: input_select.eyzee_rule_trigger_type
+                    state: It is sunrise
+                row:
+                  entity: input_number.eyzee_rule_sun_offset_minutes
+                  name: "Offset minutes"
+
+              - type: conditional
+                conditions:
+                  - condition: state
+                    entity: input_select.eyzee_rule_trigger_type
+                    state: It is sunset
+                row:
+                  entity: input_select.eyzee_rule_sun_offset_direction
+                  name: "Timing"
+
+              - type: conditional
+                conditions:
+                  - condition: state
+                    entity: input_select.eyzee_rule_trigger_type
+                    state: It is sunset
+                row:
+                  entity: input_number.eyzee_rule_sun_offset_minutes
+                  name: "Offset minutes"
+
+          - type: entities
+            title: "EyZEE Home will…"
+            show_header_toggle: false
+            entities:
+              - entity: input_select.eyzee_rule_action_device
+                name: "Device to control"
+              - entity: input_select.eyzee_rule_action_type
+                name: "What should it do?"
+
+              - type: conditional
+                conditions:
+                  - condition: state
+                    entity: sensor.eyzee_rule_action_context
+                    state: light
+                  - condition: state
+                    entity: input_select.eyzee_rule_action_type
+                    state: Turn On with Light Options
+                row:
+                  entity: input_select.eyzee_rule_brightness_preset
+                  name: Brightness
+
+              - type: conditional
+                conditions:
+                  - condition: state
+                    entity: sensor.eyzee_rule_action_context
+                    state: light
+                  - condition: state
+                    entity: input_select.eyzee_rule_action_type
+                    state: Turn On with Light Options
+                  - condition: state
+                    entity: input_select.eyzee_rule_brightness_preset
+                    state: Custom
+                row:
+                  entity: input_number.eyzee_rule_brightness
+                  name: Custom Brightness
+
+              - type: conditional
+                conditions:
+                  - condition: state
+                    entity: sensor.eyzee_rule_action_context
+                    state: light
+                  - condition: state
+                    entity: input_select.eyzee_rule_action_type
+                    state: Turn On with Light Options
+                row:
+                  entity: input_select.eyzee_rule_colour_preset
+                  name: Light Colour
+
+          - type: entities
+            title: "Enable & active time range"
+            show_header_toggle: false
+            entities:
+              - entity: input_boolean.eyzee_rule_enabled
+                name: "Behaviour enabled"
+
+              - entity: input_boolean.eyzee_rule_use_time_window
+                name: "Active time range"
+
+              - type: conditional
+                conditions:
+                  - condition: state
+                    entity: input_boolean.eyzee_rule_use_time_window
+                    state: "on"
+                row:
+                  entity: input_datetime.eyzee_rule_start
+                  name: "Start time"
+
+              - type: conditional
+                conditions:
+                  - condition: state
+                    entity: input_boolean.eyzee_rule_use_time_window
+                    state: "on"
+                row:
+                  entity: input_datetime.eyzee_rule_end
+                  name: "End time"
+
+          - type: button
+            name: "Create Behaviour"
+            icon: mdi:check-circle
+            show_name: true
+            show_icon: true
+            tap_action:
+              action: perform-action
+              perform_action: eyzee_dashboard.create_smart_behaviour
+            grid_options:
+              columns: 12
+              rows: 2
+
+          - type: markdown
+            content: |
+              {% set status = states(
+                'sensor.eyzee_smart_behaviour_status'
+              ) %}
+              {% if status in ['unknown', 'unavailable', ''] %}
+              **Ready to create a Smart Behaviour**
+              {% else %}
+              **✓ {{ status }}**
+              {% endif %}
+            grid_options:
+              columns: 12
+              rows: auto
+
+      # =========================================================
+      # EXISTING BEHAVIOURS
+      # =========================================================
+
+          - type: entities
+            title: "Manage a Behaviour"
+            show_header_toggle: false
+            entities:
+              - entity: input_select.eyzee_saved_behaviour
+                name: "Choose a Behaviour"
+            grid_options:
+              columns: 12
+              rows: auto
+
+          - type: button
+            name: "Enable / Disable Behaviour"
+            icon: mdi:toggle-switch-outline
+            show_name: true
+            show_icon: true
+            tap_action:
+              action: perform-action
+              perform_action: eyzee_dashboard.toggle_smart_behaviour
+            grid_options:
+              columns: 12
+              rows: 2
+
+          - type: button
+            name: "Delete Selected Behaviour"
+            icon: mdi:delete-outline
+            show_name: true
+            show_icon: true
+            tap_action:
+              action: perform-action
+              perform_action: eyzee_dashboard.delete_smart_behaviour
+              confirmation:
+                text: >
+                  Delete the selected Smart Behaviour?
+                  This cannot be undone from the dashboard.
+            grid_options:
+              columns: 12
+              rows: 2
+
+      - type: grid
+        cards:
+          - type: heading
+            heading: "Existing Behaviours"
+            icon: mdi:format-list-bulleted
+
+          - type: markdown
+            content: |
+              {% set behaviours = state_attr(
+                'sensor.eyzee_smart_behaviour_inventory',
+                'behaviours'
+              ) or [] %}
+
+              {% if behaviours | count == 0 %}
+              No Smart Behaviours have been created yet.
+              {% else %}
+              {% for item in behaviours %}
+              **{{ item.name }}**  
+              {{ 'Enabled' if item.enabled else 'Disabled' }}
+
+              {% endfor %}
+              {% endif %}
+            grid_options:
+              columns: 12
+              rows: auto
+
+      # =========================================================
+      # COMMON MENU FOOTER
+      # =========================================================
+      - type: grid
+        cards:
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: button
+                name: Back
+                icon: mdi:arrow-left
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+
+              - type: button
+                name: Home
+                icon: mdi:home-heart
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+
+              - type: button
+                name: Help
+                icon: mdi:help-circle-outline
+                show_state: false
+                tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/
+            grid_options:
+              columns: 12
+              rows: auto
+
+          - type: markdown
+            content: >
+              <div style="color:var(--secondary-text-color);
+              font-size:14px; font-weight:600; padding:2px 8px;">
+              EyZEE® • Making Smart Easy™</div>
+            card_mod:
+              style: >
+                ha-card {
+                  background: transparent;
+                  border: none;
+                  box-shadow: none;
+                }
+            grid_options:
+              columns: 12
+              rows: auto

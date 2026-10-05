@@ -1,0 +1,6 @@
+version: 1
+lighting:
+  aura_rgb:
+  - 255
+  - 72
+  - 87

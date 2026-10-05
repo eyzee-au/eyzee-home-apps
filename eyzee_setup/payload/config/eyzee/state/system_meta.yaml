@@ -1,0 +1,5 @@
+version: 1
+house_name: null
+floors: null
+commissioned_on: null
+eyzee_core_version: 0.1.0-beta.1

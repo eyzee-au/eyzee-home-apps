@@ -1,0 +1,1477 @@
+title: EyZEE® Home
+
+views:
+  # ============================================================
+  # EYZEE HOME — EVERYDAY MAIN MENU
+  # ============================================================
+  - title: EyZEE Home
+    path: home
+    icon: mdi:home-heart
+    type: sections
+    max_columns: 1
+
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: EyZEE Home
+            heading_style: title
+            icon: mdi:home-heart
+
+          - type: markdown
+            content: |
+              {% set home_name = states('input_text.eyzee_project_name') %}
+              {% if home_name not in ['', 'unknown', 'unavailable', 'none'] %}
+              <div style="
+                color:var(--secondary-text-color);
+                font-size:18px;
+                font-weight:600;
+                padding:0 8px 6px;
+              ">
+                {{ home_name }}
+              </div>
+              {% endif %}
+            card_mod:
+              style: |
+                ha-card {
+                  background: transparent;
+                  border: none;
+                  box-shadow: none;
+                }
+
+          - type: heading
+            heading: Where would you like to go?
+            heading_style: subtitle
+
+          - type: grid
+            columns: 2
+            square: false
+            cards:
+              - type: button
+                name: My Rooms
+                icon: mdi:floor-plan
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-rooms/rooms
+                card_mod:
+                  style: |
+                    ha-card { min-height:110px; border-radius:16px; }
+                    ha-state-icon { color:#D6AD60 !important; }
+
+              - type: button
+                name: Manage My Home
+                icon: mdi:home-plus
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/manage
+                card_mod:
+                  style: |
+                    ha-card { min-height:110px; border-radius:16px; }
+                    ha-state-icon { color:#D6AD60 !important; }
+
+              - type: button
+                name: Get Started
+                icon: mdi:book-open-page-variant-outline
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/get-started
+                card_mod:
+                  style: |
+                    ha-card {
+                      min-height:110px;
+                      border:1px solid rgba(214,173,96,0.38);
+                      background:rgba(214,173,96,0.06);
+                      border-radius:16px;
+                    }
+                    ha-state-icon { color:#D6AD60 !important; }
+
+              - type: button
+                name: Help & Support
+                icon: mdi:help-circle-outline
+                show_state: false
+                tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/
+                card_mod:
+                  style: |
+                    ha-card { min-height:76px; border-radius:16px; }
+                    ha-state-icon { color:#D6AD60 !important; }
+
+              - type: markdown
+                content: |
+                  <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">
+                    EyZEE® • Making Smart Easy™
+                  </div>
+                card_mod:
+                  style: |
+                    ha-card { background:transparent; border:none; box-shadow:none; }
+
+  # ============================================================
+  # MANAGE MY HOME
+  # ============================================================
+  - title: Manage My Home
+    path: manage
+    icon: mdi:home-plus
+    type: sections
+    max_columns: 1
+
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Manage My Home
+            heading_style: title
+            icon: mdi:home-plus
+
+          - type: heading
+            heading: What would you like to change?
+            heading_style: subtitle
+
+          - type: grid
+            columns: 2
+            square: false
+            cards:
+              - type: button
+                name: Manage My Rooms
+                icon: mdi:home-edit
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-house-builder
+                card_mod:
+                  style: |
+                    ha-card { min-height:110px; border-radius:16px; }
+                    ha-state-icon { color:#D6AD60 !important; }
+
+              - type: button
+                name: Manage Devices
+                icon: mdi:devices
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/devices
+                card_mod:
+                  style: |
+                    ha-card { min-height:110px; border-radius:16px; }
+                    ha-state-icon { color:#D6AD60 !important; }
+
+              - type: button
+                name: Lights & Switches
+                icon: mdi:lightbulb-multiple-outline
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/lights-switches
+                card_mod:
+                  style: |
+                    ha-card { min-height:110px; border-radius:16px; }
+                    ha-state-icon { color:#D6AD60 !important; }
+
+              - type: button
+                name: Smart Behaviours
+                icon: mdi:auto-fix
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-automate
+                card_mod:
+                  style: |
+                    ha-card { min-height:110px; border-radius:16px; }
+                    ha-state-icon { color:#D6AD60 !important; }
+
+              - type: button
+                name: Home Details
+                icon: mdi:home-edit-outline
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/name-home
+                card_mod:
+                  style: |
+                    ha-card { min-height:110px; border-radius:16px; }
+                    ha-state-icon { color:#D6AD60 !important; }
+
+              - type: button
+                name: Advanced Controls
+                icon: mdi:tune-variant
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/advanced
+                card_mod:
+                  style: |
+                    ha-card { min-height:110px; border-radius:16px; }
+                    ha-state-icon { color:#D6AD60 !important; }
+
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: button
+                name: Back
+                icon: mdi:arrow-left
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: button
+                name: Home
+                icon: mdi:home-heart
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: button
+                name: Help
+                icon: mdi:help-circle-outline
+                show_state: false
+                tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/manage-my-home/
+
+          - type: markdown
+            content: |
+              <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">EyZEE® • Making Smart Easy™</div>
+            card_mod:
+              style: |
+                ha-card { background:transparent; border:none; box-shadow:none; }
+
+  # ============================================================
+  # MANAGE DEVICES
+  # ============================================================
+  - title: Manage Devices
+    path: devices
+    icon: mdi:devices
+    type: sections
+    max_columns: 1
+
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Manage Devices
+            heading_style: title
+            icon: mdi:devices
+
+          - type: heading
+            heading: What would you like to do?
+            heading_style: subtitle
+
+          - type: grid
+            columns: 2
+            square: false
+            cards:
+              - type: button
+                name: Add Zigbee Device
+                icon: mdi:plus-circle-outline
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-add-device-new/add-device
+
+              - type: button
+                name: Set Up Devices
+                icon: mdi:tag-outline
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-add-device-new/setup-devices
+
+              - type: button
+                name: Rename Device
+                icon: mdi:pencil-outline
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-rename-device/rename-device
+
+              - type: button
+                name: Add Existing Device
+                icon: mdi:devices
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-existing-device/existing-device
+
+              - type: button
+                name: Remove Device
+                icon: mdi:delete-outline
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-remove-device/remove-device
+                card_mod:
+                  style: |
+                    ha-card { border:1px solid rgba(220,80,80,0.40); background:rgba(220,80,80,0.06); border-radius:16px; }
+                    ha-state-icon { color:#DC5050 !important; }
+
+              - type: button
+                name: View All Devices
+                icon: mdi:format-list-bulleted
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/my-devices
+
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: button
+                name: Back
+                icon: mdi:arrow-left
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/manage
+              - type: button
+                name: Home
+                icon: mdi:home-heart
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: button
+                name: Help
+                icon: mdi:help-circle-outline
+                show_state: false
+                tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/add-devices/
+
+          - type: markdown
+            content: |
+              <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">EyZEE® • Making Smart Easy™</div>
+            card_mod:
+              style: |
+                ha-card { background:transparent; border:none; box-shadow:none; }
+
+  # ============================================================
+  # MY DEVICES
+  # ============================================================
+  - title: My Devices
+    path: my-devices
+    icon: mdi:format-list-bulleted
+    type: sections
+    max_columns: 1
+
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: My Devices
+            heading_style: title
+            icon: mdi:format-list-bulleted
+
+          - type: heading
+            heading: Devices in your EyZEE Home
+            heading_style: subtitle
+
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - type: button
+                name: Refresh Device List
+                icon: mdi:refresh
+                action_name: Refresh
+                tap_action:
+                  action: perform-action
+                  perform_action: eyzee_dashboard.refresh_device_inventory
+
+          - type: markdown
+            content: |
+              {% set devices = state_attr('sensor.eyzee_device_inventory', 'devices') or [] %}
+              {% if devices | count == 0 %}
+              No devices have been registered yet.
+              {% else %}
+              {% set ns = namespace(last_floor='', last_room='') %}
+              {% for device in devices %}
+                {% if device.floor != ns.last_floor %}
+              ## {{ device.floor or 'My Home' }}
+                  {% set ns.last_floor = device.floor %}
+                  {% set ns.last_room = '' %}
+                {% endif %}
+
+                {% if device.room != ns.last_room %}
+              ### {{ device.room or 'Unassigned' }}
+                  {% set ns.last_room = device.room %}
+                {% endif %}
+
+              **{{ device.name }}**  
+              {{ device.type }}{% if device.control_count | int > 1 %} · {{ device.control_count }} controls{% endif %}{% if device.manufacturer %} · {{ device.manufacturer }}{% endif %}
+
+              ---
+              {% endfor %}
+              {% endif %}
+
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: button
+                name: Back
+                icon: mdi:arrow-left
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/devices
+
+              - type: button
+                name: Home
+                icon: mdi:home-heart
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+
+              - type: button
+                name: Help
+                icon: mdi:help-circle-outline
+                show_state: false
+                tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/add-devices/
+
+          - type: markdown
+            content: |
+              <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">EyZEE® • Making Smart Easy™</div>
+            card_mod:
+              style: |
+                ha-card { background:transparent; border:none; box-shadow:none; }
+
+  # ============================================================
+  # LIGHTS & SWITCHES
+  # ============================================================
+  - title: Lights & Switches
+    path: lights-switches
+    icon: mdi:lightbulb-multiple-outline
+    type: sections
+    max_columns: 1
+
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Lights & Switches
+            heading_style: title
+            icon: mdi:lightbulb-multiple-outline
+
+          - type: heading
+            heading: What would you like to organise?
+            heading_style: subtitle
+
+          - type: button
+            name: Group My Lights
+            icon: mdi:lightbulb-group
+            show_state: false
+            tap_action:
+              action: navigate
+              navigation_path: /eyzee-lighting-groups
+
+          - type: button
+            name: Link My Switches
+            icon: mdi:link-variant
+            show_state: false
+            tap_action:
+              action: navigate
+              navigation_path: /eyzee-multiway
+
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: button
+                name: Back
+                icon: mdi:arrow-left
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/manage
+              - type: button
+                name: Home
+                icon: mdi:home-heart
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: button
+                name: Help
+                icon: mdi:help-circle-outline
+                show_state: false
+                tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/link-switches-light-groups/
+
+          - type: markdown
+            content: |
+              <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">EyZEE® • Making Smart Easy™</div>
+            card_mod:
+              style: |
+                ha-card { background:transparent; border:none; box-shadow:none; }
+
+  # ============================================================
+  # ADVANCED CONTROLS — PLACEHOLDER
+  # ============================================================
+  - title: Advanced Controls
+    path: advanced
+    icon: mdi:tune-variant
+    type: sections
+    max_columns: 1
+
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Advanced Controls
+            heading_style: title
+            icon: mdi:tune-variant
+
+          - type: heading
+            heading: What would you like to manage?
+            heading_style: subtitle
+
+          - type: button
+            name: Connectivity Management
+            icon: mdi:access-point-network
+            show_state: false
+            tap_action:
+              action: navigate
+              navigation_path: /eyzee-main-menu/connectivity
+            card_mod:
+              style: |
+                ha-card { min-height:110px; border-radius:16px; }
+                ha-state-icon { color:#D6AD60 !important; }
+
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: button
+                name: Back
+                icon: mdi:arrow-left
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/manage
+              - type: button
+                name: Home
+                icon: mdi:home-heart
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: button
+                name: Help
+                icon: mdi:help-circle-outline
+                show_state: false
+                tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/
+
+          - type: markdown
+            content: |
+              <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">EyZEE® • Making Smart Easy™</div>
+            card_mod:
+              style: |
+                ha-card { background:transparent; border:none; box-shadow:none; }
+
+  # ============================================================
+  # CONNECTIVITY MANAGEMENT
+  # ============================================================
+  - title: Connectivity Management
+    path: connectivity
+    icon: mdi:access-point-network
+    type: sections
+    max_columns: 1
+
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Connectivity Management
+            heading_style: title
+            icon: mdi:access-point-network
+
+          - type: markdown
+            content: |
+              Manage the communication devices and networks used by your EyZEE® Home.
+
+          - type: heading
+            heading: Connectivity
+            heading_style: subtitle
+
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: button
+                name: Zigbee
+                icon: mdi:zigbee
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/zigbee
+                card_mod:
+                  style: |
+                    ha-card { min-height:110px; border-radius:16px; }
+                    ha-state-icon { color:#D6AD60 !important; }
+
+              - type: button
+                name: Thread — Future Upgrade
+                icon: mdi:transit-connection-variant
+                show_state: false
+                tap_action:
+                  action: none
+                card_mod:
+                  style: |
+                    ha-card {
+                      min-height:110px;
+                      border-radius:16px;
+                      opacity:0.55;
+                    }
+                    ha-state-icon { color:#D6AD60 !important; }
+
+              - type: button
+                name: Bluetooth — Future Upgrade
+                icon: mdi:bluetooth
+                show_state: false
+                tap_action:
+                  action: none
+                card_mod:
+                  style: |
+                    ha-card {
+                      min-height:110px;
+                      border-radius:16px;
+                      opacity:0.55;
+                    }
+                    ha-state-icon { color:#D6AD60 !important; }
+
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: button
+                name: Back
+                icon: mdi:arrow-left
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/advanced
+
+              - type: button
+                name: Home
+                icon: mdi:home-heart
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+
+              - type: button
+                name: Help
+                icon: mdi:help-circle-outline
+                show_state: false
+                tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/
+
+          - type: markdown
+            content: |
+              <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">EyZEE® • Making Smart Easy™</div>
+            card_mod:
+              style: |
+                ha-card { background:transparent; border:none; box-shadow:none; }
+
+
+  # ============================================================
+  # ZIGBEE MANAGEMENT
+  # ============================================================
+  - title: Zigbee
+    path: zigbee
+    icon: mdi:zigbee
+    type: sections
+    max_columns: 1
+
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Zigbee
+            heading_style: title
+            icon: mdi:zigbee
+
+          - type: markdown
+            content: |
+              Manage your EyZEE® Zigbee network, coordinator and Zigbee Extenders.
+
+          - type: heading
+            heading: What would you like to do?
+            heading_style: subtitle
+
+          - type: grid
+            columns: 2
+            square: false
+            cards:
+              - type: button
+                name: My Zigbee Coordinator
+                icon: mdi:access-point
+                show_state: false
+                tap_action:
+                  action: none
+                card_mod:
+                  style: |
+                    ha-card { min-height:110px; border-radius:16px; }
+                    ha-state-icon { color:#D6AD60 !important; }
+
+              - type: button
+                name: Add a Zigbee Extender
+                icon: mdi:access-point-plus
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/add-zigbee-extender
+                card_mod:
+                  style: |
+                    ha-card { min-height:110px; border-radius:16px; }
+                    ha-state-icon { color:#D6AD60 !important; }
+
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: button
+                name: Back
+                icon: mdi:arrow-left
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/connectivity
+
+              - type: button
+                name: Home
+                icon: mdi:home-heart
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+
+              - type: button
+                name: Help
+                icon: mdi:help-circle-outline
+                show_state: false
+                tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/
+
+          - type: markdown
+            content: |
+              <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">EyZEE® • Making Smart Easy™</div>
+            card_mod:
+              style: |
+                ha-card { background:transparent; border:none; box-shadow:none; }
+
+  # ============================================================
+  # ADD A ZIGBEE EXTENDER
+  # ============================================================
+  - title: Add a Zigbee Extender
+    path: add-zigbee-extender
+    icon: mdi:access-point-plus
+    type: sections
+    max_columns: 1
+
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Add a Zigbee Extender
+            heading_style: title
+            icon: mdi:access-point-plus
+
+          - type: markdown
+            content: |
+              Add another EyZEE® Zigbee Dongle to extend the coverage of your Zigbee network.
+
+              EyZEE will find compatible Zigbee Dongles connected to your network and protect the Gateway currently running your Zigbee network.
+
+          - type: button
+            name: Find Zigbee Gateways
+            icon: mdi:magnify
+            show_state: false
+            tap_action:
+              action: perform-action
+              perform_action: eyzee_dashboard.identify_mg24
+            card_mod:
+              style: |
+                ha-card {
+                  min-height:86px;
+                  border:1px solid rgba(214,173,96,0.45);
+                  background:rgba(214,173,96,0.08);
+                  border-radius:16px;
+                }
+                ha-state-icon { color:#D6AD60 !important; }
+
+          # ----------------------------------------------------
+          # GATEWAY 1
+          # ----------------------------------------------------
+          - type: conditional
+            conditions:
+              - entity: sensor.eyzee_zigbee_gateway_1
+                state_not: empty
+            card:
+              type: markdown
+              content: |
+                **{{ state_attr('sensor.eyzee_zigbee_gateway_1', 'display_name') }}**
+
+                {{ state_attr('sensor.eyzee_zigbee_gateway_1', 'ip_address') }}  
+                {{ state_attr('sensor.eyzee_zigbee_gateway_1', 'role_name') }}
+                {% set fw = state_attr('sensor.eyzee_zigbee_gateway_1', 'firmware') %}
+                {% if fw %} • {{ fw }}{% endif %}
+
+                **{{ state_attr('sensor.eyzee_zigbee_gateway_1', 'display_status') }}**
+
+          - type: conditional
+            conditions:
+              - entity: sensor.eyzee_zigbee_gateway_1
+                state: available
+            card:
+              type: button
+              name: Convert to Extender
+              icon: mdi:access-point-plus
+              show_state: false
+              tap_action:
+                action: perform-action
+                confirmation:
+                  text: >-
+                    This will change this Zigbee Dongle from a Gateway into a Zigbee Extender for your
+                        EyZEE® Home. | Takes several minutes - Do not turn off power or disconnect from network.
+                perform_action: eyzee_dashboard.convert_zigbee_gateway
+                data:
+                  slot: 1
+              card_mod:
+                style: |
+                  ha-card {
+                    width: 220px;
+                    min-height: 48px;
+                    background: #2196f3;
+                    border: none;
+                    border-radius: 10px;
+                    box-shadow: none;
+                  }
+                  ha-state-icon {
+                    color: white !important;
+                  }
+                  .name {
+                    color: white !important;
+                    font-weight: 600;
+                  }
+
+          # ----------------------------------------------------
+          # GATEWAY 2
+          # ----------------------------------------------------
+          - type: conditional
+            conditions:
+              - entity: sensor.eyzee_zigbee_gateway_2
+                state_not: empty
+            card:
+              type: markdown
+              content: |
+                **{{ state_attr('sensor.eyzee_zigbee_gateway_2', 'display_name') }}**
+
+                {{ state_attr('sensor.eyzee_zigbee_gateway_2', 'ip_address') }}  
+                {{ state_attr('sensor.eyzee_zigbee_gateway_2', 'role_name') }}
+                {% set fw = state_attr('sensor.eyzee_zigbee_gateway_2', 'firmware') %}
+                {% if fw %} • {{ fw }}{% endif %}
+
+                **{{ state_attr('sensor.eyzee_zigbee_gateway_2', 'display_status') }}**
+
+          - type: conditional
+            conditions:
+              - entity: sensor.eyzee_zigbee_gateway_2
+                state: available
+            card:
+              type: button
+              name: Convert to Extender
+              icon: mdi:access-point-plus
+              show_state: false
+              tap_action:
+                action: perform-action
+                confirmation:
+                  text: >-
+                    This will change this Zigbee Dongle from a Gateway into a Zigbee Extender for your
+                        EyZEE® Home. | Takes several minutes - Do not turn off power or disconnect from network.
+                perform_action: eyzee_dashboard.convert_zigbee_gateway
+                data:
+                  slot: 2
+              card_mod:
+                style: |
+                  ha-card {
+                    width: 220px;
+                    min-height: 48px;
+                    background: #2196f3;
+                    border: none;
+                    border-radius: 10px;
+                    box-shadow: none;
+                  }
+                  ha-state-icon {
+                    color: white !important;
+                  }
+                  .name {
+                    color: white !important;
+                    font-weight: 600;
+                  }
+
+          # ----------------------------------------------------
+          # GATEWAY 3
+          # ----------------------------------------------------
+          - type: conditional
+            conditions:
+              - entity: sensor.eyzee_zigbee_gateway_3
+                state_not: empty
+            card:
+              type: markdown
+              content: |
+                **{{ state_attr('sensor.eyzee_zigbee_gateway_3', 'display_name') }}**
+
+                {{ state_attr('sensor.eyzee_zigbee_gateway_3', 'ip_address') }}  
+                {{ state_attr('sensor.eyzee_zigbee_gateway_3', 'role_name') }}
+                {% set fw = state_attr('sensor.eyzee_zigbee_gateway_3', 'firmware') %}
+                {% if fw %} • {{ fw }}{% endif %}
+
+                **{{ state_attr('sensor.eyzee_zigbee_gateway_3', 'display_status') }}**
+
+          - type: conditional
+            conditions:
+              - entity: sensor.eyzee_zigbee_gateway_3
+                state: available
+            card:
+              type: entities
+              show_header_toggle: false
+              entities:
+                - type: button
+                  name: Convert to Extender
+                  icon: mdi:access-point-plus
+                  action_name: Convert
+                  tap_action:
+                    action: perform-action
+                    confirmation:
+                      text: >-
+                        This will change this Zigbee Dongle from a Gateway into a Zigbee Extender for your
+                        EyZEE® Home. | Takes several minutes - Do not turn off power or disconnect from network.
+                    perform_action: eyzee_dashboard.convert_zigbee_gateway
+                    data:
+                      slot: 3
+              card_mod:
+                style: |
+                  ha-card {
+                    height: 52px !important;
+                    min-height: 52px !important;
+                    width: 220px !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    border-radius: 10px !important;
+                    background: #2196f3 !important;
+                    border: none !important;
+                    box-shadow: none !important;
+                  }
+                  ha-state-icon {
+                    color: white !important;
+                  }
+                  .name {
+                    color: white !important;
+                    font-weight: 600 !important;
+                  }
+
+          # ----------------------------------------------------
+          # GATEWAY 4
+          # ----------------------------------------------------
+          - type: conditional
+            conditions:
+              - entity: sensor.eyzee_zigbee_gateway_4
+                state_not: empty
+            card:
+              type: markdown
+              content: |
+                **{{ state_attr('sensor.eyzee_zigbee_gateway_4', 'display_name') }}**
+
+                {{ state_attr('sensor.eyzee_zigbee_gateway_4', 'ip_address') }}  
+                {{ state_attr('sensor.eyzee_zigbee_gateway_4', 'role_name') }}
+                {% set fw = state_attr('sensor.eyzee_zigbee_gateway_4', 'firmware') %}
+                {% if fw %} • {{ fw }}{% endif %}
+
+                **{{ state_attr('sensor.eyzee_zigbee_gateway_4', 'display_status') }}**
+
+          - type: conditional
+            conditions:
+              - entity: sensor.eyzee_zigbee_gateway_4
+                state: available
+            card:
+              type: button
+              name: Convert to Extender
+              icon: mdi:access-point-plus
+              show_state: false
+              tap_action:
+                action: perform-action
+                confirmation:
+                  text: >-
+                    This will change this Zigbee Dongle from a Gateway into a Zigbee Extender for your
+                        EyZEE® Home. | Takes several minutes - Do not turn off power or disconnect from network.
+                perform_action: eyzee_dashboard.convert_zigbee_gateway
+                data:
+                  slot: 4
+              card_mod:
+                style: |
+                  ha-card {
+                    width: 220px;
+                    min-height: 48px;
+                    background: #2196f3;
+                    border: none;
+                    border-radius: 10px;
+                    box-shadow: none;
+                  }
+                  ha-state-icon {
+                    color: white !important;
+                  }
+                  .name {
+                    color: white !important;
+                    font-weight: 600;
+                  }
+
+          # ----------------------------------------------------
+          # CONVERSION RESULT
+          # ----------------------------------------------------
+          - type: conditional
+            conditions:
+              - entity: sensor.eyzee_zigbee_extender_conversion
+                state: success
+            card:
+              type: markdown
+              content: |
+                ## ✓ Zigbee Extender Ready
+
+                Your Zigbee Gateway has been successfully converted to a Zigbee Extender.
+
+                You can now move it to the area where you want to improve Zigbee coverage.
+
+          - type: conditional
+            conditions:
+              - entity: sensor.eyzee_zigbee_extender_conversion
+                state: failed
+            card:
+              type: markdown
+              content: |
+                ## Conversion wasn't completed
+
+                EyZEE could not confirm that the Gateway successfully changed to Zigbee Extender mode.
+
+                No changes have been made to your active Zigbee Coordinator.
+
+          # ----------------------------------------------------
+          # NAVIGATION
+          # ----------------------------------------------------
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: button
+                name: Back
+                icon: mdi:arrow-left
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/zigbee
+
+              - type: button
+                name: Home
+                icon: mdi:home-heart
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+
+              - type: button
+                name: Help
+                icon: mdi:help-circle-outline
+                show_state: false
+                tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/
+
+          - type: markdown
+            content: |
+              <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">EyZEE® • Making Smart Easy™</div>
+            card_mod:
+              style: |
+                ha-card {
+                  background:transparent;
+                  border:none;
+                  box-shadow:none;
+                }
+
+
+  # ============================================================
+  # ADD A ZIGBEE EXTENDER
+  # ============================================================
+  - title: Add a Zigbee Extender
+    path: add-zigbee-extender
+    icon: mdi:access-point-plus
+    type: sections
+    max_columns: 1
+
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Add a Zigbee Extender
+            heading_style: title
+            icon: mdi:access-point-plus
+
+          - type: markdown
+            content: |
+              Add another EyZEE® Ethernet Zigbee dongle to extend the coverage of your Zigbee network.
+
+              EyZEE will find compatible devices connected to your network and make sure your active Zigbee Coordinator is protected.
+
+          - type: button
+            name: Find Zigbee Dongles
+            icon: mdi:magnify
+            show_state: false
+            tap_action:
+              action: perform-action
+              perform_action: eyzee_dashboard.identify_mg24
+            card_mod:
+              style: |
+                ha-card {
+                  min-height:86px;
+                  border:1px solid rgba(214,173,96,0.45);
+                  background:rgba(214,173,96,0.08);
+                  border-radius:16px;
+                }
+                ha-state-icon { color:#D6AD60 !important; }
+
+          - type: markdown
+            content: |
+              {% set s = states('sensor.eyzee_zigbee_coordinator_discovery') %}
+              {% set devices = state_attr('sensor.eyzee_zigbee_coordinator_discovery', 'devices') or [] %}
+
+              {% if s in ['unknown', 'unavailable'] %}
+              **Ready to search**
+
+              Select **Find Zigbee Devices** to look for compatible EyZEE Zigbee devices on your network.
+
+              {% elif devices | count == 0 %}
+              **No compatible Zigbee devices found**
+
+              Check that the device is powered on and connected to your network, then try again.
+
+              {% else %}
+              **Found {{ devices | count }} compatible Zigbee device{% if devices | count != 1 %}s{% endif %}.**
+
+              {% for device in devices %}
+              **{{ device.get('ip_address', 'Unknown device') }}**  
+              Role: {{ device.get('role_name', 'Unknown') }}  
+              Firmware: {{ device.get('firmware', 'Unknown') }}
+              {% if device.get('mac_address') %}  
+              Device ID: {{ device.get('mac_address') }}
+              {% endif %}
+
+              ---
+              {% endfor %}
+              {% endif %}
+
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: button
+                name: Back
+                icon: mdi:arrow-left
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/zigbee
+
+              - type: button
+                name: Home
+                icon: mdi:home-heart
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+
+              - type: button
+                name: Help
+                icon: mdi:help-circle-outline
+                show_state: false
+                tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/
+
+          - type: markdown
+            content: |
+              <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">EyZEE® • Making Smart Easy™</div>
+            card_mod:
+              style: |
+                ha-card { background:transparent; border:none; box-shadow:none; }
+
+  # ============================================================
+  # GET STARTED — ORDERED FIRST-TIME JOURNEY
+  # ============================================================
+  - title: Get Started
+    path: get-started
+    icon: mdi:book-open-page-variant-outline
+    type: sections
+    max_columns: 1
+
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Get Started
+            heading_style: title
+            icon: mdi:book-open-page-variant-outline
+
+          - type: markdown
+            content: |
+              <div style="line-height:1.5;">
+                <b>New to EyZEE Home?</b><br>
+                Follow these steps in order. We’ll help you get your home ready one step at a time.
+              </div>
+
+          - type: button
+            name: Getting Started Help
+            icon: mdi:lifebuoy
+            show_state: false
+            tap_action:
+              action: url
+              url_path: https://eyzee.au/eyzee-home/support/getting-started/
+            card_mod:
+              style: |
+                ha-card { min-height:76px; border:1px solid rgba(214,173,96,0.38); background:rgba(214,173,96,0.06); border-radius:16px; }
+                ha-state-icon { color:#D6AD60 !important; }
+
+          - type: markdown
+            content: |
+              <a href="https://eyzee.au/eyzee-home/support/unbox-and-connect/" style="display:flex; align-items:center; gap:14px; min-height:66px; color:inherit; text-decoration:none;">
+                <span style="flex:0 0 38px; color:#D6AD60; font-size:24px; font-weight:700;">1</span>
+                <span style="flex:1;"><b>Unbox and Connect</b><br><span style="color:var(--secondary-text-color); font-size:13px;">Match the labels and connect your EyZEE Home kit.</span></span><span style="color:#D6AD60; font-size:26px;">›</span>
+              </a>
+
+          - type: markdown
+            content: |
+              <a href="/eyzee-main-menu/check-connection" style="display:flex; align-items:center; gap:14px; min-height:66px; color:inherit; text-decoration:none;">
+                <span style="flex:0 0 38px; color:#D6AD60; font-size:24px; font-weight:700;">2</span>
+                <span style="flex:1;"><b>Check My Connection</b><br><span style="color:var(--secondary-text-color); font-size:13px;">Let EyZEE check that everything is connected.</span></span><span style="color:#D6AD60; font-size:26px;">›</span>
+              </a>
+
+          - type: markdown
+            content: |
+              <a href="/eyzee-main-menu/name-home" style="display:flex; align-items:center; gap:14px; min-height:66px; color:inherit; text-decoration:none;">
+                <span style="flex:0 0 38px; color:#D6AD60; font-size:24px; font-weight:700;">3</span>
+                <span style="flex:1;"><b>Name My Home</b><br><span style="color:var(--secondary-text-color); font-size:13px;">Give your home a friendly name.</span></span><span style="color:#D6AD60; font-size:26px;">›</span>
+              </a>
+
+          - type: markdown
+            content: |
+              <a href="/eyzee-house-builder" style="display:flex; align-items:center; gap:14px; min-height:66px; color:inherit; text-decoration:none;">
+                <span style="flex:0 0 38px; color:#D6AD60; font-size:24px; font-weight:700;">4</span>
+                <span style="flex:1;"><b>Manage My Rooms</b><br><span style="color:var(--secondary-text-color); font-size:13px;">Create and name the rooms in your home.</span></span><span style="color:#D6AD60; font-size:26px;">›</span>
+              </a>
+
+          - type: markdown
+            content: |
+              <a href="/eyzee-add-device-new/add-device" style="display:flex; align-items:center; gap:14px; min-height:66px; color:inherit; text-decoration:none;">
+                <span style="flex:0 0 38px; color:#D6AD60; font-size:24px; font-weight:700;">5</span>
+                <span style="flex:1;"><b>Add My First Zigbee Device</b><br><span style="color:var(--secondary-text-color); font-size:13px;">Pair, locate, name and assign your first device.</span></span><span style="color:#D6AD60; font-size:26px;">›</span>
+              </a>
+
+          - type: markdown
+            content: |
+              <a href="/eyzee-add-device-new/add-device" style="display:flex; align-items:center; gap:14px; min-height:66px; color:inherit; text-decoration:none;">
+                <span style="flex:0 0 38px; color:#D6AD60; font-size:24px; font-weight:700;">6</span>
+                <span style="flex:1;"><b>Add More Zigbee Devices</b><br><span style="color:var(--secondary-text-color); font-size:13px;">Add the remaining devices in your home.</span></span><span style="color:#D6AD60; font-size:26px;">›</span>
+              </a>
+
+          - type: markdown
+            content: |
+              <a href="/eyzee-main-menu/lights-switches" style="display:flex; align-items:center; gap:14px; min-height:66px; color:inherit; text-decoration:none;">
+                <span style="flex:0 0 38px; color:#D6AD60; font-size:24px; font-weight:700;">7</span>
+                <span style="flex:1;"><b>Set Up Lights & Switches</b><br><span style="color:var(--secondary-text-color); font-size:13px;">Group lights and link switches together.</span></span><span style="color:#D6AD60; font-size:26px;">›</span>
+              </a>
+
+          - type: markdown
+            content: |
+              <a href="/eyzee-rooms/rooms" style="display:flex; align-items:center; gap:14px; min-height:66px; color:inherit; text-decoration:none;">
+                <span style="flex:0 0 38px; color:#D6AD60; font-size:24px; font-weight:700;">8</span>
+                <span style="flex:1;"><b>Finish Getting Started</b><br><span style="color:var(--secondary-text-color); font-size:13px;">Open My Rooms and start using your home.</span></span><span style="color:#D6AD60; font-size:26px;">›</span>
+              </a>
+
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: button
+                name: Back
+                icon: mdi:arrow-left
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: button
+                name: Home
+                icon: mdi:home-heart
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: button
+                name: Help
+                icon: mdi:help-circle-outline
+                show_state: false
+                tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/getting-started/
+
+          - type: markdown
+            content: |
+              <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">EyZEE® • Making Smart Easy™</div>
+            card_mod:
+              style: |
+                ha-card { background:transparent; border:none; box-shadow:none; }
+
+  # ============================================================
+  # CHECK MY CONNECTION — FLOW PLACEHOLDER
+  # ============================================================
+  - title: Check My Connection
+    path: check-connection
+    icon: mdi:lan-connect
+    type: sections
+    max_columns: 1
+
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Check My Connection
+            heading_style: title
+            icon: mdi:lan-connect
+
+          - type: markdown
+            content: |
+              EyZEE will check that EyZEE Core, your network and EyZEE Zigbee are connected and ready.
+
+              **Connection checking is the next backend function to be added.**
+
+          - type: button
+            name: Connection Setup Help
+            icon: mdi:help-circle-outline
+            show_state: false
+            tap_action:
+              action: url
+              url_path: https://eyzee.au/eyzee-home/support/check-my-connection/
+
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: button
+                name: Back
+                icon: mdi:arrow-left
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/get-started
+              - type: button
+                name: Home
+                icon: mdi:home-heart
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: button
+                name: Help
+                icon: mdi:help-circle-outline
+                show_state: false
+                tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/check-my-connection/
+
+          - type: markdown
+            content: |
+              <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">EyZEE® • Making Smart Easy™</div>
+            card_mod:
+              style: |
+                ha-card { background:transparent; border:none; box-shadow:none; }
+
+  # ============================================================
+  # NAME MY HOME
+  # ============================================================
+  - title: Name My Home
+    path: name-home
+    icon: mdi:home-edit-outline
+    type: sections
+    max_columns: 1
+
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Name My Home
+            heading_style: title
+            icon: mdi:home-edit-outline
+
+          - type: markdown
+            content: |
+              Give your home a friendly name, such as **Our Home**, **Beach House** or **Smith Residence**.
+
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - entity: input_text.eyzee_project_name
+                name: Home Name
+
+          - type: button
+            name: Save Home Name
+            icon: mdi:arrow-right-circle-outline
+            show_state: false
+            tap_action:
+              action: navigate
+              navigation_path: /eyzee-house-builder
+            card_mod:
+              style: |
+                ha-card { min-height:86px; border:1px solid rgba(214,173,96,0.45); background:rgba(214,173,96,0.08); border-radius:16px; }
+                ha-state-icon { color:#D6AD60 !important; }
+
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: button
+                name: Back
+                icon: mdi:arrow-left
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/get-started
+              - type: button
+                name: Home
+                icon: mdi:home-heart
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: button
+                name: Help
+                icon: mdi:help-circle-outline
+                show_state: false
+                tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/name-my-home/
+
+          - type: markdown
+            content: |
+              <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">EyZEE® • Making Smart Easy™</div>
+            card_mod:
+              style: |
+                ha-card { background:transparent; border:none; box-shadow:none; }

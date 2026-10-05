@@ -1,0 +1,177 @@
+title: Link My Switches
+
+views:
+  - title: Link My Switches
+    path: multiway
+    icon: mdi:link-variant
+    type: sections
+    max_columns: 1
+
+    sections:
+      # ============================================================
+      # INTRODUCTION
+      # ============================================================
+      - type: grid
+        cards:
+          - type: heading
+            heading: Link My Switches
+            heading_style: title
+            icon: mdi:link-variant
+
+          - type: markdown
+            content: |
+              Link two switches so either switch can turn the same lights or devices on and off. You can link multiple switches.
+
+              If either switch is already linked, EyZEE will bring the switches together into one shared group.
+               
+              For more help click on Help at bottom of page.
+
+
+            card_mod:
+              style: |
+                ha-card { border-radius:16px; }
+
+          - type: grid
+            columns: 1
+            square: false
+            cards:
+              - type: tile
+                entity: input_select.eyzee_multiway_main
+                name: Refresh Switch List
+                icon: mdi:refresh
+                hide_state: true
+                vertical: false
+                tap_action:
+                  action: call-service
+                  service: eyzee_dashboard.populate_multiway_dropdowns
+                  data:
+                    master_dropdown_entity: input_select.eyzee_multiway_main
+                    slave_dropdown_entity: input_select.eyzee_multiway_linked
+
+      # ============================================================
+      # CHOOSE SWITCHES
+      # ============================================================
+      - type: grid
+        cards:
+          - type: heading
+            heading: Choose Two Switches
+            heading_style: title
+            icon: mdi:toggle-switch-outline
+
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - entity: input_select.eyzee_multiway_main
+                name: First Switch
+              - entity: input_select.eyzee_multiway_linked
+                name: Second Switch
+            card_mod:
+              style: |
+                ha-card { border-radius:16px; }
+
+          - type: grid
+            columns: 1
+            square: false
+            cards:
+              - type: tile
+                entity: input_select.eyzee_multiway_main
+                name: Link These Switches
+                icon: mdi:link-plus
+                hide_state: true
+                vertical: true
+                tap_action:
+                  action: call-service
+                  service: eyzee_dashboard.bind_virtual_multiway
+                  data:
+                    confirm: true
+
+              - type: tile
+                entity: input_select.eyzee_multiway_main
+                name: Remove Selected Link
+                icon: mdi:link-off
+                hide_state: true
+                vertical: false
+                tap_action:
+                  action: call-service
+                  confirmation:
+                    text: Remove the link between the selected switches?
+                  service: eyzee_dashboard.unbind_virtual_multiway
+                  data:
+                    confirm: true
+
+      # ============================================================
+      # LINKED SWITCHES AND STATUS
+      # ============================================================
+      - type: grid
+        cards:
+          - type: heading
+            heading: Linked Switches
+            heading_style: title
+            icon: mdi:link-variant
+
+          - type: markdown
+            content: |
+              {{ state_attr('sensor.eyzee_linked_switches', 'summary') or 'No linked switches yet.' }}
+            card_mod:
+              style: |
+                ha-card { border-radius:16px; }
+
+          - type: markdown
+            title: Link Status
+            content: |
+              **Last action**  
+              {{ states('sensor.eyzee_multiway_status') }}
+
+              **First switch**  
+              {{ state_attr('sensor.eyzee_multiway_status', 'master_name') or state_attr('sensor.eyzee_multiway_status', 'master') or '-' }}
+
+              **Second switch**  
+              {{ state_attr('sensor.eyzee_multiway_status', 'slave_name') or state_attr('sensor.eyzee_multiway_status', 'slave') or '-' }}
+
+              **Details**  
+              {{ state_attr('sensor.eyzee_multiway_status', 'message') or '-' }}
+            card_mod:
+              style: |
+                ha-card { border-radius:16px; }
+
+      # ============================================================
+      # STANDARD NAVIGATION
+      # ============================================================
+      - type: grid
+        cards:
+          - type: grid
+            columns: 3
+            square: false
+            cards:
+              - type: button
+                name: Back
+                icon: mdi:arrow-left
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/lights-switches
+
+              - type: button
+                name: Home
+                icon: mdi:home-heart
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+
+              - type: button
+                name: Help
+                icon: mdi:help-circle-outline
+                show_state: false
+                tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/link-switches-light-groups/
+
+          - type: markdown
+            content: |
+              <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">
+                EyZEE® • Making Smart Easy™
+              </div>
+            card_mod:
+              style: |
+                ha-card { background:transparent; border:none; box-shadow:none; }

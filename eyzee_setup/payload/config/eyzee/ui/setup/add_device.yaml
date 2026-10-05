@@ -1,0 +1,110 @@
+title: Add a Zigbee Device
+views:
+- title: Add a Zigbee Device
+  path: add-device
+  icon: mdi:plus-circle
+  type: sections
+  max_columns: 1
+  sections:
+  - type: grid
+    cards:
+    - type: heading
+      heading: Add a Zigbee Device
+      heading_style: title
+      icon: mdi:plus-circle
+    - type: grid
+      columns: 2
+      square: false
+      cards:
+      - type: button
+        name: Start Pairing
+        icon: mdi:zigbee
+        show_state: false
+        tap_action:
+          action: perform-action
+          perform_action: eyzee_dashboard.start_z2m_pairing
+      - type: button
+        name: Stop Pairing
+        icon: mdi:stop-circle-outline
+        show_state: false
+        tap_action:
+          action: perform-action
+          perform_action: eyzee_dashboard.stop_z2m_pairing
+    - type: markdown
+      content: "{% set sensor = states.sensor.eyzee_add_device_status %}\n{% set count\
+        \ = sensor.attributes.get('devices_found', 0) %}\n{% set devices = sensor.attributes.get('found_devices',\
+        \ []) %}\n\n**{{ sensor.state }}**\n\n{% if count | int > 0 %}\n**Devices\
+        \ found — {{ count }}**\n\n{% for device in devices[:5] %}\n✓ {{ device }}\
+        \  \n{% endfor %}\n{% endif %}"
+    - type: tile
+      entity: input_boolean.eyzee_show_welcome
+      name: Locate & Set Up Devices
+      icon: mdi:map-marker-check-outline
+      hide_state: true
+      vertical: false
+      grid_options:
+        columns: 12
+        rows: 1
+      tap_action:
+        action: navigate
+        navigation_path: /eyzee-add-device-new/setup-devices
+    - type: grid
+      columns: 3
+      square: false
+      cards:
+      - type: tile
+        entity: input_boolean.eyzee_show_welcome
+        name: Back
+        icon: mdi:arrow-left
+        hide_state: true
+        vertical: false
+        tap_action:
+          action: navigate
+          navigation_path: /eyzee-main-menu/devices
+      - type: tile
+        entity: input_boolean.eyzee_show_welcome
+        name: Home
+        icon: mdi:home-heart
+        hide_state: true
+        vertical: false
+        tap_action:
+          action: navigate
+          navigation_path: /eyzee-main-menu/home
+      - type: tile
+        entity: input_boolean.eyzee_show_welcome
+        name: Help
+        icon: mdi:help-circle-outline
+        hide_state: true
+        vertical: false
+        tap_action:
+          action: url
+          url_path: https://eyzee.au/eyzee-home/support/add-devices/
+    - type: heading
+      heading: EyZEE®  •  Making Smart Easy™
+      heading_style: subtitle
+- title: Locate & Set Up
+  path: setup-devices
+  icon: mdi:map-marker-check-outline
+  subview: true
+  type: sections
+  max_columns: 1
+  sections:
+  - type: grid
+    cards:
+    - type: markdown
+      content: Select Refresh to find devices connected to your system.
+    - type: button
+      name: Refresh Devices
+      tap_action:
+        action: perform-action
+        perform_action: eyzee_dashboard.discover_eyzee_devices
+    - type: button
+      name: Back
+      tap_action:
+        action: navigate
+        navigation_path: /eyzee-add-device-new/add-device
+    - type: button
+      name: Home
+      tap_action:
+        action: navigate
+        navigation_path: /eyzee-main-menu/home

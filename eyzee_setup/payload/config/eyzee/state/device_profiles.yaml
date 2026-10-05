@@ -1,0 +1,420 @@
+version: 1
+
+profiles:
+  eyzee_dbl_gpo_light_metered:
+    fingerprints:
+      - integration: "zha"
+        manufacturer_name: "_TZE200_4jvmbiph"
+        model_id: "TS0601"
+      - integration: "z2m"
+        manufacturer_name: "_TZE200_4jvmbiph"
+        model_id: "TS0601"
+
+    display:
+      brand: "EyZEE"
+      product_name: "EyZEE Dbl GPO + Light Switch"
+      short_name: "Dbl GPO + Light"
+      icon: "mdi:power-socket-au"
+
+    classification:
+      device_type: "gpo_2ch_light"
+      category: "power"
+      metered: true
+
+    features:
+      switches: 3
+      backlight: true
+      child_lock: true
+      voltage: true
+      current: true
+      energy_wh: true
+
+    capabilities:
+      switches:
+        - key: "left"
+          label: "Left Socket"
+        - key: "middle"
+          label: "Middle Light"
+        - key: "right"
+          label: "Right Socket"
+      controls:
+        - key: "backlight"
+          label: "Button Backlight"
+        - key: "child_lock"
+          label: "Child Lock"
+      sensors:
+        - key: "voltage"
+          label: "Voltage"
+          unit: "V"
+        - key: "current"
+          label: "Current"
+          unit: "A"
+        - key: "energy_wh"
+          label: "Energy"
+          unit: "Wh"
+
+    entity_map:
+      zha:
+        left: "state_left"
+        middle: "state_middle"
+        right: "state_right"
+        backlight: "state_backlight"
+        child_lock: "child_lock"
+        voltage: "voltage"
+        current: "current"
+        energy_wh: "energy_wh"
+
+      z2m:
+        left: "state_left"
+        middle: "state_middle"
+        right: "state_right"
+        backlight: "state_backlight"
+        child_lock: "child_lock"
+        voltage: "voltage"
+        current: "current"
+        energy_wh: "energy_wh"
+
+  eyzee_touch_switch_5_gang:
+    fingerprints:
+      - manufacturer_name: "EyZEE"
+        model_id: "5 gang EyZEE Zigbee touch switch"
+
+    display:
+      brand: "EyZEE"
+      product_name: "EyZEE 5-Gang Touch Switch"
+      short_name: "5-Gang Switch"
+      icon: "mdi:light-switch"
+
+    classification:
+      device_type: "light_switch"
+      category: "switching"
+      metered: false
+
+    features:
+      switches: 5
+      decouplar: true
+
+    capabilities:
+      switches:
+        - key: "l1"
+          label: "Gang 1"
+        - key: "l2"
+          label: "Gang 2"
+        - key: "l3"
+          label: "Gang 3"
+        - key: "l4"
+          label: "Gang 4"
+        - key: "l5"
+          label: "Gang 5"
+
+    entity_map:
+      mqtt:
+        l1: "l1"
+        l2: "l2"
+        l3: "l3"
+        l4: "l4"
+        l5: "l5"
+        decouplar_mode: "decouplar_mode"
+        restart_status: "restart_status"
+
+      z2m:
+        l1: "l1"
+        l2: "l2"
+        l3: "l3"
+        l4: "l4"
+        l5: "l5"
+        decouplar_mode: "decouplar_mode"
+        restart_status: "restart_status"
+
+
+  eyzee_touch_switch_3_gang:
+    fingerprints:
+      - manufacturer_name: "EyZEE"
+        model_id: "3 gang smart switch with power-on behaviour, indicator mode and switch type"
+
+    display:
+      brand: "EyZEE"
+      product_name: "EyZEE 3-Gang Touch Switch"
+      short_name: "3-Gang Switch"
+      icon: "mdi:light-switch"
+
+    classification:
+      device_type: "light_switch"
+      category: "switching"
+      metered: false
+
+    features:
+      switches: 3
+
+    capabilities:
+      switches:
+        - key: "l1"
+          label: "Gang 1"
+        - key: "l2"
+          label: "Gang 2"
+        - key: "l3"
+          label: "Gang 3"
+
+    entity_map:
+      mqtt:
+        l1: "l1"
+        l2: "l2"
+        l3: "l3"
+
+      z2m:
+        l1: "l1"
+        l2: "l2"
+        l3: "l3"
+
+
+  eyzee_touch_switch_1_gang:
+    fingerprints:
+      - manufacturer_name: "EyZEE"
+        model_id: "1 gang smart switch with power-on behaviour, indicator mode and switch type"
+
+    display:
+      brand: "EyZEE"
+      product_name: "EyZEE 1-Gang Touch Switch"
+      short_name: "1-Gang Switch"
+      icon: "mdi:light-switch"
+
+    classification:
+      device_type: "light_switch"
+      category: "switching"
+      metered: false
+
+    features:
+      switches: 1
+
+    capabilities:
+      switches:
+        - key: "l1"
+          label: "Gang 1"
+
+    entity_map:
+      mqtt:
+        l1: "l1"
+
+      z2m:
+        l1: "l1"
+
+
+  eyzee_fan_light_switch:
+    fingerprints:
+      - manufacturer_name: "EyZEE"
+        model_id: "1 light and 3 speed fan switch"
+
+    display:
+      brand: "EyZEE"
+      product_name: "EyZEE Fan and Light Switch"
+      short_name: "Fan + Light"
+      icon: "mdi:ceiling-fan-light"
+
+    classification:
+      device_type: "fan_light_switch"
+      category: "switching"
+      metered: false
+
+    features:
+      lights: 1
+      fan_speeds: 3
+
+    capabilities:
+      switches:
+        - key: "light"
+          label: "Light"
+        - key: "fan_low"
+          label: "Fan Low"
+        - key: "fan_medium"
+          label: "Fan Medium"
+        - key: "fan_high"
+          label: "Fan High"
+
+    entity_map:
+      mqtt:
+        light: "light"
+        fan_low: "fan_low"
+        fan_medium: "fan_medium"
+        fan_high: "fan_high"
+
+      z2m:
+        light: "light"
+        fan_low: "fan_low"
+        fan_medium: "fan_medium"
+        fan_high: "fan_high"
+
+
+  eyzee_rgbw_downlight:
+    fingerprints:
+      - manufacturer_name: "Oz Smart Things"
+        model_id: "Oz Smart RGBW Zigbee downlight 10w"
+
+    display:
+      brand: "EyZEE"
+      product_name: "EyZEE RGBW Zigbee Downlight"
+      short_name: "RGBW Downlight"
+      icon: "mdi:light-recessed"
+
+    classification:
+      device_type: "rgbw_downlight"
+      category: "lighting"
+      metered: false
+
+    features:
+      dimmable: true
+      colour_temperature: true
+      rgb_colour: true
+
+    capabilities:
+      light:
+        brightness: true
+        colour_temperature: true
+        rgb_colour: true
+
+    entity_map:
+      mqtt:
+        light: "light"
+        do_not_disturb: "do_not_disturb"
+
+      z2m:
+        light: "light"
+        do_not_disturb: "do_not_disturb"
+
+  eyzee_touch_switch_4_gang:
+    fingerprints:
+      - manufacturer_name: "EyZEE"
+        model_id: "4 gang smart switch with power-on behaviour, indicator mode and switch type"
+
+    display:
+      brand: "EyZEE"
+      product_name: "EyZEE 4-Gang Touch Switch"
+      short_name: "4-Gang Switch"
+      icon: "mdi:light-switch"
+
+    classification:
+      device_type: "light_switch"
+      category: "switching"
+      metered: false
+
+    features:
+      switches: 4
+
+    capabilities:
+      switches:
+        - key: "l1"
+          label: "Gang 1"
+        - key: "l2"
+          label: "Gang 2"
+        - key: "l3"
+          label: "Gang 3"
+        - key: "l4"
+          label: "Gang 4"
+
+    entity_map:
+      mqtt:
+        l1: "l1"
+        l2: "l2"
+        l3: "l3"
+        l4: "l4"
+
+      z2m:
+        l1: "l1"
+        l2: "l2"
+        l3: "l3"
+        l4: "l4"
+
+  eyzee_touch_switch_2_gang:
+    fingerprints:
+      - manufacturer_name: "EyZEE"
+        model_id: "2 gang EyZEE Zigbee touch switch"
+
+    display:
+      brand: "EyZEE"
+      product_name: "EyZEE 2-Gang Touch Switch"
+      short_name: "2-Gang Switch"
+      icon: "mdi:light-switch"
+
+    classification:
+      device_type: "light_switch"
+      category: "switching"
+      metered: false
+
+    features:
+      switches: 2
+      decouplar: true
+
+    capabilities:
+      switches:
+        - key: "l1"
+          label: "Gang 1"
+        - key: "l2"
+          label: "Gang 2"
+
+    entity_map:
+      mqtt:
+        l1: "l1"
+        l2: "l2"
+        decouplar_mode: "decouplar_mode"
+        restart_status: "restart_status"
+
+      z2m:
+        l1: "l1"
+        l2: "l2"
+        decouplar_mode: "decouplar_mode"
+        restart_status: "restart_status"
+
+  eyzee_touch_switch_6_gang:
+    fingerprints:
+      - manufacturer_name: "EyZEE"
+        model_id: "6 gang EyZEE Zigbee touch switch"
+
+    display:
+      brand: "EyZEE"
+      product_name: "EyZEE 6-Gang Touch Switch"
+      short_name: "6-Gang Switch"
+      icon: "mdi:light-switch"
+
+    classification:
+      device_type: "light_switch"
+      category: "switching"
+      metered: false
+
+    features:
+      switches: 6
+      decouplar: true
+
+    capabilities:
+      switches:
+        - key: "l1"
+          label: "Gang 1"
+        - key: "l2"
+          label: "Gang 2"
+        - key: "l3"
+          label: "Gang 3"
+        - key: "l4"
+          label: "Gang 4"
+        - key: "l5"
+          label: "Gang 5"
+        - key: "l6"
+          label: "Gang 6"
+
+    entity_map:
+      mqtt:
+        l1: "l1"
+        l2: "l2"
+        l3: "l3"
+        l4: "l4"
+        l5: "l5"
+        l6: "l6"
+        decouplar_mode: "decouplar_mode"
+        restart_status: "restart_status"
+
+      z2m:
+        l1: "l1"
+        l2: "l2"
+        l3: "l3"
+        l4: "l4"
+        l5: "l5"
+        l6: "l6"
+        decouplar_mode: "decouplar_mode"
+        restart_status: "restart_status"

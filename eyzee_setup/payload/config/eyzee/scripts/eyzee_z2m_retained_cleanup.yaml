@@ -1,0 +1,40 @@
+eyzee_z2m_retained_cleanup:
+  alias: "EyZEE: Clear Z2M retained topics (selected device)"
+  description: "Publishes empty retained payloads to remove retained state for a selected Zigbee2MQTT friendly name."
+  mode: single
+  sequence:
+    - variables:
+        fn: "{{ states('input_select.z2m_device_friendly_name') | trim }}"
+        base: "zigbee2mqtt/{{ fn }}"
+        subtopics:
+          - ""
+          - "/availability"
+          - "/power"
+          - "/energy"
+          - "/state"
+          - "/set"
+          - "/get"
+    - choose:
+        - conditions:
+            - condition: template
+              value_template: >
+                {{ fn not in ['none', '', 'unknown', 'unavailable'] }}
+          sequence:
+            - repeat:
+                for_each: "{{ subtopics }}"
+                sequence:
+                  - service: mqtt.publish
+                    data:
+                      topic: "{{ base }}{{ repeat.item }}"
+                      payload: ""
+                      retain: true
+
+            - service: persistent_notification.create
+              data:
+                title: "EyZEE Z2M Retained Cleanup"
+                message: "Cleared retained MQTT topics for: {{ fn }}"
+      default:
+        - service: persistent_notification.create
+          data:
+            title: "EyZEE Z2M Retained Cleanup"
+            message: "No device selected. Choose a friendly name in the dropdown first."

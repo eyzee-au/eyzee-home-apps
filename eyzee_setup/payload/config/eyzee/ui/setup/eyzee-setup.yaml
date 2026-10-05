@@ -1,0 +1,341 @@
+title: EyZEE® Home
+
+views:
+  - title: Welcome
+    path: setup
+    icon: mdi:home-heart
+    type: sections
+    max_columns: 2
+
+    sections:
+      # ============================================================
+      # FIRST-TIME WELCOME
+      # ============================================================
+      - type: grid
+        column_span: 2
+        cards:
+          - type: conditional
+            conditions:
+              - entity: input_boolean.eyzee_show_welcome
+                state: "on"
+            card:
+              type: vertical-stack
+              cards:
+                - type: markdown
+                  content: |
+                    <div style="text-align:center; padding:30px 18px 16px; max-width:760px; margin:0 auto;">
+                      <div style="font-size:14px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#D6AD60; margin-bottom:12px;">
+                        EyZEE® Home
+                      </div>
+                      <div style="font-size:clamp(32px,7vw,56px); font-weight:700; line-height:1.08; color:var(--primary-text-color);">
+                        Welcome to your new smart home.
+                      </div>
+                      <div style="font-size:18px; font-weight:600; color:#D6AD60; margin-top:14px;">
+                        Making Smart Easy™
+                      </div>
+                      <div style="max-width:620px; margin:22px auto 0; font-size:17px; line-height:1.6; color:var(--secondary-text-color);">
+                        EyZEE® will guide you through creating your rooms, adding your devices and getting everything working together — one easy step at a time.
+                      </div>
+                      <div style="max-width:620px; margin:18px auto 0; padding:13px 17px; border-left:3px solid #D6AD60; background:rgba(214,173,96,0.08); text-align:left; font-size:14px; line-height:1.5; color:var(--secondary-text-color);">
+                        <b style="color:var(--primary-text-color);">You cannot damage your setup here.</b>
+                        Rooms, devices and settings can always be changed later.
+                      </div>
+                    </div>
+
+                - type: button
+                  name: Build My Home
+                  icon: mdi:home-edit
+                  show_state: false
+                  tap_action:
+                    action: navigate
+                    navigation_path: /eyzee-house-builder
+                  card_mod:
+                    style: |
+                      ha-card {
+                        min-height: 86px;
+                        border: 1px solid #D6AD60;
+                        background: rgba(214,173,96,0.14);
+                        border-radius: 16px;
+                        transition: 0.2s ease;
+                      }
+                      ha-card:hover {
+                        background: rgba(214,173,96,0.22);
+                        transform: translateY(-2px);
+                      }
+                      ha-state-icon { color:#D6AD60 !important; }
+
+                - type: horizontal-stack
+                  cards:
+                    - type: button
+                      name: Welcome Guide
+                      icon: mdi:book-open-page-variant-outline
+                      show_state: false
+                      tap_action:
+                        action: url
+                        url_path: https://eyzee.au/eyzee-home/support/getting-started/
+                    - type: button
+                      name: Hide Welcome
+                      icon: mdi:eye-off-outline
+                      show_state: false
+                      tap_action:
+                        action: call-service
+                        service: input_boolean.turn_off
+                        target:
+                          entity_id: input_boolean.eyzee_show_welcome
+
+      # ============================================================
+      # WELCOME GUIDE
+      # Each permanent EyZEE® URL can be updated without changing
+      # this dashboard. Videos remain embedded on the support pages.
+      # ============================================================
+      - type: grid
+        column_span: 2
+        cards:
+          - type: heading
+            heading: Welcome Guide
+            heading_style: title
+            icon: mdi:map-marker-path
+
+          - type: markdown
+            content: |
+              <div style="color:var(--secondary-text-color); font-size:15px; line-height:1.5; padding:0 4px 8px;">
+                Follow these guides in order when setting up EyZEE® Home, or return whenever you need help.
+              </div>
+
+          - type: markdown
+            content: |
+              <a href="https://eyzee.au/eyzee-home/support/getting-started/" style="display:flex; align-items:center; gap:14px; padding:8px 2px; color:inherit; text-decoration:none;">
+                <span style="flex:0 0 34px; height:34px; line-height:34px; text-align:center; border-radius:50%; background:rgba(214,173,96,0.14); color:#D6AD60; font-weight:700;">1</span>
+                <span><b style="color:var(--primary-text-color);">Getting Started with EyZEE Home</b><br><span style="color:var(--secondary-text-color);">A quick introduction to your new smart home.</span></span>
+              </a>
+            card_mod:
+              style: |
+                ha-card { border:1px solid rgba(214,173,96,0.28); border-radius:14px; }
+
+          - type: markdown
+            content: |
+              <a href="https://eyzee.au/eyzee-home/support/build-my-home/" style="display:flex; align-items:center; gap:14px; padding:8px 2px; color:inherit; text-decoration:none;">
+                <span style="flex:0 0 34px; height:34px; line-height:34px; text-align:center; border-radius:50%; background:rgba(214,173,96,0.14); color:#D6AD60; font-weight:700;">2</span>
+                <span><b style="color:var(--primary-text-color);">Build My Home</b><br><span style="color:var(--secondary-text-color);">Create your rooms and outdoor areas.</span></span>
+              </a>
+            card_mod:
+              style: |
+                ha-card { border:1px solid rgba(214,173,96,0.28); border-radius:14px; }
+
+          - type: markdown
+            content: |
+              <a href="https://eyzee.au/eyzee-home/support/add-first-device/" style="display:flex; align-items:center; gap:14px; padding:8px 2px; color:inherit; text-decoration:none;">
+                <span style="flex:0 0 34px; height:34px; line-height:34px; text-align:center; border-radius:50%; background:rgba(214,173,96,0.14); color:#D6AD60; font-weight:700;">3</span>
+                <span><b style="color:var(--primary-text-color);">Add My First Device</b><br><span style="color:var(--secondary-text-color);">Pair, locate, name and assign your first device.</span></span>
+              </a>
+            card_mod:
+              style: |
+                ha-card { border:1px solid rgba(214,173,96,0.28); border-radius:14px; }
+
+          - type: markdown
+            content: |
+              <a href="https://eyzee.au/eyzee-home/support/add-zigbee-device/" style="display:flex; align-items:center; gap:14px; padding:8px 2px; color:inherit; text-decoration:none;">
+                <span style="flex:0 0 34px; height:34px; line-height:34px; text-align:center; border-radius:50%; background:rgba(214,173,96,0.14); color:#D6AD60; font-weight:700;">4</span>
+                <span><b style="color:var(--primary-text-color);">Add More Devices</b><br><span style="color:var(--secondary-text-color);">Add more EyZEE® or compatible Zigbee devices.</span></span>
+              </a>
+            card_mod:
+              style: |
+                ha-card { border:1px solid rgba(214,173,96,0.28); border-radius:14px; }
+
+          - type: markdown
+            content: |
+              <a href="https://eyzee.au/eyzee-home/support/link-switches-and-light-groups/" style="display:flex; align-items:center; gap:14px; padding:8px 2px; color:inherit; text-decoration:none;">
+                <span style="flex:0 0 34px; height:34px; line-height:34px; text-align:center; border-radius:50%; background:rgba(214,173,96,0.14); color:#D6AD60; font-weight:700;">5</span>
+                <span><b style="color:var(--primary-text-color);">Linking Switches and Light Groups</b><br><span style="color:var(--secondary-text-color);">Link switches together and organise smart lights for easy room control.</span></span>
+              </a>
+            card_mod:
+              style: |
+                ha-card { border:1px solid rgba(214,173,96,0.28); border-radius:14px; }
+
+          - type: markdown
+            content: |
+              <a href="https://eyzee.au/eyzee-home/support/" style="display:flex; align-items:center; gap:14px; padding:8px 2px; color:inherit; text-decoration:none;">
+                <span style="flex:0 0 34px; height:34px; line-height:34px; text-align:center; border-radius:50%; background:rgba(214,173,96,0.14); color:#D6AD60; font-weight:700;">6</span>
+                <span><b style="color:var(--primary-text-color);">Help and Support</b><br><span style="color:var(--secondary-text-color);">Guides, answers and troubleshooting.</span></span>
+              </a>
+            card_mod:
+              style: |
+                ha-card { border:1px solid rgba(214,173,96,0.28); border-radius:14px; }
+
+      # ============================================================
+      # SET UP MY HOME
+      # ============================================================
+      - type: grid
+        cards:
+          - type: heading
+            heading: Set Up My Home
+            heading_style: title
+            icon: mdi:home-cog
+
+          - type: markdown
+            content: |
+              <div style="color:var(--secondary-text-color); font-size:15px; line-height:1.5; padding:0 4px 8px;">
+                Create your rooms, add your devices and organise how everything works together.
+              </div>
+
+          - type: markdown
+            content: |
+              <div style="padding:12px 14px; border-left:4px solid #D6AD60; background:rgba(214,173,96,0.10); border-radius:6px;">
+                <b style="color:#D6AD60; font-size:16px;">Build & Add</b><br>
+                <span style="color:var(--secondary-text-color); font-size:13px;">Create your rooms and connect your devices.</span>
+              </div>
+
+          - type: button
+            name: Build My Home
+            icon: mdi:home-edit
+            show_state: false
+            tap_action:
+              action: navigate
+              navigation_path: /eyzee-house-builder
+
+          - type: button
+            name: Find New Devices
+            icon: mdi:radar
+            show_state: false
+            tap_action:
+              action: navigate
+              navigation_path: /eyzee-device-discovery
+
+          - type: button
+            name: Add My Devices
+            icon: mdi:plus-circle-outline
+            show_state: false
+            tap_action:
+              action: navigate
+              navigation_path: /eyzee-add-device-new
+
+          - type: markdown
+            content: |
+              <div style="padding:12px 14px; margin-top:8px; border-left:4px solid #D6AD60; background:rgba(214,173,96,0.10); border-radius:6px;">
+                <b style="color:#D6AD60; font-size:16px;">Organise & Automate</b><br>
+                <span style="color:var(--secondary-text-color); font-size:13px;">Group lights, link switches and add smart behaviours.</span>
+              </div>
+
+          - type: button
+            name: Group My Lights
+            icon: mdi:lightbulb-group
+            show_state: false
+            tap_action:
+              action: navigate
+              navigation_path: /eyzee-lighting-groups
+
+          - type: button
+            name: Link My Switches
+            icon: mdi:link-variant
+            show_state: false
+            tap_action:
+              action: navigate
+              navigation_path: /eyzee-multiway
+
+          - type: button
+            name: Smart Behaviours
+            icon: mdi:auto-fix
+            show_state: false
+            tap_action:
+              action: navigate
+              navigation_path: /eyzee-automate
+
+          - type: button
+            name: Rebuild Room Views
+            icon: mdi:view-dashboard-edit-outline
+            show_state: false
+            tap_action:
+              action: call-service
+              service: eyzee_dashboard.build_room_views
+
+      # ============================================================
+      # MANAGE & MAINTAIN
+      # ============================================================
+      - type: grid
+        cards:
+          - type: heading
+            heading: Manage & Maintain
+            heading_style: title
+            icon: mdi:tools
+
+          - type: markdown
+            content: |
+              <div style="color:var(--secondary-text-color); font-size:15px; line-height:1.5; padding:0 4px 8px;">
+                Return here whenever you need to change a device or manage your EyZEE® Home system.
+              </div>
+
+          - type: button
+            name: Rename a Device
+            icon: mdi:pencil-outline
+            show_state: false
+            tap_action:
+              action: navigate
+              navigation_path: /eyzee-rename-device
+
+          - type: button
+            name: Remove a Device
+            icon: mdi:delete-outline
+            show_state: false
+            tap_action:
+              action: navigate
+              navigation_path: /eyzee-remove-device
+            card_mod:
+              style: |
+                ha-card { border:1px solid rgba(220,80,80,0.40); background:rgba(220,80,80,0.06); }
+                ha-state-icon { color:#DC5050 !important; }
+
+          - type: button
+            name: Device Reset Tools
+            icon: mdi:restore
+            show_state: false
+            tap_action:
+              action: navigate
+              navigation_path: /eyzee-device-reset
+
+          - type: button
+            name: System Tools
+            icon: mdi:cog-outline
+            show_state: false
+            tap_action:
+              action: navigate
+              navigation_path: /eyzee-system-tools
+
+          - type: button
+            name: Show Welcome
+            icon: mdi:eye-outline
+            show_state: false
+            tap_action:
+              action: call-service
+              service: input_boolean.turn_on
+              target:
+                entity_id: input_boolean.eyzee_show_welcome
+
+      # ============================================================
+      # RETURN HOME & BRAND FOOTER
+      # ============================================================
+      - type: grid
+        column_span: 2
+        cards:
+          - type: button
+            name: Return to EyZEE Home
+            icon: mdi:home-heart
+            show_state: false
+            tap_action:
+              action: navigate
+              navigation_path: /eyzee-home/home
+            card_mod:
+              style: |
+                ha-card {
+                  min-height:72px;
+                  border:1px solid #D6AD60;
+                  background:rgba(214,173,96,0.10);
+                  border-radius:16px;
+                }
+                ha-state-icon { color:#D6AD60 !important; }
+
+          - type: markdown
+            content: |
+              <div style="text-align:center; padding:18px 12px 8px;">
+                <div style="color:#D6AD60; font-size:18px; font-weight:700;">EyZEE®</div>
+                <div style="color:var(--secondary-text-color); font-size:12px; margin-top:5px;">Making Smart Easy™</div>
+              </div>

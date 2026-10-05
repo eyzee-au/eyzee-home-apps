@@ -1,0 +1,9 @@
+eyzee_z2m_request_devices:
+  alias: 'EyZEE: Request Zigbee2MQTT device list'
+  mode: single
+  sequence:
+  - service: mqtt.publish
+    data:
+      topic: zigbee2mqtt/bridge/request/devices
+      payload: '{}'
+      retain: false

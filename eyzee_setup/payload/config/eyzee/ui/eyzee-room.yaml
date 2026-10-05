@@ -1,0 +1,21 @@
+title: EyZEE Rooms
+views:
+- title: EyZEE Rooms
+  path: rooms
+  type: sections
+  max_columns: 1
+  sections:
+  - type: grid
+    cards:
+    - type: markdown
+      content: No rooms yet. Build your rooms to get started.
+    - type: button
+      name: Manage My Rooms
+      tap_action:
+        action: navigate
+        navigation_path: /eyzee-house-builder
+    - type: button
+      name: Home
+      tap_action:
+        action: navigate
+        navigation_path: /eyzee-main-menu/home

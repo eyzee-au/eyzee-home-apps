@@ -1,0 +1,23 @@
+eyzee_show_welcome:
+  name: Show Welcome Screen
+  initial: true
+  icon: mdi:home-heart
+eyzee_reload_lovelace:
+  name: Reload Room Views After Build
+  initial: true
+  icon: mdi:reload
+eyzee_outdoor_pool:
+  name: Outdoor - Pool
+  icon: mdi:pool
+eyzee_outdoor_patio:
+  name: Outdoor - Patio
+  icon: mdi:patio-heater
+eyzee_outdoor_yard:
+  name: Outdoor - Yard
+  icon: mdi:grass
+eyzee_rule_enabled:
+  name: Rule Enabled
+  initial: true
+eyzee_rule_use_time_window:
+  name: Use Time Window
+  initial: false
