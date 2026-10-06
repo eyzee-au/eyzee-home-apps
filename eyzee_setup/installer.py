@@ -6,7 +6,7 @@ from urllib.request import Request, urlopen
 from urllib.error import HTTPError, URLError
 import yaml
 
-VERSION = '0.1.0-beta.1'
+VERSION = '0.1.0-beta.2'
 Z2M_SLUG = '45df7312_zigbee2mqtt'  # Existing proven MG24 service expects this official repository.
 REPOSITORIES = ['https://github.com/zigbee2mqtt/hassio-zigbee2mqtt', 'https://github.com/hassio-addons/repository']
 CARD_URL = 'https://raw.githubusercontent.com/thomasloven/lovelace-card-mod/v4.2.0/card-mod.js'
@@ -60,13 +60,37 @@ class API:
             with urlopen(req,timeout=timeout) as response: result=json.load(response)
         except (HTTPError,URLError,TimeoutError,OSError,ValueError) as err:
             # Do not surface response bodies: app options may include passwords.
-            raise RetryableError('A setup step could not connect. Try again; if it repeats, share the setup report.') from err
+            failure=RetryableError('A setup step could not connect. Try again; if it repeats, share the setup report.')
+            failure.diagnostic={'method':method,'path':('/core/api' if core else '')+path,'error_type':type(err).__name__}
+            if isinstance(err,HTTPError):failure.diagnostic['http_status']=err.code
+            raise failure from err
         if not core:
             if result.get('result')!='ok': raise SetupError('Home Assistant could not complete this setup step. Share the setup report if retrying does not help.')
             return result.get('data',{})
         return result
     def ha(self,path,method='GET',data=None,timeout=60):return self.call(path,method,data,timeout,True)
     def service(self,name,data=None):return self.ha('/services/eyzee_dashboard/'+name,'POST',data or {},timeout=180)
+    def ws(self,command):
+        """Use HA's supported WebSocket API for discovery flow enumeration."""
+        import websocket
+        ws=None
+        try:
+            ws=websocket.create_connection(self.base.replace('http://','ws://').replace('https://','wss://')+'/core/websocket',timeout=15)
+            if json.loads(ws.recv()).get('type')!='auth_required':raise ValueError('handshake')
+            ws.send(json.dumps({'type':'auth','access_token':self.token}))
+            if json.loads(ws.recv()).get('type')!='auth_ok':raise ValueError('authentication')
+            ws.send(json.dumps({**command,'id':1}))
+            while True:
+                result=json.loads(ws.recv())
+                if result.get('id')!=1:continue
+                if not result.get('success'):raise ValueError('request rejected')
+                return result.get('result')
+        except Exception as err:
+            failure=RetryableError('A setup step could not connect. Try again; if it repeats, share the setup report.')
+            failure.diagnostic={'method':'WebSocket','command':command.get('type'),'error_type':type(err).__name__}
+            raise failure from err
+        finally:
+            if ws is not None:ws.close()
     def user_is_admin(self,user_id):
         # Verify the HA ingress identity rather than treat a hidden sidebar as authorization.
         import websocket
@@ -150,7 +174,7 @@ class Installer:
         return json.loads(p.read_text()) if p.exists() else {'phase':'idle','message':'Ready to prepare your home.','owned_apps':[],'files':{},'events':[]}
     def save(self):atomic(self.data/'progress.json',json.dumps(self.state,indent=2).encode())
     def status(self):
-        with self.lock:return {k:copy.deepcopy(v) for k,v in self.state.items() if k in {'phase','message','busy','events','gateways','release','backup','ready','support_code','checks','app_versions'}}
+        with self.lock:return {k:copy.deepcopy(v) for k,v in self.state.items() if k in {'phase','message','busy','events','gateways','release','backup','ready','support_code','checks','app_versions','diagnostic'}}
     def stage(self,phase,message):
         with self.lock:
             self.state.update(phase=phase,message=message,release=VERSION)
@@ -158,13 +182,16 @@ class Installer:
     def start(self,task,*args):
         with self.lock:
             if self.busy:raise SetupError('Preparation is already running.')
-            self.busy=True;self.state['busy']=True;self.state['ready']=False;self.save()
+            self.busy=True;self.state['busy']=True;self.state['ready']=False;self.state.pop('diagnostic',None);self.save()
         def run():
             try:task(*args)
             except Exception as err:
                 failed=self.state.get('phase','unknown')
                 self.stage('failed',str(err) if isinstance(err,SetupError) else 'Preparation stopped safely. Please share the setup report with support.')
-                with self.lock:self.state['support_code']=failed;self.save()
+                with self.lock:
+                    self.state['support_code']=failed
+                    if getattr(err,'diagnostic',None):self.state['diagnostic']=err.diagnostic
+                    self.save()
             finally:
                 with self.lock:self.busy=False;self.state['busy']=False;self.save()
         threading.Thread(target=run,daemon=True).start()
@@ -275,7 +302,7 @@ class Installer:
         if entries:
             if any(e.get('state')=='loaded' for e in entries):return
             raise SetupError('Your existing home connection is offline. Restore that connection before preparing EyZEE.')
-        flows=self.api.ha('/config/config_entries/flow')
+        flows=self.api.ws({'type':'config_entries/flow/progress'})
         discovered=next((f for f in flows if f.get('handler')=='mqtt' and f.get('context',{}).get('source')=='hassio'),None)
         if discovered:
             flow=self.api.ha('/config/config_entries/flow/'+discovered['flow_id'])

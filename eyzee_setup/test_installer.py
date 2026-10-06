@@ -8,7 +8,7 @@ CARD_BYTES=b'test dashboard resource'
 
 class FakeAPI:
     def __init__(self,config):
-        self.config=config;self.calls=[];self.apps={};self.entries=[];self.repos=[];self.fail_check=False
+        self.config=config;self.calls=[];self.apps={};self.entries=[];self.repos=[];self.fail_check=False;self.flows=[]
         self.gateway_slots={1:('AA:BB:CC:DD:EE:01','192.168.1.40'),2:('AA:BB:CC:DD:EE:02','192.168.1.41')};self.setup={}
     def call(self,path,method='GET',data=None,timeout=60,core=False):
         self.calls.append((path,method,copy.deepcopy(data)))
@@ -46,8 +46,10 @@ class FakeAPI:
         if path=='/config':return {'version':'2026.9.4'}
         if path=='/config/config_entries/entry':return self.entries
         if path=='/config/config_entries/flow':
-            return [] if method=='GET' else {'flow_id':'flow1','type':'menu','menu_options':['addon','broker']}
+            if method=='GET':raise AssertionError('HA rejects flow enumeration over REST with HTTP 405')
+            return {'flow_id':'flow1','type':'menu','menu_options':['addon','broker']}
         if path=='/config/config_entries/flow/flow1':
+            if method=='GET':return {'flow_id':'flow1','type':'form','step_id':'hassio_confirm'}
             if data.get('next_step_id')=='broker':return {'flow_id':'flow1','type':'form','step_id':'broker'}
             self.entries=[{'domain':'mqtt','state':'loaded'}];return {'type':'create_entry'}
         if path=='/services':return [{'domain':'eyzee_dashboard','services':{s:{} for s in ['setup_zigbee_coordinator','build_room_views','refresh_device_inventory']}}]
@@ -56,6 +58,10 @@ class FakeAPI:
             return {'attributes':{'can_setup':bool(g),'mac_address':g[0] if g else None,'ip_address':g[1] if g else None}}
         if path=='/states/sensor.eyzee_zigbee_coordinator_setup':return self.setup
         raise AssertionError(('Unexpected HA API',path,method,data))
+    def ws(self,command):
+        self.calls.append(('WS','GET',copy.deepcopy(command)))
+        if command=={'type':'config_entries/flow/progress'}:return copy.deepcopy(self.flows)
+        raise AssertionError(command)
     def service(self,name,data=None):
         self.calls.append((name,'SERVICE',copy.deepcopy(data)))
         if name=='prepare_zigbee_coordinator':self.setup={'state':'ready','attributes':{'ready':True}}
@@ -66,6 +72,12 @@ class FakeAPI:
         return []
 
 class InstallerTests(unittest.TestCase):
+    def test_mqtt_discovery_uses_websocket_and_confirms_existing_flow(self):
+        self.api.flows=[{'handler':'mqtt','flow_id':'flow1','context':{'source':'hassio'}}]
+        self.i.connect_mqtt({'host':'core-mosquitto','port':1883})
+        self.assertTrue(any(e.get('state')=='loaded' for e in self.api.entries))
+        self.assertIn(('WS','GET',{'type':'config_entries/flow/progress'}),self.api.calls)
+        self.assertNotIn(('HA/config/config_entries/flow','GET',None),self.api.calls)
     def setUp(self):
         self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup);self.root=Path(self.temp.name);self.config=self.root/'config';self.config.mkdir();self.data=self.root/'data'
         self.api=FakeAPI(self.config);self.i=m.Installer(self.config,self.data,HERE/'payload',self.api,sleeper=lambda n:None)
@@ -156,5 +168,26 @@ class InstallerTests(unittest.TestCase):
         with patch.dict(sys.modules,{'websocket':types.SimpleNamespace(create_connection=lambda *a,**k:WS())}):
             api=m.API(token='private-test-token')
             for user,expected in [('owner',True),('admin',True),('normal',False),('system',False),('absent',False)]:self.assertEqual(expected,api.user_is_admin(user))
+
+class ConnectionAPITests(unittest.TestCase):
+    def test_websocket_authenticates_reads_matching_result_and_closes(self):
+        import sys,types
+        class WS:
+            def __init__(self):
+                self.messages=iter([{'type':'auth_required'},{'type':'auth_ok'},{'id':2,'success':True},{'id':1,'success':True,'result':[{'handler':'mqtt'}]}]);self.sent=[];self.closed=False
+            def recv(self):return json.dumps(next(self.messages))
+            def send(self,data):self.sent.append(json.loads(data))
+            def close(self):self.closed=True
+        ws=WS()
+        with patch.dict(sys.modules,{'websocket':types.SimpleNamespace(create_connection=lambda *a,**k:ws)}):
+            self.assertEqual([{'handler':'mqtt'}],m.API(token='secret').ws({'type':'config_entries/flow/progress'}))
+        self.assertEqual({'type':'auth','access_token':'secret'},ws.sent[0])
+        self.assertEqual({'type':'config_entries/flow/progress','id':1},ws.sent[1]);self.assertTrue(ws.closed)
+    def test_http_failure_diagnostic_excludes_secrets_and_body(self):
+        error=m.HTTPError('http://supervisor/core/api/config/config_entries/flow',405,'secret body',{},None)
+        with patch.object(m,'urlopen',side_effect=error),self.assertRaises(m.RetryableError) as caught:
+            m.API(token='private-token').ha('/config/config_entries/flow')
+        self.assertEqual({'method':'GET','path':'/core/api/config/config_entries/flow','error_type':'HTTPError','http_status':405},caught.exception.diagnostic)
+        self.assertNotIn('secret',json.dumps(caught.exception.diagnostic))
 
 if __name__=='__main__':unittest.main()
