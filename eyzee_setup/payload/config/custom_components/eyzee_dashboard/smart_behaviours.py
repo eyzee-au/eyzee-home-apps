@@ -2090,6 +2090,23 @@ def async_register_smart_behaviour_services(
 
         await _refresh_rule_option_dropdowns()
 
+    async def handle_rule_inventory_changed(event):
+        """Keep device choices current as the homeowner builds their home."""
+
+        new_state = event.data.get("new_state")
+        if new_state is None:
+            return
+        if event.data.get("entity_id") == "sensor.eyzee_device_setup_status":
+            if new_state.state != "success":
+                return
+
+        await hass.services.async_call(
+            DOMAIN,
+            "populate_rule_device_dropdown",
+            {},
+            blocking=True,
+        )
+
     hass.services.async_register(
         DOMAIN,
         "populate_rule_device_dropdown",
@@ -2156,4 +2173,15 @@ def async_register_smart_behaviour_services(
     hass.bus.async_listen_once(
         "homeassistant_started",
         handle_smart_behaviour_startup,
+    )
+
+    async_track_state_change_event(
+        hass,
+        [
+            "sensor.eyzee_device_inventory",
+            "sensor.eyzee_lighting_groups",
+            "sensor.eyzee_device_setup_status",
+            "sensor.eyzee_rename_device_status",
+        ],
+        handle_rule_inventory_changed,
     )

@@ -166,6 +166,48 @@ def _compact_control_card(
 
 
 
+def _switch_device_cards(items: list[dict], *, compact: bool = False) -> list[dict]:
+    """Keep each physical switch's controls together under its device label."""
+    devices: dict[str, list[dict]] = {}
+    for item in items:
+        devices.setdefault(str(item["registry_id"]), []).append(item)
+
+    cards = []
+    for device_items in sorted(
+        devices.values(),
+        key=lambda group: str(group[0].get("device_name") or "").casefold(),
+    ):
+        def control_order(item):
+            try:
+                index = int(item["control"].get("index"))
+            except (TypeError, ValueError):
+                index = 999
+            return (index, str(item.get("display_name") or "").casefold())
+
+        factory = _compact_control_card if compact else _control_card
+        controls = [
+            card
+            for item in sorted(device_items, key=control_order)
+            if (card := factory(item["control"], item["display_name"]))
+        ]
+        if not controls:
+            continue
+        cards.append({
+            "type": "heading",
+            "heading": device_items[0].get("device_name") or "Switch",
+            "heading_style": "subtitle",
+            "icon": "mdi:light-switch",
+        })
+        cards.append({
+            "type": "grid",
+            "columns": 2,
+            "square": False,
+            "grid_options": {"columns": 12, "rows": "auto"},
+            "cards": controls,
+        })
+    return cards
+
+
 def _group_card(group_id: str, group: dict) -> dict:
     name = group.get("name") or group_id
     entity = group.get("z2m_entity")
@@ -265,6 +307,31 @@ def _future_nav_button(name: str, icon: str, path: str) -> dict:
             "navigation_path": path,
         },
     }
+
+
+def _apply_view_style(view: dict) -> None:
+    """Use the shared theme and compact navigation without changing destinations."""
+    view["theme"] = "EyZEE Home"
+
+    def visit(value):
+        if isinstance(value, list):
+            for child in value:
+                visit(child)
+        elif isinstance(value, dict):
+            name = str(value.get("name") or "")
+            action = value.get("tap_action", {})
+            if (value.get("type") in ("button", "tile")
+                    and (name in ("Back", "Home", "Help") or name.startswith("Back to "))
+                    and action.get("action") in ("navigate", "url")):
+                value.update(type="tile", entity="input_boolean.eyzee_show_welcome",
+                             hide_state=True, vertical=False, color="#D6AD60",
+                             icon_tap_action=dict(action))
+                value.pop("show_state", None)
+                value.pop("card_mod", None)
+            for child in list(value.values()):
+                visit(child)
+
+    visit(view)
 
 
 def _build_room_dashboard() -> dict:
@@ -479,6 +546,7 @@ def _build_room_dashboard() -> dict:
         views.append(
             {
                 "title": "Rooms",
+                "theme": "EyZEE Home",
                 "path": "rooms",
                 "icon": "mdi:home",
                 "type": "sections",
@@ -795,34 +863,7 @@ def _build_room_dashboard() -> dict:
                 }
             )
 
-            def _switch_sort_key(item):
-                name = str(
-                    item.get("display_name") or ""
-                ).strip().lower()
-
-                priority = {
-                    "light": 1,
-                    "low": 2,
-                    "medium": 3,
-                    "high": 4,
-                }
-
-                return (
-                    priority.get(name, 100),
-                    name,
-                )
-
-            for item in sorted(
-                room["switches"],
-                key=_switch_sort_key,
-            ):
-                card = _control_card(
-                    item["control"],
-                    item["display_name"],
-                )
-
-                if card:
-                    cards.append(card)
+            cards.extend(_switch_device_cards(room["switches"]))
 
         # -----------------------------------------------------
         # Secondary / individual lights
@@ -1042,31 +1083,9 @@ def _build_room_dashboard() -> dict:
                 }
             )
 
-            compact_switch_cards = []
-
-            for item in sorted(
-                room["switches"],
-                key=lambda x: (
-                    x.get("display_name") or ""
-                ).lower(),
-            ):
-                card = _compact_control_card(
-                    item["control"],
-                    item["display_name"],
-                )
-
-                if card:
-                    compact_switch_cards.append(card)
-
-            if compact_switch_cards:
-                more_control_cards.append(
-                    {
-                        "type": "grid",
-                        "columns": 2,
-                        "square": False,
-                        "cards": compact_switch_cards,
-                    }
-                )
+            more_control_cards.extend(
+                _switch_device_cards(room["switches"], compact=True)
+            )
 
         # Other supported room devices.
         if room["other"]:
@@ -1168,6 +1187,9 @@ def _build_room_dashboard() -> dict:
                     ],
                 }
             )
+
+    for view in views:
+        _apply_view_style(view)
 
     return {
         "title": "EyZEE Rooms",

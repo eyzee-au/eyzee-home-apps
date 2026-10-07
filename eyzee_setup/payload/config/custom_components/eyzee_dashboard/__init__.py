@@ -2774,7 +2774,9 @@ views:
                     "icon": icon,
                     "hide_state": True,
                     "vertical": False,
+                    "color": "#D6AD60",
                     "tap_action": tap_action,
+                    "icon_tap_action": dict(tap_action),
                 }
 
             back_tap_action = {
@@ -2819,7 +2821,7 @@ views:
             ]
 
         def _is_infrastructure_device(device: dict) -> bool:
-            """Return True for system infrastructure not requiring room setup."""
+            """Exclude the Z2M bridge and virtual groups from physical-device setup."""
 
             manufacturer = str(
                 device.get("manufacturer") or ""
@@ -2831,7 +2833,7 @@ views:
 
             return (
                 manufacturer == "zigbee2mqtt"
-                and model == "bridge"
+                and model in ("bridge", "group")
             )
 
         unregistered_devices = [
@@ -2919,11 +2921,15 @@ views:
         setup_views: list[dict] = []
         setup_device_cards: list[dict] = []
 
-        if setup_devices:
-            device_count = len(setup_devices)
-
-            main_cards.append(
-                {
+        main_cards.append(
+            {
+                "type": "conditional",
+                "conditions": [{
+                    "condition": "numeric_state",
+                    "entity": "sensor.eyzee_setup_device_count",
+                    "above": 0,
+                }],
+                "card": {
                     "type": "tile",
                     "entity": "input_boolean.eyzee_show_welcome",
                     "name": "Locate & Set Up Devices",
@@ -2937,11 +2943,33 @@ views:
                     "tap_action": {
                         "action": "navigate",
                         "navigation_path": (
-                            "/eyzee-add-device-new/setup-devices"
+                            "/eyzee-device-setup/setup-devices"
                         ),
                     },
-                }
-            )
+                },
+            }
+        )
+        main_cards.append(
+            {
+                "type": "conditional",
+                "conditions": [{
+                    "condition": "state",
+                    "entity": "sensor.eyzee_setup_device_count",
+                    "state": "0",
+                }],
+                "card": {
+                    "type": "markdown",
+                    "content": (
+                        "## No new devices ready yet\n\n"
+                        "Put your device into pairing mode. "
+                        "Locate & Set Up will appear when it is ready."
+                    ),
+                },
+            }
+        )
+
+        if setup_devices:
+            device_count = len(setup_devices)
 
             # Number matching products when several identical devices
             # have been paired at the same time.
@@ -3356,20 +3384,6 @@ views:
                     }
                 )
 
-        else:
-            
-            main_cards.append(
-                {
-                    "type": "markdown",
-                    "content": (
-                        "## No new devices found\n\n"
-                        "Put your new device into pairing mode, "
-                        "complete pairing and then select "
-                        "**Find New Devices**."
-                    ),
-                }
-            )
-
         if unrecognised_count > 0:
             device_word = (
                 "devices" if unrecognised_count != 1 else "device"
@@ -3453,6 +3467,10 @@ views:
             ],
         }
 
+        # Apply the shared theme to both pairing and per-device setup screens.
+        for view in [main_view, setup_devices_view, *setup_views]:
+            view["theme"] = "EyZEE Home"
+
         add_device_config = {
             "title": "Add a Zigbee Device",
             "views": [
@@ -3464,6 +3482,7 @@ views:
         device_setup_config = {
             "title": "Device Setup",
             "views": [
+                setup_devices_view,
                 *setup_views,
             ],
         }
@@ -3522,6 +3541,12 @@ views:
         try:
             await hass.async_add_executor_job(
                 _write_dashboard_file
+            )
+
+            hass.states.async_set(
+                "sensor.eyzee_setup_device_count",
+                len(setup_devices),
+                {"friendly_name": "EyZEE Devices Ready for Setup"},
             )
 
             _LOGGER.info(
