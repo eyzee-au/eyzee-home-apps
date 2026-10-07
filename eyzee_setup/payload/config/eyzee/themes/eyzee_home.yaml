@@ -26,3 +26,15 @@ EyZEE Home:
 
   mdc-theme-primary: "#D6AD60"
   mdc-theme-secondary: "#D6AD60"
+
+  # Consistent control accents; inactive and unavailable states stay distinct.
+  state-active-color: "#D6AD60"
+  state-inactive-color: "#777777"
+  state-switch-active-color: "#D6AD60"
+  state-input_boolean-active-color: "#D6AD60"
+  state-light-active-color: "#D6AD60"
+  state-script-active-color: "#D6AD60"
+  state-icon-unavailable-color: "#999999"
+  switch-checked-color: "#D6AD60"
+  switch-checked-button-color: "#D6AD60"
+  switch-checked-track-color: "#D6AD60"
