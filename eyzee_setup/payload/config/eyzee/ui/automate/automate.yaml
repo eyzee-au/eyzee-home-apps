@@ -3,6 +3,7 @@ path: eyzee-automate
 icon: mdi:creation
 views:
   - title: Smart Automations
+    theme: EyZEE Home
     path: automate
     icon: mdi:creation
     type: sections
@@ -291,27 +292,43 @@ views:
             columns: 3
             square: false
             cards:
-              - type: button
+              - type: tile
                 name: Back
                 icon: mdi:arrow-left
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/home
-
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: tile
                 name: Home
                 icon: mdi:home-heart
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/home
-
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: tile
                 name: Help
                 icon: mdi:help-circle-outline
-                show_state: false
                 tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
                   action: url
                   url_path: https://eyzee.au/eyzee-home/support/
             grid_options:
