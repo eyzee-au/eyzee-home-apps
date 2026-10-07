@@ -2,6 +2,7 @@ title: Manage My Rooms
 
 views:
   - title: Manage My Rooms
+    theme: EyZEE Home
     path: house-builder
     icon: mdi:home-edit
     type: sections
@@ -360,33 +361,45 @@ views:
             columns: 3
             square: false
             cards:
-              - type: button
+              - type: tile
                 name: Back
                 icon: mdi:arrow-left
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/manage
-
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/manage
+              - type: tile
                 name: Home
                 icon: mdi:home-heart
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/home
-
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: tile
                 name: Help
                 icon: mdi:help-circle-outline
-                show_state: false
                 tap_action:
                   action: url
                   url_path: https://eyzee.au/eyzee-home/support/manage-my-rooms/
-
-      # ============================================================
-      # BRAND FOOTER
-      # ============================================================
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/manage-my-rooms/
       - type: grid
         cards:
           - type: markdown
@@ -402,6 +415,7 @@ views:
   # MORE ROOM TOOLS
   # ============================================================
   - title: More Room Tools
+    theme: EyZEE Home
     path: room-tools
     icon: mdi:tools
     subview: true
@@ -541,28 +555,45 @@ views:
             columns: 3
             square: false
             cards:
-              - type: button
+              - type: tile
                 name: Back
                 icon: mdi:arrow-left
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-house-builder/house-builder
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-house-builder/house-builder
+              - type: tile
                 name: Home
                 icon: mdi:home-heart
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/home
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: tile
                 name: Help
                 icon: mdi:help-circle-outline
-                show_state: false
                 tap_action:
                   action: url
                   url_path: https://eyzee.au/eyzee-home/support/manage-my-rooms/
-
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/manage-my-rooms/
           - type: markdown
             content: |
               <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">
@@ -576,6 +607,7 @@ views:
   # SET ROOM LOCATIONS
   # ============================================================
   - title: Add Floor Level & Locations
+    theme: EyZEE Home
     path: room-locations
     icon: mdi:stairs
     subview: true
@@ -711,28 +743,45 @@ views:
             columns: 3
             square: false
             cards:
-              - type: button
+              - type: tile
                 name: Back
                 icon: mdi:arrow-left
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-house-builder/room-tools
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-house-builder/room-tools
+              - type: tile
                 name: Home
                 icon: mdi:home-heart
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/home
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: tile
                 name: Help
                 icon: mdi:help-circle-outline
-                show_state: false
                 tap_action:
                   action: url
                   url_path: https://eyzee.au/eyzee-home/support/manage-my-rooms/
-
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/manage-my-rooms/
           - type: markdown
             content: |
               <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">

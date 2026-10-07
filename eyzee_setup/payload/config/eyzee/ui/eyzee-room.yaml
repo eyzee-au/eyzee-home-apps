@@ -1,6 +1,7 @@
 title: EyZEE Rooms
 views:
 - title: EyZEE Rooms
+  theme: EyZEE Home
   path: rooms
   type: sections
   max_columns: 1
@@ -14,8 +15,15 @@ views:
       tap_action:
         action: navigate
         navigation_path: /eyzee-house-builder
-    - type: button
+    - type: tile
       name: Home
       tap_action:
+        action: navigate
+        navigation_path: /eyzee-main-menu/home
+      entity: input_boolean.eyzee_show_welcome
+      hide_state: true
+      vertical: false
+      color: '#D6AD60'
+      icon_tap_action:
         action: navigate
         navigation_path: /eyzee-main-menu/home
