@@ -1,4 +1,4 @@
-# Fresh HAOS acceptance — pending
+# Fresh HAOS acceptance — 0.1.0-beta.3 pending
 
 Record HAOS, Supervisor, Core and installed app versions with the setup report. Start with a fresh backed-up `.201` and a default MG24 on Ethernet/PoE. Do not use `.200` for this run.
 
@@ -26,3 +26,15 @@ Record HAOS, Supervisor, Core and installed app versions with the setup report. 
 - [ ] Restore the pre-install full backup and verify recovery.
 
 Do not distribute to ordinary customers until every applicable item passes. Final converter/quirk selection must be approved before release.
+
+## Consolidated dashboard regression checks
+
+- [ ] Newly paired device makes Locate & Set Up appear without F5; opening it shows the new physical device.
+- [ ] Zigbee2MQTT bridge and virtual lighting groups are excluded from Locate & Set Up.
+- [ ] Two physical wall switches in one room have separate headings and controls in endpoint order.
+- [ ] Smart Behaviours device and group dropdowns populate after adding and renaming devices without Developer Tools actions.
+- [ ] Group My Lights dropdown labels use the saved control names.
+- [ ] Check a light set up immediately after a multi-gang switch: its control name must match its device name. This previously inherited the last switch button name and remains a known regression check.
+- [ ] Main lighting-group setup has a discreet Delete lighting groups link; deletion controls appear only on the separate page.
+- [ ] Back / Home / Help navigation, theme and red delete styling work across screens.
+- [ ] Aura wording and saved colour work across room controls and Smart Behaviours.

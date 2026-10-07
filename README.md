@@ -1,6 +1,6 @@
-# EyZEE Setup — 0.1.0-beta.1
+# EyZEE Setup — 0.1.0-beta.3
 
-A candidate Home Assistant OS app repository for the EyZEE Home onboarding flow. This is a lab release: automated tests pass, but a fresh HAOS/MG24 acceptance run and image build are still required before customer distribution.
+A candidate Home Assistant OS app repository for the EyZEE Home onboarding flow. This is a lab release: automated tests and incremental HAOS/MG24 tests have passed. A fresh installation of this consolidated version and the remaining recovery checks are required before customer distribution.
 
 ## Customer flow after repository publication
 
@@ -23,7 +23,15 @@ The customer does not edit YAML or call Home Assistant actions. Setup invokes th
 
 Terminal & SSH and Studio Code Server are included because the current Sue installation specification explicitly requests all four apps. The later dongle handover proposes making these optional; that policy can be changed before customer release. No external SSH port is opened for a newly installed Terminal & SSH app.
 
-## First lab installation
+## Fresh-install test from GitHub
+
+1. Add `https://github.com/eyzee-au/eyzee-home-apps` through the Install EyZEE Home link.
+2. Search the Home Assistant app store for **EyZEE Setup**.
+3. Confirm the offered version is **0.1.0-beta.3**, then install and start it.
+4. Open its screen, press **Prepare My Home**, and select the intended Zigbee gateway when prompted.
+5. Follow `ACCEPTANCE.md`.
+
+## Local lab installation
 
 Use a fresh HAOS installation on the `.201` test machine with a default MG24 powered on and connected to Ethernet. Back up `.201` before rebuilding it. Keep `.200` intact.
 
