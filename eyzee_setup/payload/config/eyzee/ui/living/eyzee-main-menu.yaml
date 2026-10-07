@@ -5,6 +5,7 @@ views:
   # EYZEE HOME — EVERYDAY MAIN MENU
   # ============================================================
   - title: EyZEE Home
+    theme: EyZEE Home
     path: home
     icon: mdi:home-heart
     type: sections
@@ -113,6 +114,7 @@ views:
   # MANAGE MY HOME
   # ============================================================
   - title: Manage My Home
+    theme: EyZEE Home
     path: manage
     icon: mdi:home-plus
     type: sections
@@ -210,28 +212,45 @@ views:
             columns: 3
             square: false
             cards:
-              - type: button
+              - type: tile
                 name: Back
                 icon: mdi:arrow-left
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/home
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: tile
                 name: Home
                 icon: mdi:home-heart
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/home
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: tile
                 name: Help
                 icon: mdi:help-circle-outline
-                show_state: false
                 tap_action:
                   action: url
                   url_path: https://eyzee.au/eyzee-home/support/manage-my-home/
-
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/manage-my-home/
           - type: markdown
             content: |
               <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">EyZEE® • Making Smart Easy™</div>
@@ -243,6 +262,7 @@ views:
   # MANAGE DEVICES
   # ============================================================
   - title: Manage Devices
+    theme: EyZEE Home
     path: devices
     icon: mdi:devices
     type: sections
@@ -320,28 +340,45 @@ views:
             columns: 3
             square: false
             cards:
-              - type: button
+              - type: tile
                 name: Back
                 icon: mdi:arrow-left
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/manage
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/manage
+              - type: tile
                 name: Home
                 icon: mdi:home-heart
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/home
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: tile
                 name: Help
                 icon: mdi:help-circle-outline
-                show_state: false
                 tap_action:
                   action: url
                   url_path: https://eyzee.au/eyzee-home/support/add-devices/
-
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/add-devices/
           - type: markdown
             content: |
               <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">EyZEE® • Making Smart Easy™</div>
@@ -353,6 +390,7 @@ views:
   # MY DEVICES
   # ============================================================
   - title: My Devices
+    theme: EyZEE Home
     path: my-devices
     icon: mdi:format-list-bulleted
     type: sections
@@ -411,30 +449,45 @@ views:
             columns: 3
             square: false
             cards:
-              - type: button
+              - type: tile
                 name: Back
                 icon: mdi:arrow-left
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/devices
-
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/devices
+              - type: tile
                 name: Home
                 icon: mdi:home-heart
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/home
-
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: tile
                 name: Help
                 icon: mdi:help-circle-outline
-                show_state: false
                 tap_action:
                   action: url
                   url_path: https://eyzee.au/eyzee-home/support/add-devices/
-
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/add-devices/
           - type: markdown
             content: |
               <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">EyZEE® • Making Smart Easy™</div>
@@ -446,6 +499,7 @@ views:
   # LIGHTS & SWITCHES
   # ============================================================
   - title: Lights & Switches
+    theme: EyZEE Home
     path: lights-switches
     icon: mdi:lightbulb-multiple-outline
     type: sections
@@ -483,28 +537,45 @@ views:
             columns: 3
             square: false
             cards:
-              - type: button
+              - type: tile
                 name: Back
                 icon: mdi:arrow-left
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/manage
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/manage
+              - type: tile
                 name: Home
                 icon: mdi:home-heart
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/home
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: tile
                 name: Help
                 icon: mdi:help-circle-outline
-                show_state: false
                 tap_action:
                   action: url
                   url_path: https://eyzee.au/eyzee-home/support/link-switches-light-groups/
-
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/link-switches-light-groups/
           - type: markdown
             content: |
               <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">EyZEE® • Making Smart Easy™</div>
@@ -516,6 +587,7 @@ views:
   # ADVANCED CONTROLS — PLACEHOLDER
   # ============================================================
   - title: Advanced Controls
+    theme: EyZEE Home
     path: advanced
     icon: mdi:tune-variant
     type: sections
@@ -549,28 +621,45 @@ views:
             columns: 3
             square: false
             cards:
-              - type: button
+              - type: tile
                 name: Back
                 icon: mdi:arrow-left
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/manage
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/manage
+              - type: tile
                 name: Home
                 icon: mdi:home-heart
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/home
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: tile
                 name: Help
                 icon: mdi:help-circle-outline
-                show_state: false
                 tap_action:
                   action: url
                   url_path: https://eyzee.au/eyzee-home/support/
-
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/
           - type: markdown
             content: |
               <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">EyZEE® • Making Smart Easy™</div>
@@ -582,6 +671,7 @@ views:
   # CONNECTIVITY MANAGEMENT
   # ============================================================
   - title: Connectivity Management
+    theme: EyZEE Home
     path: connectivity
     icon: mdi:access-point-network
     type: sections
@@ -653,30 +743,45 @@ views:
             columns: 3
             square: false
             cards:
-              - type: button
+              - type: tile
                 name: Back
                 icon: mdi:arrow-left
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/advanced
-
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/advanced
+              - type: tile
                 name: Home
                 icon: mdi:home-heart
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/home
-
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: tile
                 name: Help
                 icon: mdi:help-circle-outline
-                show_state: false
                 tap_action:
                   action: url
                   url_path: https://eyzee.au/eyzee-home/support/
-
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/
           - type: markdown
             content: |
               <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">EyZEE® • Making Smart Easy™</div>
@@ -689,6 +794,7 @@ views:
   # ZIGBEE MANAGEMENT
   # ============================================================
   - title: Zigbee
+    theme: EyZEE Home
     path: zigbee
     icon: mdi:zigbee
     type: sections
@@ -741,30 +847,45 @@ views:
             columns: 3
             square: false
             cards:
-              - type: button
+              - type: tile
                 name: Back
                 icon: mdi:arrow-left
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/connectivity
-
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/connectivity
+              - type: tile
                 name: Home
                 icon: mdi:home-heart
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/home
-
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: tile
                 name: Help
                 icon: mdi:help-circle-outline
-                show_state: false
                 tap_action:
                   action: url
                   url_path: https://eyzee.au/eyzee-home/support/
-
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/
           - type: markdown
             content: |
               <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">EyZEE® • Making Smart Easy™</div>
@@ -776,6 +897,7 @@ views:
   # ADD A ZIGBEE EXTENDER
   # ============================================================
   - title: Add a Zigbee Extender
+    theme: EyZEE Home
     path: add-zigbee-extender
     icon: mdi:access-point-plus
     type: sections
@@ -854,16 +976,16 @@ views:
                   ha-card {
                     width: 220px;
                     min-height: 48px;
-                    background: #2196f3;
+                    background: var(--primary-color);
                     border: none;
                     border-radius: 10px;
                     box-shadow: none;
                   }
                   ha-state-icon {
-                    color: white !important;
+                    color: var(--primary-text-color) !important;
                   }
                   .name {
-                    color: white !important;
+                    color: var(--primary-text-color) !important;
                     font-weight: 600;
                   }
 
@@ -909,16 +1031,16 @@ views:
                   ha-card {
                     width: 220px;
                     min-height: 48px;
-                    background: #2196f3;
+                    background: var(--primary-color);
                     border: none;
                     border-radius: 10px;
                     box-shadow: none;
                   }
                   ha-state-icon {
-                    color: white !important;
+                    color: var(--primary-text-color) !important;
                   }
                   .name {
-                    color: white !important;
+                    color: var(--primary-text-color) !important;
                     font-weight: 600;
                   }
 
@@ -971,15 +1093,15 @@ views:
                     display: flex !important;
                     align-items: center !important;
                     border-radius: 10px !important;
-                    background: #2196f3 !important;
+                    background: var(--primary-color) !important;
                     border: none !important;
                     box-shadow: none !important;
                   }
                   ha-state-icon {
-                    color: white !important;
+                    color: var(--primary-text-color) !important;
                   }
                   .name {
-                    color: white !important;
+                    color: var(--primary-text-color) !important;
                     font-weight: 600 !important;
                   }
 
@@ -1025,16 +1147,16 @@ views:
                   ha-card {
                     width: 220px;
                     min-height: 48px;
-                    background: #2196f3;
+                    background: var(--primary-color);
                     border: none;
                     border-radius: 10px;
                     box-shadow: none;
                   }
                   ha-state-icon {
-                    color: white !important;
+                    color: var(--primary-text-color) !important;
                   }
                   .name {
-                    color: white !important;
+                    color: var(--primary-text-color) !important;
                     font-weight: 600;
                   }
 
@@ -1074,30 +1196,45 @@ views:
             columns: 3
             square: false
             cards:
-              - type: button
+              - type: tile
                 name: Back
                 icon: mdi:arrow-left
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/zigbee
-
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/zigbee
+              - type: tile
                 name: Home
                 icon: mdi:home-heart
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/home
-
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: tile
                 name: Help
                 icon: mdi:help-circle-outline
-                show_state: false
                 tap_action:
                   action: url
                   url_path: https://eyzee.au/eyzee-home/support/
-
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/
           - type: markdown
             content: |
               <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">EyZEE® • Making Smart Easy™</div>
@@ -1114,6 +1251,7 @@ views:
   # ADD A ZIGBEE EXTENDER
   # ============================================================
   - title: Add a Zigbee Extender
+    theme: EyZEE Home
     path: add-zigbee-extender
     icon: mdi:access-point-plus
     type: sections
@@ -1184,30 +1322,45 @@ views:
             columns: 3
             square: false
             cards:
-              - type: button
+              - type: tile
                 name: Back
                 icon: mdi:arrow-left
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/zigbee
-
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/zigbee
+              - type: tile
                 name: Home
                 icon: mdi:home-heart
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/home
-
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: tile
                 name: Help
                 icon: mdi:help-circle-outline
-                show_state: false
                 tap_action:
                   action: url
                   url_path: https://eyzee.au/eyzee-home/support/
-
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/
           - type: markdown
             content: |
               <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">EyZEE® • Making Smart Easy™</div>
@@ -1219,6 +1372,7 @@ views:
   # GET STARTED — ORDERED FIRST-TIME JOURNEY
   # ============================================================
   - title: Get Started
+    theme: EyZEE Home
     path: get-started
     icon: mdi:book-open-page-variant-outline
     type: sections
@@ -1311,28 +1465,45 @@ views:
             columns: 3
             square: false
             cards:
-              - type: button
+              - type: tile
                 name: Back
                 icon: mdi:arrow-left
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/home
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: tile
                 name: Home
                 icon: mdi:home-heart
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/home
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: tile
                 name: Help
                 icon: mdi:help-circle-outline
-                show_state: false
                 tap_action:
                   action: url
                   url_path: https://eyzee.au/eyzee-home/support/getting-started/
-
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/getting-started/
           - type: markdown
             content: |
               <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">EyZEE® • Making Smart Easy™</div>
@@ -1344,6 +1515,7 @@ views:
   # CHECK MY CONNECTION — FLOW PLACEHOLDER
   # ============================================================
   - title: Check My Connection
+    theme: EyZEE Home
     path: check-connection
     icon: mdi:lan-connect
     type: sections
@@ -1375,28 +1547,45 @@ views:
             columns: 3
             square: false
             cards:
-              - type: button
+              - type: tile
                 name: Back
                 icon: mdi:arrow-left
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/get-started
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/get-started
+              - type: tile
                 name: Home
                 icon: mdi:home-heart
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/home
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: tile
                 name: Help
                 icon: mdi:help-circle-outline
-                show_state: false
                 tap_action:
                   action: url
                   url_path: https://eyzee.au/eyzee-home/support/check-my-connection/
-
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/check-my-connection/
           - type: markdown
             content: |
               <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">EyZEE® • Making Smart Easy™</div>
@@ -1408,6 +1597,7 @@ views:
   # NAME MY HOME
   # ============================================================
   - title: Name My Home
+    theme: EyZEE Home
     path: name-home
     icon: mdi:home-edit-outline
     type: sections
@@ -1447,28 +1637,45 @@ views:
             columns: 3
             square: false
             cards:
-              - type: button
+              - type: tile
                 name: Back
                 icon: mdi:arrow-left
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/get-started
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/get-started
+              - type: tile
                 name: Home
                 icon: mdi:home-heart
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/home
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: tile
                 name: Help
                 icon: mdi:help-circle-outline
-                show_state: false
                 tap_action:
                   action: url
                   url_path: https://eyzee.au/eyzee-home/support/name-my-home/
-
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/name-my-home/
           - type: markdown
             content: |
               <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">EyZEE® • Making Smart Easy™</div>
