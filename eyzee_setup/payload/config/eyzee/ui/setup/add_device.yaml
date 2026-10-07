@@ -1,6 +1,7 @@
 title: Add a Zigbee Device
 views:
 - title: Add a Zigbee Device
+  theme: EyZEE Home
   path: add-device
   icon: mdi:plus-circle
   type: sections
@@ -61,6 +62,10 @@ views:
         tap_action:
           action: navigate
           navigation_path: /eyzee-main-menu/devices
+        color: '#D6AD60'
+        icon_tap_action:
+          action: navigate
+          navigation_path: /eyzee-main-menu/devices
       - type: tile
         entity: input_boolean.eyzee_show_welcome
         name: Home
@@ -68,6 +73,10 @@ views:
         hide_state: true
         vertical: false
         tap_action:
+          action: navigate
+          navigation_path: /eyzee-main-menu/home
+        color: '#D6AD60'
+        icon_tap_action:
           action: navigate
           navigation_path: /eyzee-main-menu/home
       - type: tile
@@ -79,10 +88,15 @@ views:
         tap_action:
           action: url
           url_path: https://eyzee.au/eyzee-home/support/add-devices/
+        color: '#D6AD60'
+        icon_tap_action:
+          action: url
+          url_path: https://eyzee.au/eyzee-home/support/add-devices/
     - type: heading
       heading: EyZEE®  •  Making Smart Easy™
       heading_style: subtitle
 - title: Locate & Set Up
+  theme: EyZEE Home
   path: setup-devices
   icon: mdi:map-marker-check-outline
   subview: true
@@ -98,13 +112,27 @@ views:
       tap_action:
         action: perform-action
         perform_action: eyzee_dashboard.discover_eyzee_devices
-    - type: button
+    - type: tile
       name: Back
       tap_action:
         action: navigate
         navigation_path: /eyzee-add-device-new/add-device
-    - type: button
+      entity: input_boolean.eyzee_show_welcome
+      hide_state: true
+      vertical: false
+      color: '#D6AD60'
+      icon_tap_action:
+        action: navigate
+        navigation_path: /eyzee-add-device-new/add-device
+    - type: tile
       name: Home
       tap_action:
+        action: navigate
+        navigation_path: /eyzee-main-menu/home
+      entity: input_boolean.eyzee_show_welcome
+      hide_state: true
+      vertical: false
+      color: '#D6AD60'
+      icon_tap_action:
         action: navigate
         navigation_path: /eyzee-main-menu/home

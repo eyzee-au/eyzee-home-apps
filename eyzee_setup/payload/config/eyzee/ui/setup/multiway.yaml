@@ -2,6 +2,7 @@ title: Link My Switches
 
 views:
   - title: Link My Switches
+    theme: EyZEE Home
     path: multiway
     icon: mdi:link-variant
     type: sections
@@ -143,30 +144,45 @@ views:
             columns: 3
             square: false
             cards:
-              - type: button
+              - type: tile
                 name: Back
                 icon: mdi:arrow-left
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/lights-switches
-
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/lights-switches
+              - type: tile
                 name: Home
                 icon: mdi:home-heart
-                show_state: false
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/home
-
-              - type: button
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-main-menu/home
+              - type: tile
                 name: Help
                 icon: mdi:help-circle-outline
-                show_state: false
                 tap_action:
                   action: url
                   url_path: https://eyzee.au/eyzee-home/support/link-switches-light-groups/
-
+                entity: input_boolean.eyzee_show_welcome
+                hide_state: true
+                vertical: false
+                color: '#D6AD60'
+                icon_tap_action:
+                  action: url
+                  url_path: https://eyzee.au/eyzee-home/support/link-switches-light-groups/
           - type: markdown
             content: |
               <div style="color:var(--secondary-text-color); font-size:14px; font-weight:600; padding:2px 8px;">

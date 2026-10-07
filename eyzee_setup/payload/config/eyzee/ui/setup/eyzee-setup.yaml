@@ -2,6 +2,7 @@ title: EyZEE® Home
 
 views:
   - title: Welcome
+    theme: EyZEE Home
     path: setup
     icon: mdi:home-heart
     type: sections

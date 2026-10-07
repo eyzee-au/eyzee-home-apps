@@ -1,6 +1,7 @@
 title: Device Setup
 views:
 - title: Device Setup
+  theme: EyZEE Home
   path: setup
   type: sections
   max_columns: 1
@@ -9,13 +10,27 @@ views:
     cards:
     - type: markdown
       content: Choose a device from Locate & Set Up Devices first.
-    - type: button
+    - type: tile
       name: Back
       tap_action:
         action: navigate
         navigation_path: /eyzee-add-device-new/setup-devices
-    - type: button
+      entity: input_boolean.eyzee_show_welcome
+      hide_state: true
+      vertical: false
+      color: '#D6AD60'
+      icon_tap_action:
+        action: navigate
+        navigation_path: /eyzee-add-device-new/setup-devices
+    - type: tile
       name: Home
       tap_action:
+        action: navigate
+        navigation_path: /eyzee-main-menu/home
+      entity: input_boolean.eyzee_show_welcome
+      hide_state: true
+      vertical: false
+      color: '#D6AD60'
+      icon_tap_action:
         action: navigate
         navigation_path: /eyzee-main-menu/home
