@@ -116,6 +116,8 @@ views:
   - title: Manage My Home
     theme: EyZEE Home
     path: manage
+    subview: true
+    back_path: /eyzee-main-menu/home
     icon: mdi:home-plus
     type: sections
     max_columns: 1
@@ -264,6 +266,8 @@ views:
   - title: Manage Devices
     theme: EyZEE Home
     path: devices
+    subview: true
+    back_path: /eyzee-main-menu/manage
     icon: mdi:devices
     type: sections
     max_columns: 1
@@ -291,6 +295,9 @@ views:
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-add-device-new/add-device
+                card_mod:
+                  style: |
+                    ha-state-icon { color:#D6AD60 !important; }
 
               - type: button
                 name: Set Up Devices
@@ -299,6 +306,9 @@ views:
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-add-device-new/setup-devices
+                card_mod:
+                  style: |
+                    ha-state-icon { color:#D6AD60 !important; }
 
               - type: button
                 name: Rename Device
@@ -307,6 +317,9 @@ views:
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-rename-device/rename-device
+                card_mod:
+                  style: |
+                    ha-state-icon { color:#D6AD60 !important; }
 
               - type: button
                 name: Add Existing Device
@@ -315,6 +328,9 @@ views:
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-existing-device/existing-device
+                card_mod:
+                  style: |
+                    ha-state-icon { color:#D6AD60 !important; }
 
               - type: button
                 name: Remove Device
@@ -325,7 +341,11 @@ views:
                   navigation_path: /eyzee-remove-device/remove-device
                 card_mod:
                   style: |
-                    ha-card { border:1px solid rgba(220,80,80,0.40); background:rgba(220,80,80,0.06); border-radius:16px; }
+                    ha-card {
+                      border:1px solid rgba(220,80,80,0.40);
+                      background:rgba(220,80,80,0.06);
+                      border-radius:16px;
+                    }
                     ha-state-icon { color:#DC5050 !important; }
 
               - type: button
@@ -335,6 +355,9 @@ views:
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/my-devices
+                card_mod:
+                  style: |
+                    ha-state-icon { color:#D6AD60 !important; }
 
           - type: grid
             columns: 3
@@ -392,6 +415,8 @@ views:
   - title: My Devices
     theme: EyZEE Home
     path: my-devices
+    subview: true
+    back_path: /eyzee-main-menu/devices
     icon: mdi:format-list-bulleted
     type: sections
     max_columns: 1
@@ -501,6 +526,8 @@ views:
   - title: Lights & Switches
     theme: EyZEE Home
     path: lights-switches
+    subview: true
+    back_path: /eyzee-main-menu/manage
     icon: mdi:lightbulb-multiple-outline
     type: sections
     max_columns: 1
@@ -589,6 +616,8 @@ views:
   - title: Advanced Controls
     theme: EyZEE Home
     path: advanced
+    subview: true
+    back_path: /eyzee-main-menu/manage
     icon: mdi:tune-variant
     type: sections
     max_columns: 1
@@ -673,6 +702,8 @@ views:
   - title: Connectivity Management
     theme: EyZEE Home
     path: connectivity
+    subview: true
+    back_path: /eyzee-main-menu/advanced
     icon: mdi:access-point-network
     type: sections
     max_columns: 1
@@ -796,6 +827,8 @@ views:
   - title: Zigbee
     theme: EyZEE Home
     path: zigbee
+    subview: true
+    back_path: /eyzee-main-menu/connectivity
     icon: mdi:zigbee
     type: sections
     max_columns: 1
@@ -899,6 +932,8 @@ views:
   - title: Add a Zigbee Extender
     theme: EyZEE Home
     path: add-zigbee-extender
+    subview: true
+    back_path: /eyzee-main-menu/zigbee
     icon: mdi:access-point-plus
     type: sections
     max_columns: 1
@@ -1253,6 +1288,8 @@ views:
   - title: Add a Zigbee Extender
     theme: EyZEE Home
     path: add-zigbee-extender
+    subview: true
+    back_path: /eyzee-main-menu/zigbee
     icon: mdi:access-point-plus
     type: sections
     max_columns: 1
@@ -1374,6 +1411,8 @@ views:
   - title: Get Started
     theme: EyZEE Home
     path: get-started
+    subview: true
+    back_path: /eyzee-main-menu/home
     icon: mdi:book-open-page-variant-outline
     type: sections
     max_columns: 1
@@ -1517,6 +1556,8 @@ views:
   - title: Check My Connection
     theme: EyZEE Home
     path: check-connection
+    subview: true
+    back_path: /eyzee-main-menu/get-started
     icon: mdi:lan-connect
     type: sections
     max_columns: 1
@@ -1599,6 +1640,8 @@ views:
   - title: Name My Home
     theme: EyZEE Home
     path: name-home
+    subview: true
+    back_path: /eyzee-main-menu/get-started
     icon: mdi:home-edit-outline
     type: sections
     max_columns: 1
