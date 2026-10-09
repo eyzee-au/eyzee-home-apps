@@ -1,4 +1,4 @@
-# Fresh HAOS acceptance — 0.1.0-beta.3 pending
+# Fresh HAOS acceptance — 0.1.0-beta.4 pending
 
 Record HAOS, Supervisor, Core and installed app versions with the setup report. Start with a fresh backed-up `.201` and a default MG24 on Ethernet/PoE. Do not use `.200` for this run.
 

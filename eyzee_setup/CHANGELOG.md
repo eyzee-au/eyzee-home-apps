@@ -1,3 +1,12 @@
+# 0.1.0-beta.4
+
+- Make secondary main-menu pages subviews with explicit back destinations; keep Home as the entry view.
+- Apply gold icons to Manage Devices while retaining red Remove Device styling.
+- Make Scan Existing Devices and Add to EyZEE Home compact full-width tiles, including icon actions.
+- Set existing-device navigation and footer to full section width.
+
+Dashboard changes supplied from the working HAOS system. Fresh beta.4 installation and complete navigation/action acceptance remain pending. No backend behaviour changes.
+
 # 0.1.0-beta.3
 
 - Refresh Smart Behaviours device choices when the device inventory, lighting groups or device names change.
