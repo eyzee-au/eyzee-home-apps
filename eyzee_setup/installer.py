@@ -6,7 +6,7 @@ from urllib.request import Request, urlopen
 from urllib.error import HTTPError, URLError
 import yaml
 
-VERSION = '0.1.0-beta.4'
+VERSION = '0.1.0-beta.5'
 Z2M_SLUG = '45df7312_zigbee2mqtt'  # Existing proven MG24 service expects this official repository.
 REPOSITORIES = ['https://github.com/zigbee2mqtt/hassio-zigbee2mqtt', 'https://github.com/hassio-addons/repository']
 CARD_URL = 'https://raw.githubusercontent.com/thomasloven/lovelace-card-mod/v4.2.0/card-mod.js'
@@ -174,7 +174,7 @@ class Installer:
         return json.loads(p.read_text()) if p.exists() else {'phase':'idle','message':'Ready to prepare your home.','owned_apps':[],'files':{},'events':[]}
     def save(self):atomic(self.data/'progress.json',json.dumps(self.state,indent=2).encode())
     def status(self):
-        with self.lock:return {k:copy.deepcopy(v) for k,v in self.state.items() if k in {'phase','message','busy','events','gateways','release','backup','ready','support_code','checks','app_versions','diagnostic'}}
+        with self.lock:return {k:copy.deepcopy(v) for k,v in self.state.items() if k in {'phase','message','busy','events','gateways','release','backup','ready','support_code','checks','app_versions','diagnostic','home_hostname'}}
     def stage(self,phase,message):
         with self.lock:
             self.state.update(phase=phase,message=message,release=VERSION)
@@ -435,6 +435,28 @@ class Installer:
                 self.state['z2m_restart_needed']=False;self.save()
             self.verify_ready()
         else:self.discover()
+    def use_home_hostname(self):
+        """Explicit owner choice after readiness; never part of automatic preparation."""
+        try:
+            current = self.api.call('/host/info').get('hostname')
+            if not current:
+                raise SetupError('The current home address could not be checked.')
+            self.state.setdefault('previous_hostname', current)
+            self.save()
+            if current != 'eyzee-home':
+                self.api.call('/host/options', 'POST', {'hostname': 'eyzee-home'})
+            # Read back instead of claiming that a successful POST proves the change.
+            if self.api.call('/host/info').get('hostname') != 'eyzee-home':
+                raise SetupError('The new home address could not be confirmed yet.')
+            self.state['home_hostname'] = 'eyzee-home'
+            self.stage('ready', 'Your home is ready. The eyzee-home.local address is set; it may take a moment to become available.')
+        except Exception:
+            self.state.pop('home_hostname', None)
+            self.stage('ready', 'Your home is ready, but the new address could not be confirmed. Keep using your current address or try the address button again.')
+        finally:
+            self.state['ready'] = True
+            self.save()
+
     def verify_payload(self):
         manifest=json.loads((self.payload.parent/'payload-hashes.json').read_text())
         for rel,expected in manifest.items():

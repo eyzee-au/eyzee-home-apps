@@ -1,3 +1,14 @@
+# 0.1.0-beta.5
+
+- Offer an explicit Use eyzee-home.local action after setup checks pass.
+- Preserve the current hostname unless the owner presses that button.
+- Read back the hostname before offering the new address; preserve the browser protocol and port.
+- Keep the existing Open EyZEE Home link available and explain bookmark/address recovery.
+- Fix hidden controls being overridden by button display styling.
+- Include the supplied room-addition fix: preserve existing indoor/custom rooms and metadata, and allocate unused numbered IDs for added rooms.
+
+Fresh HAOS test candidate only. The integration payload includes Ian's supplied room-overwrite fix. This does not establish an existing-home upgrade path. Real HAOS hostname discovery, browser access and full installation acceptance remain pending. No files removed or renamed.
+
 # 0.1.0-beta.4
 
 - Make secondary main-menu pages subviews with explicit back destinations; keep Home as the entry view.

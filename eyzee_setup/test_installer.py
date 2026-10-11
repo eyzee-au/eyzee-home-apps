@@ -82,6 +82,27 @@ class InstallerTests(unittest.TestCase):
         self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup);self.root=Path(self.temp.name);self.config=self.root/'config';self.config.mkdir();self.data=self.root/'data'
         self.api=FakeAPI(self.config);self.i=m.Installer(self.config,self.data,HERE/'payload',self.api,sleeper=lambda n:None)
         (self.config/'configuration.yaml').write_text('default_config:\nhttp:\n  server_port: 8123\n')
+    def test_hostname_change_requires_successful_readback(self):
+        with patch.object(self.api, 'call', side_effect=[{'hostname':'homeassistant'}, {}, {'hostname':'eyzee-home'}]) as call:
+            self.i.use_home_hostname()
+        self.assertEqual(call.call_args_list[1].args, ('/host/options', 'POST', {'hostname':'eyzee-home'}))
+        self.assertEqual(self.i.status()['home_hostname'], 'eyzee-home')
+        self.assertEqual(self.i.state['previous_hostname'], 'homeassistant')
+        self.assertTrue(self.i.status()['ready'])
+
+    def test_hostname_failure_keeps_home_available_without_new_link(self):
+        for results in ([{'hostname':'custom-home'}, {}, {'hostname':'custom-home'}], [m.SetupError('unavailable')]):
+            with patch.object(self.api, 'call', side_effect=results):
+                self.i.use_home_hostname()
+            self.assertTrue(self.i.status()['ready'])
+            self.assertEqual(self.i.status()['phase'], 'ready')
+            self.assertNotIn('home_hostname', self.i.status())
+
+    def test_existing_eyzee_hostname_is_not_written_again(self):
+        with patch.object(self.api, 'call', return_value={'hostname':'eyzee-home'}) as call:
+            self.i.use_home_hostname()
+        self.assertTrue(all(c.args == ('/host/info',) for c in call.call_args_list))
+
     def snapshot(self,*args):
         p=self.config/'zigbee2mqtt/configuration.yaml';serial=m.load(p.read_text()).get('serial',{}) if p.exists() else {}
         return {'zigbee2mqtt/bridge/state':{'state':'online'},'zigbee2mqtt/bridge/info':{'config':{'serial':serial}},'zigbee2mqtt/bridge/converters':[{'name':p.name} for p in (HERE/'payload/device-support/zigbee2mqtt/external_converters').glob('*')]}

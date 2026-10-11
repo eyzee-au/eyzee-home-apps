@@ -1569,34 +1569,38 @@ views:
 
                     return backup, existing_model
 
-                preserved_custom_rooms = {}
+                # Quantities are additions, not a replacement house definition.
+                # Keep existing room IDs and metadata so device links survive.
+                requested_model = _build_house_model(payload)
+                for slug in {"pool", "patio", "yard"}:
+                    existing_rooms.pop(slug, None)
 
-                for slug, room in existing_rooms.items():
-                    if not isinstance(room, dict):
-                        continue
-
-                    group = room.get("group")
-                    label = room.get("label") or slug.replace("_", " ").title()
-
-                    is_custom = (
-                        group == "Other"
-                        or room.get("custom") is True
-                        or slug not in ROOM_META
+                for slug, room in requested_model.get("rooms", {}).items():
+                    new_slug = slug
+                    base = re.sub(r"_\d+$", "", slug)
+                    family_exists = any(
+                        key == base or re.fullmatch(re.escape(base) + r"_\d+", key)
+                        for key in existing_rooms
                     )
+                    if new_slug in existing_rooms or family_exists:
+                        label = re.sub(r" \d+$", "", room.get("label") or base.replace("_", " ").title())
+                        number = 2
+                        while f"{base}_{number}" in existing_rooms:
+                            number += 1
+                        new_slug = f"{base}_{number}"
+                        room = dict(room, label=f"{label} {number}")
+                    existing_rooms[new_slug] = room
 
-                    if is_custom:
-                        preserved_custom_rooms[slug] = room
-
-                model = _build_house_model(payload)
-
-                model_rooms = model.setdefault("rooms", {})
-
-                for slug, room in preserved_custom_rooms.items():
-                    if slug not in model_rooms:
-                        model_rooms[slug] = room
-
-                _write_yaml(_path(ROOMS_YAML), model)
-                return backup, model
+                existing_model.setdefault("version", 1)
+                existing_model["project"] = (
+                    payload.get("project_name")
+                    or existing_model.get("project")
+                    or "My Home"
+                )
+                existing_model.setdefault("devices", {})
+                existing_model["rooms"] = existing_rooms
+                _write_yaml(_path(ROOMS_YAML), existing_model)
+                return backup, existing_model
 
             backup, model = await hass.async_add_executor_job(_write_model)
 

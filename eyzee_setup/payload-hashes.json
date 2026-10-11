@@ -1,5 +1,5 @@
 {
-  "config/custom_components/eyzee_dashboard/__init__.py": "3bcb40c97014390118ebdcf6ef2aba588bd5ebd52f17500bc96cff3dc78cf408",
+  "config/custom_components/eyzee_dashboard/__init__.py": "1615ae1773401a7491e252ea08b9bca60594b24e62643769a10712798b1cb285",
   "config/custom_components/eyzee_dashboard/add_custom_room.py": "59d2d9a85ccf4ee541e74e9e6cfe4b40558a4ef6e23fea5b0cdaf366531bf7d6",
   "config/custom_components/eyzee_dashboard/const.py": "de76924f3d64edd30940bd6e1a16e88a70e951802daae7a282bc408f6079bf6f",
   "config/custom_components/eyzee_dashboard/device_profiles.py": "b519b0dfea8f3cfbc35b8baa4ecd4a5f078822234839bf2b07ffba397184b901",

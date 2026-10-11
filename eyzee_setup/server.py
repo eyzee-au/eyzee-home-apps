@@ -46,6 +46,10 @@ class Handler(BaseHTTPRequestHandler):
                 if type(slot)!=int or not 1<=slot<=4 or not isinstance(mac,str) or len(mac)>32:raise ValueError()
                 if APP.status().get('phase')!='choose_gateway':raise SetupError('Find your gateway before connecting.')
                 APP.start(APP.connect_gateway,slot,mac)
+            elif path=='/api/hostname':
+                if body!={'hostname':'eyzee-home'}:raise ValueError()
+                if not APP.status().get('ready'):raise SetupError('Finish preparing your home before changing its address.')
+                APP.start(APP.use_home_hostname)
             elif path=='/api/check':
                 if not APP.state.get('vscode_slug'):raise SetupError('Prepare your home first.')
                 APP.start(APP.verify_ready)
