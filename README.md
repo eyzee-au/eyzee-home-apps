@@ -1,4 +1,4 @@
-# EyZEE Setup — 0.1.0-beta.6
+# EyZEE Setup — 0.1.0-beta.7
 
 A candidate Home Assistant OS app repository for the EyZEE Home onboarding flow. This is a lab release: automated tests and incremental HAOS/MG24 tests have passed. A fresh installation of this consolidated version and the remaining recovery checks are required before customer distribution.
 
@@ -27,7 +27,7 @@ Terminal & SSH and Studio Code Server are included because the current Sue insta
 
 1. Add `https://github.com/eyzee-au/eyzee-home-apps` through the Install EyZEE Home link.
 2. Search the Home Assistant app store for **EyZEE Setup**.
-3. Confirm the offered version is **0.1.0-beta.6**, then install and start it.
+3. Confirm the offered version is **0.1.0-beta.7**, then install and start it.
 4. Open its screen, press **Prepare My Home**, and select the intended Zigbee gateway when prompted.
 5. Follow `ACCEPTANCE.md`.
 
@@ -100,3 +100,11 @@ Includes the supplied integration fix for adding standard rooms without replacin
 existing indoor/custom rooms. Repeated room types receive unused numbered IDs.
 Outdoor areas continue to follow their selected toggles. On fresh HAOS, verify
 that adding rooms retains prior room names and device assignments.
+
+## Existing-installation safeguard (beta.7)
+
+Reopening Setup after a completed installation shows **EyZEE Core is already installed** and **Open EyZEE Core**. Repeated preparation requests return to that screen before changing Home Assistant, the hostname, supporting apps or installed files. An integration with no installer ownership history is also protected; its completeness is not assumed and it needs manual review if it does not open.
+
+An incomplete installation tracked by Setup can still resume. An available **Check Connection Again** action checks services; detecting installed files does not claim those services are healthy. Existing-home upgrades still require a tested migration path.
+
+Acceptance: complete a fresh install, restart Setup, and verify the open-only screen. Confirm a repeated preparation request makes no installation changes. Verify an interrupted incomplete setup can resume and a failed connection check does not re-enable preparation on a completed home.

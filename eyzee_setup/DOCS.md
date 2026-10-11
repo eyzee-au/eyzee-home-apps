@@ -26,3 +26,11 @@ Includes the supplied integration fix for adding standard rooms without replacin
 existing indoor/custom rooms. Repeated room types receive unused numbered IDs.
 Outdoor areas continue to follow their selected toggles. On fresh HAOS, verify
 that adding rooms retains prior room names and device assignments.
+
+## Existing-installation safeguard (beta.7)
+
+Reopening Setup after a completed installation shows **EyZEE Core is already installed** and **Open EyZEE Core**. Repeated preparation requests return to that screen before changing Home Assistant, the hostname, supporting apps or installed files. An integration with no installer ownership history is also protected; its completeness is not assumed and it needs manual review if it does not open.
+
+An incomplete installation tracked by Setup can still resume. An available **Check Connection Again** action checks services; detecting installed files does not claim those services are healthy. Existing-home upgrades still require a tested migration path.
+
+Acceptance: complete a fresh install, restart Setup, and verify the open-only screen. Confirm a repeated preparation request makes no installation changes. Verify an interrupted incomplete setup can resume and a failed connection check does not re-enable preparation on a completed home.

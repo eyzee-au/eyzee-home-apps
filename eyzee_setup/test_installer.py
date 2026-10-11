@@ -144,7 +144,10 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(original,(self.config/'configuration.yaml').read_bytes());self.assertFalse(any(c[0]=='/core/restart' for c in self.api.calls))
     def test_changed_existing_integration_is_refused_before_backup_or_app_mutation(self):
         p=self.config/'custom_components/eyzee_dashboard/__init__.py';m.atomic(p,b'# existing code')
-        with self.assertRaises(m.SetupError):self.prepare()
+        self.prepare()
+        self.assertEqual('installed',self.i.status()['phase'])
+        self.assertTrue(self.i.status()['installed'])
+        self.assertFalse(self.api.calls)
         self.assertEqual(b'# existing code',p.read_bytes());self.assertFalse(self.api.apps);self.assertFalse(any(c[0]=='/backups/new/full' for c in self.api.calls))
     def test_duplicate_configuration_keys_are_rejected(self):
         (self.config/'configuration.yaml').write_text('http:\n  server_port: 8123\nhttp:\n  server_port: 9000\n')
@@ -192,6 +195,51 @@ class InstallerTests(unittest.TestCase):
         self.i.state.update(ready=True,phase='ready');self.i.save()
         restarted=m.Installer(self.config,self.data,HERE/'payload',self.api)
         self.assertFalse(restarted.status()['ready']);self.assertEqual('interrupted',restarted.status()['phase'])
+
+    def complete_installation(self):
+        self.prepare()
+        with patch.object(m,'mqtt_snapshot',self.snapshot):
+            self.i.connect_gateway(1,'AA:BB:CC:DD:EE:01')
+
+    def test_completed_installation_blocks_preparation_without_mutations(self):
+        self.complete_installation()
+        before={str(p):p.read_bytes() for p in self.config.rglob('*') if p.is_file()}
+        self.api.calls.clear()
+        self.i.prepare(True)
+        self.assertEqual([],self.api.calls)
+        self.assertEqual(before,{str(p):p.read_bytes() for p in self.config.rglob('*') if p.is_file()})
+        self.assertFalse(self.i.state['use_core_address'])
+        self.assertEqual('installed',self.i.status()['phase'])
+
+    def test_legacy_ready_installation_remains_guarded_after_restart(self):
+        self.complete_installation()
+        self.i.state.pop('installation_complete');self.i.save()
+        self.api.calls.clear()
+        restarted=m.Installer(self.config,self.data,HERE/'payload',self.api)
+        self.assertTrue(restarted.status()['installed'])
+        self.assertFalse(restarted.status()['ready'])
+        self.assertEqual('installed',restarted.status()['phase'])
+        restarted.prepare()
+        self.assertEqual([],self.api.calls)
+
+    def test_failed_connection_check_cannot_reenable_preparation(self):
+        self.complete_installation()
+        self.i.state.update(ready=False,phase='failed');self.i.save()
+        self.api.calls.clear()
+        self.i.prepare()
+        self.assertTrue(self.i.status()['installed'])
+        self.assertEqual([],self.api.calls)
+
+    def test_start_preserves_legacy_completion_before_clearing_ready(self):
+        import types
+        self.complete_installation()
+        self.i.state.pop('installation_complete');self.i.save()
+        self.api.calls.clear()
+        with patch.object(m.threading,'Thread',side_effect=lambda target,daemon:types.SimpleNamespace(start=target)):
+            self.i.start(self.i.prepare,True)
+        self.assertEqual('installed',self.i.status()['phase'])
+        self.assertEqual([],self.api.calls)
+        self.assertFalse(self.i.status()['busy'])
 
     def test_admin_identity_check_rejects_normal_and_system_users(self):
         import sys,types

@@ -1,3 +1,12 @@
+# 0.1.0-beta.7
+
+- Detect an existing EyZEE installation and show Open EyZEE Core instead of preparation.
+- Block repeated preparation on the server before app, backup, configuration, hostname or payload changes.
+- Preserve completed-install protection across restarts and connection-check failures.
+- Keep resumable incomplete preparation available; do not adopt an untracked integration.
+
+Payload unchanged from beta.6. No files removed or renamed. Fresh HAOS and completed-system reopening tests remain required. This is not an existing-home migration release.
+
 # 0.1.0-beta.6
 
 - Identify the downloadable installer as EyZEE Core.

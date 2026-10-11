@@ -6,7 +6,7 @@ from urllib.request import Request, urlopen
 from urllib.error import HTTPError, URLError
 import yaml
 
-VERSION = '0.1.0-beta.6'
+VERSION = '0.1.0-beta.7'
 Z2M_SLUG = '45df7312_zigbee2mqtt'  # Existing proven MG24 service expects this official repository.
 REPOSITORIES = ['https://github.com/zigbee2mqtt/hassio-zigbee2mqtt', 'https://github.com/hassio-addons/repository']
 CARD_URL = 'https://raw.githubusercontent.com/thomasloven/lovelace-card-mod/v4.2.0/card-mod.js'
@@ -166,15 +166,36 @@ class Installer:
         self.config,self.data,self.payload=config,data,payload;self.api=api or API();self.sleep=sleeper
         self.lock=threading.Lock();self.busy=False;self.data.mkdir(parents=True,exist_ok=True)
         self.state=self.read_state();self.state.setdefault('events',[])
-        if self.state.get('busy') or self.state.get('ready'):
+        if self.existing_installation():
+            self.show_existing_installation()
+        elif self.state.get('busy') or self.state.get('ready'):
             self.state.update(busy=False,ready=False,phase='interrupted',message='Press Prepare My Home to continue and check your connection safely.')
             self.save()
+    def existing_installation(self):
+        integration = self.config/'custom_components/eyzee_dashboard/__init__.py'
+        if not integration.is_file():
+            return False
+        # Completed installs remain protected even when a later connection check fails.
+        # An untracked integration must never be adopted by the fresh installer.
+        return bool(self.state.get('installation_complete') or self.state.get('ready')
+                    or not self.state.get('files'))
+
+    def show_existing_installation(self):
+        self.state.update(installation_complete=True, ready=False, phase='installed',
+                          message='EyZEE Core is already installed. Open EyZEE Core to continue.')
+        self.state['busy'] = self.busy
+        self.save()
+
     def read_state(self):
         p=self.data/'progress.json'
         return json.loads(p.read_text()) if p.exists() else {'phase':'idle','message':'Ready to prepare your home.','owned_apps':[],'files':{},'events':[]}
     def save(self):atomic(self.data/'progress.json',json.dumps(self.state,indent=2).encode())
     def status(self):
-        with self.lock:return {k:copy.deepcopy(v) for k,v in self.state.items() if k in {'phase','message','busy','events','gateways','release','backup','ready','support_code','checks','app_versions','diagnostic','home_hostname','use_core_address'}}
+        with self.lock:
+            result = {k:copy.deepcopy(v) for k,v in self.state.items() if k in {'phase','message','busy','events','gateways','release','backup','ready','support_code','checks','app_versions','diagnostic','home_hostname','use_core_address'}}
+            result['installed'] = self.existing_installation()
+            result['can_check_connection'] = bool(self.state.get('vscode_slug'))
+            return result
     def stage(self,phase,message):
         with self.lock:
             self.state.update(phase=phase,message=message,release=VERSION)
@@ -182,6 +203,7 @@ class Installer:
     def start(self,task,*args):
         with self.lock:
             if self.busy:raise SetupError('Preparation is already running.')
+            if self.existing_installation():self.state['installation_complete']=True
             self.busy=True;self.state['busy']=True;self.state['ready']=False;self.state.pop('diagnostic',None);self.save()
         def run():
             try:task(*args)
@@ -316,6 +338,9 @@ class Installer:
         if flow.get('type')!='create_entry' and not self.mqtt_entries():raise SetupError('The home connection needs a setup update. Share the report; no manual technical settings are required.')
         self.wait(lambda:any(e.get('state')=='loaded' for e in self.mqtt_entries()),90)
     def prepare(self, use_core_address=False):
+        if self.existing_installation():
+            self.show_existing_installation()
+            return
         self.state["use_core_address"] = use_core_address
         self.save()
         self.stage('checking','Checking your home.')
@@ -518,7 +543,7 @@ class Installer:
             if self.app_info(slug).get('state')!='started':raise SetupError('A supporting app has stopped. Please retry preparation.')
         for service_name in ['setup_zigbee_coordinator','build_room_views','refresh_device_inventory']:
             if not self.has_service(service_name):raise SetupError('EyZEE Core did not finish starting. Retry preparation.')
-        with self.lock:self.state.update(ready=True,checks={'home':True,'connection':True,'gateway':True,'device_support':True,'support_apps':True});self.save()
+        with self.lock:self.state.update(installation_complete=True,ready=True,checks={'home':True,'connection':True,'gateway':True,'device_support':True,'support_apps':True});self.save()
         self.stage('ready','Your home is ready. Open EyZEE Core to add your rooms and devices.')
         if self.state.get('use_core_address') and self.state.get('home_hostname') != 'eyzee-core':
             self.use_home_hostname()
