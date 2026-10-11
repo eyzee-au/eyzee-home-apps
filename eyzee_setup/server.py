@@ -37,7 +37,10 @@ class Handler(BaseHTTPRequestHandler):
             body=json.loads(self.rfile.read(length) or b'{}')
             if not isinstance(body,dict):raise ValueError()
             path=urlsplit(self.path).path
-            if path=='/api/prepare':APP.start(APP.prepare)
+            if path=='/api/prepare':
+                use_core_address=body.get('use_core_address',False)
+                if type(use_core_address) is not bool:raise ValueError()
+                APP.start(APP.prepare,use_core_address)
             elif path=='/api/discover':
                 if not APP.has_service('setup_zigbee_coordinator'):raise SetupError('Prepare your home first.')
                 APP.start(APP.discover)
@@ -47,7 +50,7 @@ class Handler(BaseHTTPRequestHandler):
                 if APP.status().get('phase')!='choose_gateway':raise SetupError('Find your gateway before connecting.')
                 APP.start(APP.connect_gateway,slot,mac)
             elif path=='/api/hostname':
-                if body!={'hostname':'eyzee-home'}:raise ValueError()
+                if body!={'hostname':'eyzee-core'}:raise ValueError()
                 if not APP.status().get('ready'):raise SetupError('Finish preparing your home before changing its address.')
                 APP.start(APP.use_home_hostname)
             elif path=='/api/check':

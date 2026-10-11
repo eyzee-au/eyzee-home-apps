@@ -83,10 +83,10 @@ class InstallerTests(unittest.TestCase):
         self.api=FakeAPI(self.config);self.i=m.Installer(self.config,self.data,HERE/'payload',self.api,sleeper=lambda n:None)
         (self.config/'configuration.yaml').write_text('default_config:\nhttp:\n  server_port: 8123\n')
     def test_hostname_change_requires_successful_readback(self):
-        with patch.object(self.api, 'call', side_effect=[{'hostname':'homeassistant'}, {}, {'hostname':'eyzee-home'}]) as call:
+        with patch.object(self.api, 'call', side_effect=[{'hostname':'homeassistant'}, {}, {'hostname':'eyzee-core'}]) as call:
             self.i.use_home_hostname()
-        self.assertEqual(call.call_args_list[1].args, ('/host/options', 'POST', {'hostname':'eyzee-home'}))
-        self.assertEqual(self.i.status()['home_hostname'], 'eyzee-home')
+        self.assertEqual(call.call_args_list[1].args, ('/host/options', 'POST', {'hostname':'eyzee-core'}))
+        self.assertEqual(self.i.status()['home_hostname'], 'eyzee-core')
         self.assertEqual(self.i.state['previous_hostname'], 'homeassistant')
         self.assertTrue(self.i.status()['ready'])
 
@@ -99,7 +99,7 @@ class InstallerTests(unittest.TestCase):
             self.assertNotIn('home_hostname', self.i.status())
 
     def test_existing_eyzee_hostname_is_not_written_again(self):
-        with patch.object(self.api, 'call', return_value={'hostname':'eyzee-home'}) as call:
+        with patch.object(self.api, 'call', return_value={'hostname':'eyzee-core'}) as call:
             self.i.use_home_hostname()
         self.assertTrue(all(c.args == ('/host/info',) for c in call.call_args_list))
 
@@ -118,6 +118,21 @@ class InstallerTests(unittest.TestCase):
         with patch.object(m,'mqtt_snapshot',self.snapshot):self.i.connect_gateway(1,'AA:BB:CC:DD:EE:01')
         self.assertTrue(self.i.status()['ready']);self.assertIn(('setup_zigbee_coordinator','SERVICE',{'slot':2}),self.api.calls)
         self.assertNotIn('do-not-display',json.dumps(self.i.status()))
+    def test_address_choice_is_saved_and_applied_only_after_readiness(self):
+        with patch.object(m,'mqtt_snapshot',self.snapshot),patch.object(m,'urlopen',lambda *a,**k:io.BytesIO(CARD_BYTES)),patch.object(m,'CARD_HASH',m.sha(CARD_BYTES)),patch.object(self.i,'use_home_hostname') as rename:
+            self.i.prepare(True)
+            rename.assert_not_called()
+            self.assertTrue(self.i.state['use_core_address'])
+            self.assertTrue(json.loads((self.data/'progress.json').read_text())['use_core_address'])
+            self.i.connect_gateway(1,'AA:BB:CC:DD:EE:01')
+            rename.assert_called_once()
+
+    def test_default_preparation_keeps_existing_hostname(self):
+        with patch.object(self.i,'use_home_hostname') as rename:
+            self.prepare()
+            with patch.object(m,'mqtt_snapshot',self.snapshot):self.i.connect_gateway(1,'AA:BB:CC:DD:EE:01')
+            rename.assert_not_called()
+
     def test_repeated_prepare_preserves_customer_state_and_no_duplicate_helpers(self):
         self.prepare();room=self.config/'eyzee/state/rooms.yaml';room.write_text('version: 1\nrooms:\n  kitchen:\n    label: Kitchen\n');original=room.read_bytes()
         self.prepare();self.assertEqual(original,room.read_bytes())

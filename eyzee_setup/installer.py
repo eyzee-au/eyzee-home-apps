@@ -6,7 +6,7 @@ from urllib.request import Request, urlopen
 from urllib.error import HTTPError, URLError
 import yaml
 
-VERSION = '0.1.0-beta.5'
+VERSION = '0.1.0-beta.6'
 Z2M_SLUG = '45df7312_zigbee2mqtt'  # Existing proven MG24 service expects this official repository.
 REPOSITORIES = ['https://github.com/zigbee2mqtt/hassio-zigbee2mqtt', 'https://github.com/hassio-addons/repository']
 CARD_URL = 'https://raw.githubusercontent.com/thomasloven/lovelace-card-mod/v4.2.0/card-mod.js'
@@ -174,7 +174,7 @@ class Installer:
         return json.loads(p.read_text()) if p.exists() else {'phase':'idle','message':'Ready to prepare your home.','owned_apps':[],'files':{},'events':[]}
     def save(self):atomic(self.data/'progress.json',json.dumps(self.state,indent=2).encode())
     def status(self):
-        with self.lock:return {k:copy.deepcopy(v) for k,v in self.state.items() if k in {'phase','message','busy','events','gateways','release','backup','ready','support_code','checks','app_versions','diagnostic','home_hostname'}}
+        with self.lock:return {k:copy.deepcopy(v) for k,v in self.state.items() if k in {'phase','message','busy','events','gateways','release','backup','ready','support_code','checks','app_versions','diagnostic','home_hostname','use_core_address'}}
     def stage(self,phase,message):
         with self.lock:
             self.state.update(phase=phase,message=message,release=VERSION)
@@ -315,7 +315,9 @@ class Installer:
                 flow=self.api.ha('/config/config_entries/flow/'+flow['flow_id'],'POST',{'broker':service['host'],'port':int(service['port']),'username':service.get('username',''),'password':service.get('password','')})
         if flow.get('type')!='create_entry' and not self.mqtt_entries():raise SetupError('The home connection needs a setup update. Share the report; no manual technical settings are required.')
         self.wait(lambda:any(e.get('state')=='loaded' for e in self.mqtt_entries()),90)
-    def prepare(self):
+    def prepare(self, use_core_address=False):
+        self.state["use_core_address"] = use_core_address
+        self.save()
         self.stage('checking','Checking your home.')
         self.api.call('/supervisor/info');self.api.call('/os/info');self.api.ha('/config');self.verify_payload()
         if shutil.disk_usage(self.config).free<3*1024**3:raise SetupError('Your system needs at least 3 GB of free storage before preparation.')
@@ -397,7 +399,7 @@ class Installer:
                 zdata.setdefault('advanced',{})['enable_external_js']=True
                 self.write_owned('zigbee2mqtt/configuration.yaml',yaml.safe_dump(zdata,sort_keys=False),replace=True)
                 self.state['z2m_restart_needed']=True;self.save()
-        self.stage('files','Preparing EyZEE Home and device support.')
+        self.stage('files','Preparing EyZEE Core and device support.')
         self.verify_payload()
         for src in sorted((self.payload/'config').rglob('*')):
             if not src.is_file():continue
@@ -417,11 +419,11 @@ class Installer:
         # configuration.yaml has its own recovery copy; installation data never gets reset.
         atomic(self.data/'configuration-before.yaml',original.encode())
         config_path=self.config/'configuration.yaml';atomic(config_path,planned.encode())
-        self.stage('checking_configuration','Checking EyZEE Home before restarting.')
+        self.stage('checking_configuration','Checking EyZEE Core before restarting.')
         try:self.api.call('/core/check','POST',{},timeout=180)
         except Exception:
             atomic(config_path,original.encode());raise SetupError('The home configuration check failed. Your previous configuration has been restored. Share the setup report.')
-        self.stage('restarting','Starting EyZEE Home. Please keep this screen open.')
+        self.stage('restarting','Starting EyZEE Core. Please keep this screen open.')
         try:self.api.call('/core/restart','POST',{},timeout=180)
         except RetryableError:pass  # Core may close its connection once restart is accepted.
         self.wait(lambda:self.has_service('setup_zigbee_coordinator'),240)
@@ -436,23 +438,23 @@ class Installer:
             self.verify_ready()
         else:self.discover()
     def use_home_hostname(self):
-        """Explicit owner choice after readiness; never part of automatic preparation."""
+        """Apply the owner-selected Core hostname only after readiness."""
         try:
             current = self.api.call('/host/info').get('hostname')
             if not current:
                 raise SetupError('The current home address could not be checked.')
             self.state.setdefault('previous_hostname', current)
             self.save()
-            if current != 'eyzee-home':
-                self.api.call('/host/options', 'POST', {'hostname': 'eyzee-home'})
+            if current != 'eyzee-core':
+                self.api.call('/host/options', 'POST', {'hostname': 'eyzee-core'})
             # Read back instead of claiming that a successful POST proves the change.
-            if self.api.call('/host/info').get('hostname') != 'eyzee-home':
+            if self.api.call('/host/info').get('hostname') != 'eyzee-core':
                 raise SetupError('The new home address could not be confirmed yet.')
-            self.state['home_hostname'] = 'eyzee-home'
-            self.stage('ready', 'Your home is ready. The eyzee-home.local address is set; it may take a moment to become available.')
+            self.state['home_hostname'] = 'eyzee-core'
+            self.stage('ready', 'Your home is ready. The eyzee-core.local address is set; it may take a moment to become available.')
         except Exception:
             self.state.pop('home_hostname', None)
-            self.stage('ready', 'Your home is ready, but the new address could not be confirmed. Keep using your current address or try the address button again.')
+            self.stage('ready', 'Your home is ready, but the new address could not be confirmed. Keep using your current address and review the hostname in Home Assistant network settings.')
         finally:
             self.state['ready'] = True
             self.save()
@@ -515,6 +517,8 @@ class Installer:
         for slug in ['core_mosquitto','core_ssh',Z2M_SLUG,self.state['vscode_slug']]:
             if self.app_info(slug).get('state')!='started':raise SetupError('A supporting app has stopped. Please retry preparation.')
         for service_name in ['setup_zigbee_coordinator','build_room_views','refresh_device_inventory']:
-            if not self.has_service(service_name):raise SetupError('EyZEE Home did not finish starting. Retry preparation.')
+            if not self.has_service(service_name):raise SetupError('EyZEE Core did not finish starting. Retry preparation.')
         with self.lock:self.state.update(ready=True,checks={'home':True,'connection':True,'gateway':True,'device_support':True,'support_apps':True});self.save()
-        self.stage('ready','Your home is ready. Open EyZEE Home to add your rooms and devices.')
+        self.stage('ready','Your home is ready. Open EyZEE Core to add your rooms and devices.')
+        if self.state.get('use_core_address') and self.state.get('home_hostname') != 'eyzee-core':
+            self.use_home_hostname()

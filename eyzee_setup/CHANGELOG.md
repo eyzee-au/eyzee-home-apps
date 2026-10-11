@@ -1,3 +1,13 @@
+# 0.1.0-beta.6
+
+- Identify the downloadable installer as EyZEE Core.
+- Offer eyzee-core.local before preparation; keep the existing hostname unless selected.
+- Apply the chosen hostname after setup checks pass and verify it before using the new link.
+- Simplify completion to Open EyZEE Core and retain current-address recovery under help.
+- Preserve the tested Prepare My Home button hiding and retry behaviour.
+
+Payload unchanged from beta.5, including its room-addition fix. No files removed or renamed. Fresh HAOS acceptance remains required.
+
 # 0.1.0-beta.5
 
 - Offer an explicit Use eyzee-home.local action after setup checks pass.
