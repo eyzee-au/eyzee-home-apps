@@ -1,3 +1,15 @@
+# 0.1.0-beta.9
+
+- Replace the blinking status dot with a gold progress bar driven by actual setup stages.
+- Show the current step, wait at gateway selection, and show completion only after readiness checks pass.
+- Recover progress from saved status after page reload; retain the last stage on failure or interrupted setup.
+- Hold the bar during connection loss and resume it on the next successful status response.
+- Keep existing installation protection, preparation/retry controls and gateway setup unchanged.
+
+The bar measures completed stages, not elapsed time or download bytes. Payload and
+payload hashes are unchanged. All 37 existing Python tests and 15 progress checks
+pass. Real HAOS installation acceptance remains required.
+
 # 0.1.0-beta.8
 
 - Preserve Home Assistant configuration comments, quoted values, include/secret tags,

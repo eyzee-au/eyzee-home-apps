@@ -8,7 +8,7 @@ import yaml
 from ruamel.yaml import YAML
 from ruamel.yaml.comments import TaggedScalar
 
-VERSION = '0.1.0-beta.8'
+VERSION = '0.1.0-beta.9'
 Z2M_SLUG = '45df7312_zigbee2mqtt'  # Existing proven MG24 service expects this official repository.
 REPOSITORIES = ['https://github.com/zigbee2mqtt/hassio-zigbee2mqtt', 'https://github.com/hassio-addons/repository']
 CARD_URL = 'https://raw.githubusercontent.com/thomasloven/lovelace-card-mod/v4.2.0/card-mod.js'
