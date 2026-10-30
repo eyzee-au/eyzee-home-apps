@@ -308,6 +308,57 @@ def _future_nav_button(name: str, icon: str, path: str) -> dict:
         },
     }
 
+def _room_navigation(back_path: str) -> list[dict]:
+    """Bottom navigation and footer for room control pages."""
+    return [
+        {
+            "type": "grid",
+            "columns": 3,
+            "square": False,
+            "cards": [
+                _future_nav_button(
+                    "Back",
+                    "mdi:arrow-left",
+                    back_path,
+                ),
+                _future_nav_button(
+                    "Home",
+                    "mdi:home-heart",
+                    "/eyzee-main-menu/home",
+                ),
+                {
+                    "type": "button",
+                    "name": "Help",
+                    "icon": "mdi:help-circle-outline",
+                    "tap_action": {
+                        "action": "url",
+                        "url_path": (
+                            "https://eyzee.au/"
+                            "eyzee-home/support/"
+                        ),
+                    },
+                },
+            ],
+        },
+        {
+            "type": "markdown",
+            "content": (
+                '<div style="color:var(--secondary-text-color); '
+                'font-size:14px; font-weight:600; '
+                'padding:2px 8px;">'
+                "EyZEE® • Making Smart Easy™</div>"
+            ),
+            "card_mod": {
+                "style": (
+                    "ha-card { background:transparent; "
+                    "border:none; box-shadow:none; }"
+                ),
+            },
+        },
+    ]
+
+
+
 
 def _apply_view_style(view: dict) -> None:
     """Use the shared theme and compact navigation without changing destinations."""
@@ -963,6 +1014,7 @@ def _build_room_dashboard() -> dict:
         )
 
         cards.extend(more_cards)
+        cards.extend(_room_navigation("/eyzee-rooms"))
 
         views.append(
             {
@@ -1112,22 +1164,8 @@ def _build_room_dashboard() -> dict:
                 if card:
                     more_control_cards.append(card)
 
-        more_control_cards.append(
-            {
-                "type": "button",
-                "name": f"Back to {room['label']}",
-                "icon": "mdi:arrow-left",
-                "grid_options": {
-                    "columns": 12,
-                    "rows": 1,
-                },
-                "tap_action": {
-                    "action": "navigate",
-                    "navigation_path": (
-                        f"/eyzee-rooms/{room_path}"
-                    ),
-                },
-            }
+        more_control_cards.extend(
+            _room_navigation(f"/eyzee-rooms/{room_path}")
         )
 
         views.append(
