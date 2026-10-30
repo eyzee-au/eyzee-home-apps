@@ -5527,8 +5527,9 @@ views:
             "none",
             "unknown",
             "unavailable",
+            "select a room",
         ):
-            raise HomeAssistantError("Room is required")
+            raise HomeAssistantError("Please select a room")
 
         if not friendly_name:
             raise HomeAssistantError("Friendly name is required")
@@ -6147,6 +6148,76 @@ views:
                 "device_id": device_id,
             },
         )
+
+        # Clear shared setup fields only after a successful save.
+        # The saved name and room remain in the local variables
+        # used by the success message.
+        setup_text_fields = [
+            "input_text.eyzee_wizard_device_friendly_name",
+            "input_text.eyzee_custom_room_name",
+            *[
+                f"input_text.eyzee_wizard_control_{index}_name"
+                for index in range(1, 7)
+            ],
+        ]
+
+        for entity_id in setup_text_fields:
+            if hass.states.get(entity_id) is None:
+                continue
+
+            try:
+                await hass.services.async_call(
+                    "input_text",
+                    "set_value",
+                    {
+                        "entity_id": entity_id,
+                        "value": "",
+                    },
+                    blocking=True,
+                )
+            except Exception as err:
+                _LOGGER.warning(
+                    "EyZEE: Device saved, but could not clear %s: %s",
+                    entity_id,
+                    err,
+                )
+
+        room_entity = "input_select.eyzee_wizard_room"
+        room_state = hass.states.get(room_entity)
+
+        if room_state is not None:
+            placeholder = "Select a room"
+            room_options = list(
+                room_state.attributes.get("options", [])
+            )
+
+            try:
+                if placeholder not in room_options:
+                    await hass.services.async_call(
+                        "input_select",
+                        "set_options",
+                        {
+                            "entity_id": room_entity,
+                            "options": [placeholder, *room_options],
+                        },
+                        blocking=True,
+                    )
+
+                await hass.services.async_call(
+                    "input_select",
+                    "select_option",
+                    {
+                        "entity_id": room_entity,
+                        "option": placeholder,
+                    },
+                    blocking=True,
+                )
+            except Exception as err:
+                _LOGGER.warning(
+                    "EyZEE: Device saved, but could not reset room: %s",
+                    err,
+                )
+
 
         # Hide the success message after 10 seconds.
         async def _clear_setup_status():
