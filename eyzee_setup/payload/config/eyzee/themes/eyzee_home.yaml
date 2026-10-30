@@ -38,3 +38,16 @@ EyZEE Home:
   switch-checked-color: "#D6AD60"
   switch-checked-button-color: "#D6AD60"
   switch-checked-track-color: "#D6AD60"
+
+  # Keep input fields readable in light and dark phone modes.
+  input-fill-color: "#F2F2F2"
+  input-ink-color: "#111111"
+  input-label-ink-color: "#555555"
+  input-dropdown-icon-color: "#555555"
+
+  input-disabled-fill-color: "#EEEEEE"
+  input-disabled-ink-color: "#666666"
+
+  # Open dropdown menu colours.
+  mdc-theme-surface: "#FFFFFF"
+  mdc-theme-on-surface: "#111111"
