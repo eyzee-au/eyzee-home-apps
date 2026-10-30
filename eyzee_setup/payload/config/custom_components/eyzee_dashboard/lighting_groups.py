@@ -598,6 +598,17 @@ def async_register_lighting_groups_services(hass: HomeAssistant):
             type("obj", (), {"data": {}})
         )
 
+        # Clear the light selection ready for the next light.
+        await hass.services.async_call(
+            "input_select",
+            "select_option",
+            {
+                "entity_id": DEFAULT_MEMBER_DROPDOWN,
+                "option": "none",
+            },
+            blocking=True,
+        )
+
         # Rebuild room views so the applied lighting group
         # appears in its assigned room automatically.
         try:
