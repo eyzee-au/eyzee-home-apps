@@ -1,3 +1,21 @@
+# 0.1.0-beta.8
+
+- Preserve Home Assistant configuration comments, quoted values, include/secret tags,
+  and existing settings while merging the required EyZEE entries.
+- Verify the merged settings before writing; retain the original recovery copy and
+  restore it if Home Assistant configuration validation fails.
+- Stop if configuration.yaml changes while preparation is running.
+- Check converter and ZHA quirk filename conflicts before backup/app mutations;
+  retain unrelated customer files and reject changes to unowned files.
+- Preserve an explicitly disabled ZHA quirks setting by stopping for review.
+- Add ruamel.yaml 0.18.6 to the installer image for comment-preserving YAML editing.
+
+Payload unchanged from beta.7; payload hashes remain valid. 37 automated tests pass.
+Real HAOS acceptance is still required. Existing unsupported include layouts,
+custom ZHA paths and custom Zigbee data paths still stop for review; this release
+does not claim support for every existing-home configuration. Existing completed
+EyZEE installations retain the beta.7 preparation guard.
+
 # 0.1.0-beta.7
 
 - Detect an existing EyZEE installation and show Open EyZEE Core instead of preparation.

@@ -5,8 +5,10 @@ from pathlib import Path
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError, URLError
 import yaml
+from ruamel.yaml import YAML
+from ruamel.yaml.comments import TaggedScalar
 
-VERSION = '0.1.0-beta.7'
+VERSION = '0.1.0-beta.8'
 Z2M_SLUG = '45df7312_zigbee2mqtt'  # Existing proven MG24 service expects this official repository.
 REPOSITORIES = ['https://github.com/zigbee2mqtt/hassio-zigbee2mqtt', 'https://github.com/hassio-addons/repository']
 CARD_URL = 'https://raw.githubusercontent.com/thomasloven/lovelace-card-mod/v4.2.0/card-mod.js'
@@ -37,6 +39,38 @@ Dumper.add_representer(Tagged, lambda d,v:d.represent_scalar(v.tag,v.value))
 def load(text): return yaml.load(text, Loader=Loader) or {}
 def dump(data): return yaml.dump(data,Dumper=Dumper,sort_keys=False,allow_unicode=True)
 def inc(path,tag='!include'): return Tagged(tag,path)
+def merge_document(text, planned):
+    """Apply planned additions while retaining comments, quotes and HA tags."""
+    rt = YAML(typ='rt')
+    rt.preserve_quotes = True
+    # HA uses YAML 1.1. In particular, unquoted on/off are booleans.
+    rt.version = (1, 1)
+    current = rt.load(text)
+    desired = rt.load(dump(planned))
+    def merge(old, new):
+        if (isinstance(old, TaggedScalar) and isinstance(new, TaggedScalar)
+                and old.tag == new.tag and old.value == new.value):
+            return old
+        if isinstance(old, dict) and isinstance(new, dict):
+            for key, value in new.items():
+                old[key] = merge(old[key], value) if key in old else value
+            return old
+        if isinstance(old, list) and isinstance(new, list):
+            if len(old) > len(new):
+                raise SetupError('Existing configuration lists need an installer review.')
+            old.extend(new[len(old):])
+            return old
+        if old == new:
+            return old
+        return new
+    result = merge(current, desired)
+    output = io.StringIO()
+    rt.dump(result, output)
+    rendered = output.getvalue()
+    # Compare through HA-compatible parsing, including tagged include values.
+    if dump(load(rendered)) != dump(planned):
+        raise SetupError('The configuration merge could not be verified. Your settings have been preserved.')
+    return rendered
 def sha(data): return hashlib.sha256(data).hexdigest()
 def atomic(path:Path, data:bytes, mode=0o600):
     path.parent.mkdir(parents=True,exist_ok=True)
@@ -290,11 +324,13 @@ class Installer:
         zha=c.get('zha')
         if zha is None:c['zha']={'enable_quirks':True,'custom_quirks_path':'/config/custom_zha_quirks'}
         elif isinstance(zha,dict):
+            if zha.get('enable_quirks') is False:
+                raise SetupError('Custom device support is disabled in your home. Your setting has been preserved for installer review.')
             custom=zha.get('custom_quirks_path','/config/custom_zha_quirks')
             if custom!='/config/custom_zha_quirks':raise SetupError('Your existing device-support directory needs an installer review.')
             zha['enable_quirks']=True;zha['custom_quirks_path']=custom
         else:raise SetupError('Your device-support configuration needs an installer review.')
-        return text,dump(c)
+        return text,merge_document(text,c)
     def core_package(self):
         d={domain:inc('/config/eyzee/helpers/'+filename+'.yaml') for domain,filename in [('input_number','input_numbers'),('input_boolean','input_booleans'),('input_select','input_selects'),('input_text','input_texts'),('input_datetime','input_datetimes')]}
         d.update(eyzee_dashboard={},script=inc('/config/eyzee/scripts','!include_dir_merge_named'));return d
@@ -347,6 +383,16 @@ class Installer:
         self.api.call('/supervisor/info');self.api.call('/os/info');self.api.ha('/config');self.verify_payload()
         if shutil.disk_usage(self.config).free<3*1024**3:raise SetupError('Your system needs at least 3 GB of free storage before preparation.')
         original,planned=self.config_plan()  # Refuse incompatible layouts before app or file writes.
+        # Check shared device-support filenames before any backup/app mutation.
+        support = [(src, str(src.relative_to(self.payload/'config')))
+                   for src in (self.payload/'config/custom_zha_quirks').rglob('*') if src.is_file()]
+        support += [(src, 'zigbee2mqtt/external_converters/'+src.name)
+                    for src in (self.payload/'device-support/zigbee2mqtt/external_converters').glob('*') if src.is_file()]
+        for src, relative in support:
+            dest = inside(self.config, relative)
+            if (dest.exists() and dest.read_bytes() != src.read_bytes()
+                    and self.state['files'].get(relative) != sha(dest.read_bytes())):
+                raise SetupError('An existing device-support file conflicts with EyZEE: '+relative+'. Your files have been preserved.')
         # Unknown prior EyZEE code is preserved. This is an installer, not an unreviewed upgrade.
         for src in (self.payload/'config/custom_components/eyzee_dashboard').glob('*'):
             dest=self.config/'custom_components/eyzee_dashboard'/src.name
@@ -442,8 +488,11 @@ class Installer:
         self.write_owned('eyzee/installation/core.yaml',dump(self.core_package()))
         for rel,content in getattr(self,'pending_packages',{}).items():self.write_owned(rel,content)
         # configuration.yaml has its own recovery copy; installation data never gets reset.
+        config_path=self.config/'configuration.yaml'
+        if config_path.exists() and config_path.read_text()!=original:
+            raise SetupError('Your home configuration changed during preparation. It has been preserved; retry preparation.')
         atomic(self.data/'configuration-before.yaml',original.encode())
-        config_path=self.config/'configuration.yaml';atomic(config_path,planned.encode())
+        atomic(config_path,planned.encode())
         self.stage('checking_configuration','Checking EyZEE Core before restarting.')
         try:self.api.call('/core/check','POST',{},timeout=180)
         except Exception:

@@ -152,6 +152,76 @@ class InstallerTests(unittest.TestCase):
     def test_duplicate_configuration_keys_are_rejected(self):
         (self.config/'configuration.yaml').write_text('http:\n  server_port: 8123\nhttp:\n  server_port: 9000\n')
         with self.assertRaises(m.SetupError):self.i.config_plan()
+    def test_merge_preserves_customer_comments_tags_quotes_and_settings(self):
+        original = '''# My home settings — keep this note
+default_config:
+http:
+  server_port: 8123 # custom port
+automation: !include automations.yaml
+script: !include scripts.yaml
+my_integration:
+  password: !secret customer_password
+  label: "Kitchen"
+  enabled: on
+frontend:
+  extra_module_url:
+    - /local/customer.js # existing module
+homeassistant:
+  packages:
+    customer: !include customer.yaml
+'''
+        (self.config/'configuration.yaml').write_text(original)
+        self.prepare()
+        result = (self.config/'configuration.yaml').read_text()
+        for detail in ['# My home settings — keep this note', '# custom port',
+                       '# existing module', '"Kitchen"', '!secret customer_password',
+                       '!include automations.yaml', '!include scripts.yaml']:
+            self.assertIn(detail, result)
+        parsed = m.load(result)
+        self.assertTrue(parsed['my_integration']['enabled'])
+        self.assertEqual('customer.yaml', parsed['homeassistant']['packages']['customer'].value)
+        self.assertEqual(['/local/customer.js', '/local/eyzee/card-mod.js'], parsed['frontend']['extra_module_url'])
+        self.assertEqual(original, (self.data/'configuration-before.yaml').read_text())
+        _, again = self.i.config_plan()
+        self.assertEqual(result, again)
+
+    def test_existing_converters_and_other_quirks_survive_installation(self):
+        files = {'zigbee2mqtt/external_converters/customer.js': b'// customer converter',
+                 'custom_zha_quirks/customer/quirk.py': b'# customer quirk'}
+        for name, content in files.items():m.atomic(self.config/name, content)
+        self.prepare()
+        for name, content in files.items():self.assertEqual(content, (self.config/name).read_bytes())
+
+    def test_device_support_conflicts_stop_before_backup_or_app_changes(self):
+        for prefix, source in [('zigbee2mqtt/external_converters/', 'device-support/zigbee2mqtt/external_converters'),
+                               ('custom_zha_quirks/', 'config/custom_zha_quirks')]:
+            src = next(p for p in (HERE/'payload'/source).rglob('*') if p.is_file())
+            dest = self.config/prefix/src.relative_to(HERE/'payload'/source)
+            m.atomic(dest, b'customer modified file')
+            original = (self.config/'configuration.yaml').read_bytes()
+            self.api.calls.clear()
+            with self.assertRaises(m.SetupError):self.prepare()
+            self.assertEqual(b'customer modified file', dest.read_bytes())
+            self.assertEqual(original, (self.config/'configuration.yaml').read_bytes())
+            self.assertFalse(any(method == 'POST' for _, method, _ in self.api.calls))
+            dest.unlink()
+
+    def test_explicitly_disabled_quirks_are_not_enabled(self):
+        (self.config/'configuration.yaml').write_text('zha:\n  enable_quirks: false\n')
+        with self.assertRaises(m.SetupError):self.i.config_plan()
+
+    def test_concurrent_configuration_edit_is_preserved(self):
+        changed = '# edited while installing\ndefault_config:\n'
+        original_verify = self.i.verify_payload
+        count = 0
+        def verify():
+            nonlocal count
+            original_verify()
+            count += 1
+            if count == 2:(self.config/'configuration.yaml').write_text(changed)
+        with patch.object(self.i, 'verify_payload', verify), self.assertRaises(m.SetupError):self.prepare()
+        self.assertEqual(changed, (self.config/'configuration.yaml').read_text())
+        self.assertFalse(any(c[0] == '/core/restart' for c in self.api.calls))
     def test_unknown_file_is_not_overwritten_and_edited_owned_file_is_preserved(self):
         p=self.config/'eyzee/test.yaml';m.atomic(p,b'existing')
         with self.assertRaises(m.SetupError):self.i.write_owned('eyzee/test.yaml',b'new',replace=True)
