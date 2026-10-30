@@ -48,17 +48,6 @@ views:
             columns: 2
             square: false
             cards:
-              - type: button
-                name: My Rooms
-                icon: mdi:floor-plan
-                show_state: false
-                tap_action:
-                  action: navigate
-                  navigation_path: /eyzee-rooms/rooms
-                card_mod:
-                  style: |
-                    ha-card { min-height:110px; border-radius:16px; }
-                    ha-state-icon { color:#D6AD60 !important; }
 
               - type: button
                 name: Manage My Home
@@ -67,6 +56,18 @@ views:
                 tap_action:
                   action: navigate
                   navigation_path: /eyzee-main-menu/manage
+                card_mod:
+                  style: |
+                    ha-card { min-height:110px; border-radius:16px; }
+                    ha-state-icon { color:#D6AD60 !important; }
+
+              - type: button
+                name: My Rooms
+                icon: mdi:floor-plan
+                show_state: false
+                tap_action:
+                  action: navigate
+                  navigation_path: /eyzee-rooms/rooms
                 card_mod:
                   style: |
                     ha-card { min-height:110px; border-radius:16px; }
