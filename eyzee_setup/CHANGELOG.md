@@ -1,3 +1,9 @@
+# 0.1.0-beta.10
+
+- Refresh payload checksums to match the current integration, theme and dashboard files.
+- Bump the Setup app version so Home Assistant can build the corrected package.
+- Retain file verification; payload contents are unchanged by this repair.
+
 # 0.1.0-beta.9
 
 - Replace the blinking status dot with a gold progress bar driven by actual setup stages.
