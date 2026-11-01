@@ -1414,6 +1414,16 @@ views:
         try:
             result = await hass.async_add_executor_job(_generate_dashboards_sync)
 
+            # The room index and controls are rendered by room_views.py.
+            # Rebuild them for every room change, including custom-room saves,
+            # removal, clearing and restore, before reporting success/reloading.
+            await hass.services.async_call(
+                DOMAIN,
+                "build_room_views",
+                {},
+                blocking=True,
+            )
+
             current_model = await hass.async_add_executor_job(
                 _read_yaml_file,
                 _path(ROOMS_YAML),
