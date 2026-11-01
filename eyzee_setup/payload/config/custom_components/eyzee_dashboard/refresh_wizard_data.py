@@ -64,17 +64,7 @@ async def handle_refresh_wizard_data(call):
         except Exception:
             pass
 
-    # Visible confirmation
-    await hass.services.async_call(
-        "persistent_notification",
-        "create",
-        {
-            "title": "EyZEE Wizard Refreshed",
-            "message": "Rooms + Z2M lists refreshed.",
-            "notification_id": "eyzee_wizard_refresh",
-        },
-        blocking=False,
-    )
+    _LOGGER.info("EyZEE Wizard Refreshed: Rooms + Z2M lists refreshed.")
 
 
 def async_register_refresh_wizard_data_service(hass: HomeAssistant):

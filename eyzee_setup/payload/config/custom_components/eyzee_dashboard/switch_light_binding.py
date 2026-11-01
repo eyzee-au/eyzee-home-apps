@@ -206,16 +206,7 @@ def async_register_switch_light_binding_services(hass: HomeAssistant) -> None:
             ]
             await hass.data[DOMAIN]["switch_light"]["_install_listeners"]()
 
-        await hass.services.async_call(
-            "persistent_notification",
-            "create",
-            {
-                "title": "EyZEE Switch → Light Linked",
-                "message": f"✅ Linked\n\nSWITCH: {sw}\nLIGHT: {lt}\n\nMode: ON/OFF follows switch",
-                "notification_id": "eyzee_switch_light_linked",
-            },
-            blocking=False,
-        )
+        _LOGGER.info("EyZEE Switch → Light Linked: %s → %s", sw, lt)
         return True
 
     async def handle_unbind_switch_to_light(call: ServiceCall):
@@ -262,15 +253,9 @@ def async_register_switch_light_binding_services(hass: HomeAssistant) -> None:
             ]
             await hass.data[DOMAIN]["switch_light"]["_install_listeners"]()
 
-        await hass.services.async_call(
-            "persistent_notification",
-            "create",
-            {
-                "title": "EyZEE Switch → Light Unlinked",
-                "message": f"✅ Removed {removed} binding(s).\n\nFilter used:\nSWITCH: {sw or '(any)'}\nLIGHT: {lt or '(any)'}",
-                "notification_id": "eyzee_switch_light_unlinked",
-            },
-            blocking=False,
+        _LOGGER.info(
+            "EyZEE Switch → Light Unlinked: removed %s bindings (switch=%s, light=%s)",
+            removed, sw or "(any)", lt or "(any)",
         )
         return True
 

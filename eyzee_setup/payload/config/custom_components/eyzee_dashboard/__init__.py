@@ -300,6 +300,26 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
         hass.states.async_set("sensor.eyzee_dashboard_status", "ok" if ok else "error", attrs)
 
     async def _notify(title: str, message: str, notification_id: str):
+        # Routine setup confirmations belong in the log, not the bell.
+        # Only these known success messages are quiet; errors and future
+        # warnings still use the normal notification path.
+        if notification_id in {
+            "eyzee_dashboards_generated",
+            "eyzee_house_built",
+            "eyzee_room_removed",
+            "eyzee_rooms_cleared",
+            "eyzee_rooms_restored",
+            "eyzee_multiway_linked",
+            "eyzee_multiway_unlinked",
+            "eyzee_discovery_results",
+            "eyzee_device_assigned",
+            "eyzee_device_setup_complete",
+            "eyzee_device_updated",
+            "eyzee_room_renamed",
+        }:
+            _LOGGER.info("%s: %s", title, message)
+            return
+
         await hass.services.async_call(
             "persistent_notification",
             "create",
