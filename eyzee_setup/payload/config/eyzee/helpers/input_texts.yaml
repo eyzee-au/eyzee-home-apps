@@ -80,6 +80,7 @@ eyzee_lighting_group_name:
 eyzee_custom_room_name:
   name: Custom Room Name
   icon: mdi:home-plus
+  initial: ""
 
 ############################################################
 # Smart Behavi helper

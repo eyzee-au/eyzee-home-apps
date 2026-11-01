@@ -84,6 +84,11 @@ async def async_add_custom_room(
     if not room_key:
         raise ValueError("Custom room name is not valid.")
 
+    # Home Assistant uses these values for missing/unavailable helper states.
+    # Do not persist them as rooms that other setup actions cannot select.
+    if room_key in {"unknown", "unavailable", "none"}:
+        raise ValueError("Please enter a custom room name before saving.")
+
     def _add_room() -> None:
         data = _read_rooms()
         rooms = data.setdefault("rooms", {})

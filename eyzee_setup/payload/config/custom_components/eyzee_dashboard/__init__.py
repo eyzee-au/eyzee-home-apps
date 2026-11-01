@@ -1732,11 +1732,9 @@ views:
 
         room_slug = selected.state.strip()
 
-        if not room_slug or room_slug.lower() in {
-            "none",
-            "unknown",
-            "unavailable",
-        }:
+        # Validate against the saved rooms below. A legacy room may actually
+        # have a slug such as "unknown" and must still be removable.
+        if not room_slug:
             raise ValueError("No room selected.")
 
         def _remove():

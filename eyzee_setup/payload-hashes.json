@@ -1,6 +1,6 @@
 {
-  "config/custom_components/eyzee_dashboard/__init__.py": "9ecebfb06171fc286c993081339db3e41a3f43dff4961379ab44d54dfd94cfd6",
-  "config/custom_components/eyzee_dashboard/add_custom_room.py": "59d2d9a85ccf4ee541e74e9e6cfe4b40558a4ef6e23fea5b0cdaf366531bf7d6",
+  "config/custom_components/eyzee_dashboard/__init__.py": "c2ffd6de6a6cf302330e492d82173308fa3d1add2b30af4ffe28b29939a24b7e",
+  "config/custom_components/eyzee_dashboard/add_custom_room.py": "2167d283944a0113906614a34d8761ca4f5dcd07e035d20083d3529cfba74f9a",
   "config/custom_components/eyzee_dashboard/const.py": "de76924f3d64edd30940bd6e1a16e88a70e951802daae7a282bc408f6079bf6f",
   "config/custom_components/eyzee_dashboard/device_profiles.py": "b519b0dfea8f3cfbc35b8baa4ecd4a5f078822234839bf2b07ffba397184b901",
   "config/custom_components/eyzee_dashboard/eyzee_settings.py": "ca2f8ec5cf193183967982c88dfbbe231650d57f155299bb30956470bba8679c",
@@ -44,7 +44,7 @@
   "config/eyzee/helpers/input_datetimes.yaml": "a36a9104d1b8d84da2e617c750edffdcec8e2b298c86d0f156381aa1f3dcbd74",
   "config/eyzee/helpers/input_numbers.yaml": "db52232101eff8e6605643593f6ba81da1174a3b2e224ea6ece470d47edff136",
   "config/eyzee/helpers/input_selects.yaml": "b1d9c015cd85e9bad284ffeb0178c8fdeaa84c768a33e7630a70988ec708404e",
-  "config/eyzee/helpers/input_texts.yaml": "944ec098dc6eecdfe39f1f11b17bc1d9585576a666ff758031dcb6bce1f650dd",
+  "config/eyzee/helpers/input_texts.yaml": "28d9a908948acf51325f7c6ae7da6fc68163a49cc0b471368eb455441884e7f7",
   "config/eyzee/scripts/eyzee_assign_device.yaml": "e6f9349ce862263c03f01883eda6db3c31a16fef17eed556b125f98e800a0be0",
   "config/eyzee/scripts/eyzee_build_house_from_helpers.yaml": "c74ae29eacfc26a695cda581618edf90046ed19080c5021e5fd7833a60cdbe76",
   "config/eyzee/scripts/eyzee_load_rename_device_data.yaml": "5685b0b1c72d8dc52832cd26ecc9514ed68162160a4f9b438f82fe2a6c5d2dec",
