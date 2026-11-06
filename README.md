@@ -1,4 +1,4 @@
-# EyZEE Setup — 0.1.0-beta.11
+# EyZEE Setup — 0.1.0-beta.12
 
 A candidate Home Assistant OS app repository for the EyZEE Home onboarding flow. This is a lab release: automated tests and incremental HAOS/MG24 tests have passed. A fresh installation of this consolidated version and the remaining recovery checks are required before customer distribution.
 
@@ -17,8 +17,8 @@ The customer does not edit YAML or call Home Assistant actions. Setup invokes th
 Beta.11 retries temporary administrator-verification failures and shows a friendly
 reconnection screen while Home Assistant returns. Setup actions remain blocked
 until the administrator session is verified again. The main **Open EyZEE Core**
-button keeps the currently signed-in address; a separate button offers the
-confirmed **eyzee-core.local** address, where a first sign-in may be required.
+button opens **eyzee-core.local** once the hostname change is confirmed. If you
+keep the current hostname, the button opens the dashboard on that address.
 If the original hostname no longer resolves, use the new address or the system IP,
 sign in, and reopen EyZEE Setup from Home Assistant.
 
@@ -40,7 +40,7 @@ Terminal & SSH and Studio Code Server are included because the current Sue insta
 
 1. Add `https://github.com/eyzee-au/eyzee-home-apps` through the Install EyZEE Home link.
 2. Search the Home Assistant app store for **EyZEE Setup**.
-3. Confirm the offered version is **0.1.0-beta.11**, then install and start it.
+3. Confirm the offered version is **0.1.0-beta.12**, then install and start it.
 4. Open its screen, press **Prepare My Home**, and select the intended Zigbee gateway when prompted.
 5. Follow `ACCEPTANCE.md`.
 

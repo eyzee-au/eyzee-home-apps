@@ -1,4 +1,4 @@
-# Fresh HAOS acceptance — 0.1.0-beta.11 pending
+# Fresh HAOS acceptance — 0.1.0-beta.12 pending
 
 Record HAOS, Supervisor, Core and installed app versions with the setup report. Start with a fresh backed-up `.201` and a default MG24 on Ethernet/PoE. Do not use `.200` for this run.
 
@@ -39,12 +39,12 @@ Do not distribute to ordinary customers until every applicable item passes. Fina
 - [ ] Back / Home / Help navigation, theme and red delete styling work across screens.
 - [ ] Aura wording and saved colour work across room controls and Smart Behaviours.
 
-## Beta.11 restart and hostname acceptance
+## Beta.12 restart and hostname acceptance
 
-- [ ] On the backed-up test system, install beta.11 and test on iPhone/Safari with the eyzee-core.local checkbox selected. Confirm the restart/reconnect message replaces the raw JSON page, and gateway selection and readiness complete.
-- [ ] Open EyZEE Core using the main completion button; it keeps the currently signed-in browser origin.
-- [ ] Open the separately offered eyzee-core.local link. If asked, sign in, then confirm the room dashboard loads. Confirm the new address resolves on the test network.
-- [ ] Repeat with the checkbox unticked; hostname is retained and the new-address completion button stays hidden.
+- [ ] On the backed-up test system, install beta.12 and test on iPhone/Safari with the eyzee-core.local checkbox selected. Confirm the restart/reconnect message replaces the raw JSON page, and gateway selection and readiness complete.
+- [ ] Open EyZEE Core using the main completion button; it opens the confirmed eyzee-core.local address and matches the text below it.
+- [ ] If asked, sign in, then confirm the room dashboard loads. Confirm the new address resolves on the test network.
+- [ ] Repeat with the checkbox unticked; confirm the completion button and address text both use the original hostname.
 - [ ] While Core restarts, reload the Setup screen. It either stays on the progress screen or shows the recovery screen and retries. If the Home Assistant ingress session has expired, reopening Home Assistant as an administrator and opening Setup restores access.
 - [ ] A non-admin, a missing user header, a direct app-port request, and an invalid CSRF token still cannot read setup state or start actions.
 - [ ] Report download contains no CSRF token, passwords, Supervisor token or network keys.

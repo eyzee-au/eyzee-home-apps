@@ -44,10 +44,13 @@ function page(html,fetcher) {
     console.log('PASS fresh setup retains checked hostname choice');
     current={...state(),phase:'ready',installed:true,ready:true,home_hostname:'eyzee-core'};
     await p.w.refresh();
-    assert.equal(p.q('#open-core').getAttribute('href'),'/eyzee-main-menu/home');
-    assert.equal(p.q('#open-new-address').href,'http://eyzee-core.local:8123/eyzee-main-menu/home');
-    assert.equal(p.q('#new-address-choice').hidden,false);
-    console.log('PASS completion keeps current origin; separate new-address link preserves port');
+    assert.equal(p.q('#open-core').href,'http://eyzee-core.local:8123/eyzee-main-menu/home');
+    assert.equal(p.q('#completion-address').textContent,'Opens '+p.q('#open-core').href);
+    current={...current,home_hostname:null,use_core_address:false};
+    await p.w.refresh();
+    assert.equal(p.q('#open-core').href,'http://homeassistant.local:8123/eyzee-main-menu/home');
+    assert.equal(p.q('#completion-address').textContent,'Opens '+p.q('#open-core').href);
+    console.log('PASS completion button and address agree for both hostname choices');
 
     current=state();await p.w.refresh();mode='error';await p.w.refresh();
     assert.equal(p.q('#reconnecting').hidden,false);

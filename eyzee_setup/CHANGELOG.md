@@ -1,3 +1,7 @@
+# 0.1.0-beta.12
+
+- Open EyZEE Core on the confirmed hostname and show the button destination below it.
+
 # 0.1.0-beta.11
 
 - Treat temporary Home Assistant administrator-lookup failures as retryable, without caching an access denial.
