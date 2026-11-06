@@ -1,4 +1,4 @@
-# EyZEE Setup — 0.1.0-beta.7
+# EyZEE Setup — 0.1.0-beta.11
 
 A candidate Home Assistant OS app repository for the EyZEE Home onboarding flow. This is a lab release: automated tests and incremental HAOS/MG24 tests have passed. A fresh installation of this consolidated version and the remaining recovery checks are required before customer distribution.
 
@@ -11,6 +11,19 @@ A candidate Home Assistant OS app repository for the EyZEE Home onboarding flow.
 5. Open **EyZEE Home** when all connection checks pass.
 
 The customer does not edit YAML or call Home Assistant actions. Setup invokes the existing EyZEE MG24 services; the bundled `zigbee_coordinator.py` is unchanged from the supplied integration.
+
+## Reconnection after restart or address change
+
+Beta.11 retries temporary administrator-verification failures and shows a friendly
+reconnection screen while Home Assistant returns. Setup actions remain blocked
+until the administrator session is verified again. The main **Open EyZEE Core**
+button keeps the currently signed-in address; a separate button offers the
+confirmed **eyzee-core.local** address, where a first sign-in may be required.
+If the original hostname no longer resolves, use the new address or the system IP,
+sign in, and reopen EyZEE Setup from Home Assistant.
+
+The checkbox remains selected by default for a fresh setup and preserves a saved
+opt-out. Updating the Setup app does not reinstall or reset an existing EyZEE home.
 
 ## Included setup
 
@@ -27,7 +40,7 @@ Terminal & SSH and Studio Code Server are included because the current Sue insta
 
 1. Add `https://github.com/eyzee-au/eyzee-home-apps` through the Install EyZEE Home link.
 2. Search the Home Assistant app store for **EyZEE Setup**.
-3. Confirm the offered version is **0.1.0-beta.7**, then install and start it.
+3. Confirm the offered version is **0.1.0-beta.11**, then install and start it.
 4. Open its screen, press **Prepare My Home**, and select the intended Zigbee gateway when prompted.
 5. Follow `ACCEPTANCE.md`.
 

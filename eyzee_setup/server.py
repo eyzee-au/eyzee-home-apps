@@ -3,7 +3,7 @@ import hmac, json, os, secrets, threading, time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlsplit
-from installer import Installer, SetupError
+from installer import Installer, SetupError, RetryableError
 
 APP = Installer(config=Path(os.environ.get('EYZEE_CONFIG','/config')),data=Path(os.environ.get('EYZEE_DATA','/data')),payload=Path(__file__).parent/'payload')
 CSRF=secrets.token_urlsafe(32)
@@ -13,23 +13,44 @@ ADMIN_CACHE={}
 class Handler(BaseHTTPRequestHandler):
     def log_message(self,*args):pass
     def allowed(self):
+        self.auth_retryable=False
         if os.environ.get('EYZEE_LOCAL_PREVIEW')=='1' and self.client_address[0]=='127.0.0.1':return True
         if self.client_address[0]!=INGRESS_IP:return False
         user=self.headers.get('X-Remote-User-Id','')
         cached=ADMIN_CACHE.get(user)
-        if cached and time.monotonic()-cached[1]<60:return cached[0]
-        allowed=APP.api.user_is_admin(user);ADMIN_CACHE[user]=(allowed,time.monotonic());return allowed
+        if not user:return False
+        if cached and cached[0] is True and time.monotonic()-cached[1]<60:return True
+        try:
+            allowed=APP.api.user_is_admin(user)
+        except RetryableError:
+            self.auth_retryable=True
+            return False
+        # Do not cache denials: identities can be temporarily unavailable during
+        # startup. Only a confirmed administrator may access the setup APIs.
+        if allowed:ADMIN_CACHE[user]=(True,time.monotonic())
+        else:ADMIN_CACHE.pop(user,None)
+        return allowed
+
+    def deny_access(self):
+        status=503 if self.auth_retryable else 403
+        if self.command=='GET' and urlsplit(self.path).path=='/':
+            return self.send(status,(Path(__file__).parent/'reconnect.html').read_text(),'text/html')
+        message=('Home Assistant is reconnecting. Please wait while we check your session again.'
+                 if self.auth_retryable else 'Reopen EyZEE Setup through Home Assistant using an administrator account.')
+        return self.send(status,{'error':message})
     def send(self,status,data,kind='application/json'):
         body=data.encode() if isinstance(data,str) else json.dumps(data).encode()
         self.send_response(status);self.send_header('Content-Type',kind+'; charset=utf-8');self.send_header('Content-Length',str(len(body)));self.send_header('Cache-Control','no-store');self.send_header('X-Content-Type-Options','nosniff');self.end_headers();self.wfile.write(body)
     def do_GET(self):
-        if not self.allowed():return self.send(403,{'error':'Open EyZEE Setup through Home Assistant.'})
+        if not self.allowed():return self.deny_access()
         path=urlsplit(self.path).path
         if path=='/':return self.send(200,(Path(__file__).parent/'index.html').read_text().replace('__CSRF__',CSRF),'text/html')
-        if path in ['/api/status','/api/report']:return self.send(200,APP.status())
+        if path=='/api/status':return self.send(200,{**APP.status(),'csrf_token':CSRF})
+        if path=='/api/report':return self.send(200,APP.status())
         self.send(404,{'error':'Page not found.'})
     def do_POST(self):
-        if not self.allowed() or not hmac.compare_digest(self.headers.get('X-EyZEE-Token',''),CSRF):return self.send(403,{'error':'Reopen EyZEE Setup and try again.'})
+        if not self.allowed():return self.deny_access()
+        if not hmac.compare_digest(self.headers.get('X-EyZEE-Token',''),CSRF):return self.send(403,{'error':'Reopen EyZEE Setup and try again.'})
         if self.headers.get('Content-Type','').split(';')[0]!='application/json':return self.send(415,{'error':'Unexpected request.'})
         try:
             length=int(self.headers.get('Content-Length','0'))

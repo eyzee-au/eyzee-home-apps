@@ -324,6 +324,27 @@ homeassistant:
             for user,expected in [('owner',True),('admin',True),('normal',False),('system',False),('absent',False)]:self.assertEqual(expected,api.user_is_admin(user))
 
 class ConnectionAPITests(unittest.TestCase):
+    def test_admin_lookup_transport_failure_is_retryable(self):
+        import sys,types
+        def unavailable(*args,**kwargs):raise OSError('Core is restarting')
+        with patch.dict(sys.modules,{'websocket':types.SimpleNamespace(create_connection=unavailable)}):
+            with self.assertRaises(m.RetryableError) as error:
+                m.API(token='private-token').user_is_admin('owner')
+        self.assertNotIn('private-token',str(error.exception))
+
+    def test_admin_lookup_closes_websocket_when_core_rejects_request(self):
+        import sys,types
+        class WS:
+            def __init__(self):
+                self.responses=iter([{'type':'auth_required'},{'type':'auth_ok'},{'success':False}]);self.closed=False
+            def recv(self):return json.dumps(next(self.responses))
+            def send(self,data):pass
+            def close(self):self.closed=True
+        ws=WS()
+        with patch.dict(sys.modules,{'websocket':types.SimpleNamespace(create_connection=lambda *a,**k:ws)}):
+            with self.assertRaises(m.RetryableError):m.API(token='private-token').user_is_admin('owner')
+        self.assertTrue(ws.closed)
+
     def test_websocket_authenticates_reads_matching_result_and_closes(self):
         import sys,types
         class WS:

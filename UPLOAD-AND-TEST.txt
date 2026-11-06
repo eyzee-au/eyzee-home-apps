@@ -1,0 +1,25 @@
+EyZEE Setup beta.11 — restart and hostname recovery fix
+
+UPLOAD TO GITHUB
+1. Extract this ZIP on your computer.
+2. Open https://github.com/eyzee-au/eyzee-home-apps at the repository root on main.
+3. Add file > Upload files.
+4. Drag in the extracted eyzee_setup folder, plus README.md and ACCEPTANCE.md. Do not upload this instruction file or the ZIP itself.
+5. There should be 12 files, including the NEW eyzee_setup/reconnect.html. Preserve the folder paths; do not upload inside an already-open eyzee_setup directory.
+6. Commit message: Release beta.11: recover setup after restart and hostname change
+
+UPDATE THE SETUP APP
+Refresh/reload the Home Assistant app store. Update EyZEE Setup to 0.1.0-beta.11 and reopen its screen through Home Assistant. Confirm that exact version is installed before testing. Updating the Setup app does not reinstall EyZEE Core or alter a configured home's rooms or devices.
+
+LIVE TEST
+Use the fresh backed-up test system as before. On the phone, repeat the installation with Use eyzee-core.local selected. During Core restart the existing screen should wait or show the friendly reconnection page; it retries automatically. Complete gateway selection if requested.
+The main Open EyZEE Core button uses the currently signed-in address. A second button offers eyzee-core.local after its hostname change is confirmed. Sign in there once if Home Assistant asks.
+If the original hostname no longer resolves or the ingress session expires, open the new address (or Home Assistant IP), sign in as an administrator and reopen EyZEE Setup. The installer cannot bypass that sign-in.
+Repeat with the checkbox unticked to confirm the current hostname is retained.
+
+WHAT CHANGED
+Temporary administrator-verification outages are returned as retryable 503 responses and are never cached as access denials. The start-page error now shows a public, static recovery screen with no setup data or request token. Setup APIs still require trusted ingress and an administrator; mutation actions also require the process CSRF token. Status polling does not overlap, actions pause during outages, and controls recover when verified status returns. A new authorized status response refreshes the process token after the Setup app restarts; reports exclude that token. No setup action is automatically replayed.
+
+VALIDATION AND LIMITS
+46 Python checks and 9 JavaScript/DOM scenarios passed. Live HAOS/iPhone/Safari acceptance remains required; a rendered browser test could not run in this environment. All 90 existing payload hashes were verified. The latest payload room and notification fixes are retained unchanged. App version, installer version and Docker label agree at beta.11.
+Baseline: eyzee-au/eyzee-home-apps main commit 1d085b1, inspected before the repair. GitHub and the live Home Assistant system have not been modified.

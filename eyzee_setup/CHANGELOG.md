@@ -1,3 +1,14 @@
+# 0.1.0-beta.11
+
+- Treat temporary Home Assistant administrator-lookup failures as retryable, without caching an access denial.
+- Replace the raw start-page authentication error with a branded reconnection screen that retries access automatically and explains how to reopen Home Assistant after a hostname change.
+- Keep the main Open EyZEE Core button on the current signed-in address. Offer eyzee-core.local separately after its hostname change is confirmed, retaining the browser protocol and port.
+- Pause setup actions while disconnected, recover controls on reconnect, prevent overlapping status requests, and refresh the process request token only from an authenticated status response.
+- Preserve ingress source checks, administrator checks, CSRF checks, readiness validation, and the owner's hostname choice. No setup action is replayed automatically after a failed request.
+- Retain the latest bundled room and notification fixes. Payload contents and checksums are unchanged from the verified baseline.
+
+Validation: 46 Python checks and 9 JavaScript/DOM recovery scenarios passed. Live HAOS and iPhone/Safari installation acceptance remains required. Desktop Chromium launch was unavailable in the execution environment; no rendered mobile-browser verification is claimed.
+
 # 0.1.0-beta.10
 
 - Refresh payload checksums to match the current integration, theme and dashboard files.

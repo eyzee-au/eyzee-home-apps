@@ -8,7 +8,7 @@ import yaml
 from ruamel.yaml import YAML
 from ruamel.yaml.comments import TaggedScalar
 
-VERSION = '0.1.0-beta.10'
+VERSION = '0.1.0-beta.11'
 Z2M_SLUG = '45df7312_zigbee2mqtt'  # Existing proven MG24 service expects this official repository.
 REPOSITORIES = ['https://github.com/zigbee2mqtt/hassio-zigbee2mqtt', 'https://github.com/hassio-addons/repository']
 CARD_URL = 'https://raw.githubusercontent.com/thomasloven/lovelace-card-mod/v4.2.0/card-mod.js'
@@ -132,16 +132,19 @@ class API:
         ws=None
         try:
             ws=websocket.create_connection(self.base.replace('http://','ws://').replace('https://','wss://')+'/core/websocket',timeout=8)
-            if json.loads(ws.recv()).get('type')!='auth_required':return False
+            if json.loads(ws.recv()).get('type')!='auth_required':raise ValueError('handshake')
             ws.send(json.dumps({'type':'auth','access_token':self.token}))
-            if json.loads(ws.recv()).get('type')!='auth_ok':return False
+            if json.loads(ws.recv()).get('type')!='auth_ok':raise ValueError('authentication')
             ws.send(json.dumps({'id':1,'type':'config/auth/list'}))
             result=json.loads(ws.recv())
-            if not result.get('success'):return False
+            if not result.get('success'):raise ValueError('identity check unavailable')
             for user in result.get('result',[]):
                 if user.get('id')==user_id:return bool(user.get('is_active') and not user.get('system_generated') and (user.get('is_owner') or 'system-admin' in user.get('group_ids',[])))
             return False
-        except Exception:return False
+        except Exception as err:
+            # A restarting Core cannot verify identities. Fail closed for this
+            # request, but do not mistake an outage for a non-admin decision.
+            raise RetryableError('Home Assistant is reconnecting. Please wait while we check your session again.') from err
         finally:
             if ws is not None:ws.close()
 

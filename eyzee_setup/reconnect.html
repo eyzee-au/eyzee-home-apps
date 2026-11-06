@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EyZEE Core · Reconnecting</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#111;color:#fff;font:17px system-ui,sans-serif}main{max-width:680px;margin:auto;padding:36px 22px}header{color:#D6AD60;font-weight:750;letter-spacing:.06em}h1{font-size:30px;line-height:1.25;margin-top:32px}p{color:#b3b3b3;line-height:1.6}.card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:20px;padding:24px;margin:24px 0}a,button{display:block;width:100%;margin:14px 0;padding:16px;border:0;border-radius:12px;background:#D6AD60;color:#111;text-align:center;text-decoration:none;font:700 17px system-ui;cursor:pointer}.secondary{background:#2a2a2a;color:#fff}small{color:#b3b3b3;line-height:1.5}
+</style>
+<main><header>EyZEE® CORE</header><div class="card">
+<h1>EyZEE is getting things ready…</h1>
+<p role="status" aria-live="polite">Home Assistant may be restarting or reconnecting. This may take a little while. Please wait while we reconnect. If this screen doesn't update, refresh your browser.</p>
+<p>If you changed the home address, you may need to sign in again. Open Home Assistant using an administrator account, then reopen EyZEE Setup.</p>
+<button id="retry">Try Again</button>
+<a class="secondary" href="/" target="_top">Open Home Assistant</a>
+<a class="secondary" id="new-address" target="_top">Open eyzee-core.local</a>
+<small>Use eyzee-core.local only if you selected that address during setup. If the original address no longer opens, use the new address or your Home Assistant IP address.</small>
+</div></main>
+<script>
+const newAddress = new URL(window.location.origin);
+newAddress.hostname = 'eyzee-core.local';
+newAddress.pathname = '/';
+document.querySelector('#new-address').href = newAddress.href;
+document.querySelector('#retry').onclick = () => window.location.reload();
+async function reconnect() {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
+  try {
+    const response = await fetch('api/status', {cache: 'no-store', signal: controller.signal});
+    if (response.ok && (response.headers.get('Content-Type') || '').includes('application/json')) {
+      const status = await response.json();
+      if (typeof status.phase === 'string') { window.location.reload(); return; }
+    }
+  } catch (error) { /* Keep the recovery screen visible while Home Assistant returns. */ }
+  finally { clearTimeout(timeout); }
+  setTimeout(reconnect, 5000);
+}
+setTimeout(reconnect, 2500);
+</script>
+</html>
