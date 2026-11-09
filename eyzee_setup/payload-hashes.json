@@ -64,7 +64,7 @@
   "config/eyzee/state/switch_light_bindings.yaml": "e5e1a50eb1714514f2cea667ec9087ce884edc560747af139efb8ac1b4b9e010",
   "config/eyzee/state/system_meta.yaml": "198677d66d8d385610693de4e18551369cc93743d73bec0a8bc750573c069914",
   "config/eyzee/templates/fans.yaml": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
-  "config/eyzee/themes/eyzee_home.yaml": "5cceb41982e99f9290ba95c2029086576704d63961846bfe23c7b80e5022edc8",
+  "config/eyzee/themes/eyzee_home.yaml": "1d078927da8d4f57e7d605c7ec2ec091cc3b18ec667bd090b31057409c707ab3",
   "config/eyzee/ui/automate/automate.yaml": "0dd3f33fe3321f6eb8db5b09f3d36182e72f584ed3641c28b7839c97fb26555f",
   "config/eyzee/ui/eyzee-master.yaml": "4aac1635794cd9c225c5cec06341efa56dde2fd865ecd4a015eed30f52f7c8ba",
   "config/eyzee/ui/eyzee-onboarding.yaml": "865d6d2d82b2eafcbb3fb65e93c62a78543ea66d1e029f630e268f10d64f2d54",

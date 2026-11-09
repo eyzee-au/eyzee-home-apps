@@ -108,6 +108,47 @@ class InstallerTests(unittest.TestCase):
         return {'zigbee2mqtt/bridge/state':{'state':'online'},'zigbee2mqtt/bridge/info':{'config':{'serial':serial}},'zigbee2mqtt/bridge/converters':[{'name':p.name} for p in (HERE/'payload/device-support/zigbee2mqtt/external_converters').glob('*')]}
     def prepare(self):
         with patch.object(m,'mqtt_snapshot',self.snapshot),patch.object(m,'urlopen',lambda *a,**k:io.BytesIO(CARD_BYTES)),patch.object(m,'CARD_HASH',m.sha(CARD_BYTES)):self.i.prepare()
+
+    def test_fresh_theme_pointer_tracks_definition_and_allows_other_themes(self):
+        self.prepare()
+        configuration = m.load((self.config / 'configuration.yaml').read_text())
+        self.assertEqual('themes', configuration['frontend']['themes'].value)
+        pointer_file = self.config / 'themes/eyzee_home.yaml'
+        pointer = m.load(pointer_file.read_text())
+        self.assertEqual('!include', pointer.tag)
+        source = (pointer_file.parent / pointer.value).resolve()
+        self.assertEqual(self.config / 'eyzee/themes/eyzee_home.yaml', source)
+        source.write_text('EyZEE Home:\n  primary-color: "#123456"\n')
+        (self.config / 'themes/another.yaml').write_text('Another Theme:\n  primary-color: blue\n')
+        combined = {}
+        for path in (self.config / 'themes').glob('*.yaml'):
+            data = m.load(path.read_text())
+            if isinstance(data, m.Tagged):
+                data = m.load((path.parent / data.value).read_text())
+            combined.update(data)
+        self.assertEqual('#123456', combined['EyZEE Home']['primary-color'])
+        self.assertIn('Another Theme', combined)
+
+    def test_custom_theme_directory_gets_relative_pointer(self):
+        (self.config / 'configuration.yaml').write_text(
+            'default_config:\nfrontend:\n  themes: !include_dir_merge_named customer/themes\n'
+        )
+        self.prepare()
+        configuration = m.load((self.config / 'configuration.yaml').read_text())
+        self.assertEqual('customer/themes', configuration['frontend']['themes'].value)
+        path = self.config / 'customer/themes/eyzee_home.yaml'
+        pointer = m.load(path.read_text())
+        self.assertEqual(self.config / 'eyzee/themes/eyzee_home.yaml', (path.parent / pointer.value).resolve())
+
+    def test_direct_eyzee_theme_include_does_not_create_self_reference(self):
+        (self.config / 'configuration.yaml').write_text(
+            'default_config:\nfrontend:\n  themes: !include_dir_merge_named eyzee/themes\n'
+        )
+        self.prepare()
+        theme = m.load((self.config / 'eyzee/themes/eyzee_home.yaml').read_text())
+        self.assertIsInstance(theme, dict)
+        self.assertEqual('#F2F2F2', theme['EyZEE Home']['ha-color-form-background'])
+
     def test_fresh_flow_uses_existing_services_and_preserves_generated_defaults(self):
         self.prepare();self.assertEqual('choose_gateway',self.i.status()['phase'])
         self.assertTrue((self.config/'custom_components/eyzee_dashboard/zigbee_coordinator.py').exists())

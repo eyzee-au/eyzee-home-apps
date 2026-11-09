@@ -8,7 +8,7 @@ import yaml
 from ruamel.yaml import YAML
 from ruamel.yaml.comments import TaggedScalar
 
-VERSION = '0.1.0-beta.12'
+VERSION = '0.1.0-beta.13'
 Z2M_SLUG = '45df7312_zigbee2mqtt'  # Existing proven MG24 service expects this official repository.
 REPOSITORIES = ['https://github.com/zigbee2mqtt/hassio-zigbee2mqtt', 'https://github.com/hassio-addons/repository']
 CARD_URL = 'https://raw.githubusercontent.com/thomasloven/lovelace-card-mod/v4.2.0/card-mod.js'
@@ -302,10 +302,12 @@ class Installer:
                     self.pending_packages=getattr(self,'pending_packages',{})
                     self.pending_packages[str(target.relative_to(self.config))]=dump(self.core_package()) if key=='eyzee_setup_core' else '!include /config/eyzee/generated_smart_behaviours.yaml\n'
             else:raise SetupError('Your package configuration needs an installer review before adding EyZEE.')
-        # Copy themes into the existing theme directory rather than replace its include.
+        # Keep the active theme directory available for the owner's other themes.
         frontend=c.setdefault('frontend',{}) or {};c['frontend']=frontend
         themes=frontend.get('themes')
-        if themes is None:frontend['themes']=inc('eyzee/themes','!include_dir_merge_named')
+        if themes is None:
+            frontend['themes']=inc('themes','!include_dir_merge_named')
+            self.theme_target='themes/eyzee_home.yaml'
         elif isinstance(themes,dict):themes.setdefault('EyZEE Home',yaml.safe_load((self.payload/'config/eyzee/themes/eyzee_home.yaml').read_text())['EyZEE Home'])
         elif isinstance(themes,Tagged) and themes.tag=='!include_dir_merge_named':
             dest=inside(self.config,themes.value)/'eyzee_home.yaml'
@@ -482,7 +484,13 @@ class Installer:
             preserve=rel.startswith('eyzee/state/') or rel in {'eyzee/generated_smart_behaviours.yaml','eyzee/templates/fans.yaml','eyzee/ui/eyzee-room.yaml','eyzee/ui/eyzee-master.yaml','eyzee/ui/setup/add_device.yaml','eyzee/ui/setup/device_setup.yaml'}
             if preserve and (self.config/rel).exists():continue
             self.write_owned(rel,src.read_bytes(),replace=True)
-        if getattr(self,'theme_target',None):self.write_owned(self.theme_target,(self.payload/'config/eyzee/themes/eyzee_home.yaml').read_bytes())
+        theme_source = 'eyzee/themes/eyzee_home.yaml'
+        if self.theme_target and self.theme_target != theme_source:
+            theme_reference = os.path.relpath(
+                self.config / theme_source,
+                (self.config / self.theme_target).parent,
+            )
+            self.write_owned(self.theme_target, dump(inc(theme_reference)), replace=True)
         for src in (self.payload/'device-support/zigbee2mqtt/external_converters').glob('*'):
             self.write_owned('zigbee2mqtt/external_converters/'+src.name,src.read_bytes(),replace=True)
         with urlopen(CARD_URL,timeout=45) as response:card=response.read(1_000_001)

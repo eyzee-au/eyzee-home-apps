@@ -1,0 +1,5 @@
+Extract the ZIP. At the root of eyzee-au/eyzee-home-apps on main, choose Add file > Upload files. Drag the extracted eyzee_setup folder and README.md into the upload area. Commit message: Release beta.13: fix night-mode fields and use a single EyZEE theme definition. Refresh the Home Assistant app store and update EyZEE Setup to beta.13.
+
+Includes the phone-tested form background colours and an installer change that writes an include pointer to the canonical theme for directory-based themes. Fresh configurations use /config/themes as the active theme directory. Existing directory includes are preserved. An include pointing directly to eyzee/themes keeps the full definition and avoids a self-reference.
+
+This is a changed-files package based on main commit 00d573f. The installer changes were simulated locally. A fresh HAOS installation remains the live acceptance check. Your existing home already has the manually applied working colours and pointer.

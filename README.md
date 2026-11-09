@@ -1,4 +1,4 @@
-# EyZEE Setup — 0.1.0-beta.12
+# EyZEE Setup — 0.1.0-beta.13
 
 A candidate Home Assistant OS app repository for the EyZEE Home onboarding flow. This is a lab release: automated tests and incremental HAOS/MG24 tests have passed. A fresh installation of this consolidated version and the remaining recovery checks are required before customer distribution.
 
@@ -40,7 +40,7 @@ Terminal & SSH and Studio Code Server are included because the current Sue insta
 
 1. Add `https://github.com/eyzee-au/eyzee-home-apps` through the Install EyZEE Home link.
 2. Search the Home Assistant app store for **EyZEE Setup**.
-3. Confirm the offered version is **0.1.0-beta.12**, then install and start it.
+3. Confirm the offered version is **0.1.0-beta.13**, then install and start it.
 4. Open its screen, press **Prepare My Home**, and select the intended Zigbee gateway when prompted.
 5. Follow `ACCEPTANCE.md`.
 
@@ -121,3 +121,11 @@ Reopening Setup after a completed installation shows **EyZEE Core is already ins
 An incomplete installation tracked by Setup can still resume. An available **Check Connection Again** action checks services; detecting installed files does not claim those services are healthy. Existing-home upgrades still require a tested migration path.
 
 Acceptance: complete a fresh install, restart Setup, and verify the open-only screen. Confirm a repeated preparation request makes no installation changes. Verify an interrupted incomplete setup can resume and a failed connection check does not re-enable preparation on a completed home.
+
+## Theme files
+
+For directory-based themes, Setup stores the EyZEE definition in
+/config/eyzee/themes/eyzee_home.yaml and writes an include pointer in the active
+theme directory. A fresh configuration uses /config/themes. Additional themes can
+be added to that directory. Existing configurations that include the EyZEE folder
+directly use the definition there.

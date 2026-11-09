@@ -1,3 +1,8 @@
+# 0.1.0-beta.13
+
+- Set the current Home Assistant form-background variables to keep EyZEE dropdowns readable when the phone switches to dark mode. This correction passed the live phone test.
+- Keep the full EyZEE theme in eyzee/themes/eyzee_home.yaml and create an include pointer in an existing themes directory. Fresh configurations use the standard themes directory, ready for additional themes.
+
 # 0.1.0-beta.12
 
 - Open EyZEE Core on the confirmed hostname and show the button destination below it.

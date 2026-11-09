@@ -48,6 +48,35 @@ EyZEE Home:
   input-disabled-fill-color: "#EEEEEE"
   input-disabled-ink-color: "#666666"
 
+  # The newer ha-picker-field used by dropdowns reads these backgrounds.
+  ha-color-form-background: "#F2F2F2"
+  ha-color-form-background-disabled: "#EEEEEE"
+
+  # Set the Material control variables directly as well as the shared inputs.
+  # This keeps a dark parent theme from supplying a mismatched field colour.
+  mdc-select-fill-color: "#F2F2F2"
+  mdc-select-ink-color: "#111111"
+  mdc-select-label-ink-color: "#555555"
+  mdc-select-dropdown-icon-color: "#555555"
+  mdc-select-disabled-fill-color: "#EEEEEE"
+  mdc-select-disabled-ink-color: "#666666"
+  mdc-select-disabled-dropdown-icon-color: "#666666"
+
+  mdc-text-field-fill-color: "#F2F2F2"
+  mdc-text-field-ink-color: "#111111"
+  mdc-text-field-label-ink-color: "#555555"
+  mdc-text-field-disabled-fill-color: "#EEEEEE"
+  mdc-text-field-disabled-ink-color: "#666666"
+
+  # Newer controls also use semantic text tokens.
+  ha-color-text-primary: "#111111"
+  ha-color-text-secondary: "#555555"
+  ha-color-text-disabled: "#666666"
+
   # Open dropdown menu colours.
   mdc-theme-surface: "#FFFFFF"
   mdc-theme-on-surface: "#111111"
+  mdc-theme-text-primary-on-background: "#111111"
+  mdc-theme-text-secondary-on-background: "#555555"
+  paper-listbox-background-color: "#FFFFFF"
+  paper-listbox-color: "#111111"
