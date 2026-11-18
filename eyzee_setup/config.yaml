@@ -1,5 +1,5 @@
 name: EyZEE Setup
-version: 0.1.0-beta.13
+version: 0.1.0-beta.15
 slug: eyzee_setup
 description: Prepare EyZEE Core and connect your Zigbee gateway.
 url: https://eyzee.au
@@ -24,5 +24,9 @@ map:
   - type: homeassistant_config
     read_only: false
     path: /config
-options: {}
-schema: false
+options:
+  service_url: "https://subscriptions.eyzee.au"
+  release_public_key: "vAoZ9VFR/qYR+LFXJEXJknAnAVBxU8BBuTwylZKeVkA="
+schema:
+  service_url: str
+  release_public_key: str

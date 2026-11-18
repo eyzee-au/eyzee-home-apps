@@ -1,3 +1,61 @@
+# 0.1.0-beta.15 — editions beta release
+
+- Link the Setup updates panel to the live EyZEE Core software licence, opening
+  it in a separate browser tab without giving the destination access to Setup.
+- Changed-file update failures now name the managed relative path in the screen
+  message and downloaded Setup report while continuing to preserve all files.
+- Core edition migration accepts an existing file only when it matches either
+  its tracked hash or the exact verified signed Home source before rendering.
+  Genuinely modified local files remain protected.
+- Accept the exact official beta14 `eyzee-main-menu.yaml` hash for that path
+  only, allowing beta14 to receive the beta15 Updates & Support tile while
+  continuing to block any customer-edited value.
+- Carry each preflight-approved current-file hash into the atomic writer. This
+  removes a contradictory second rejection while retaining protection against
+  a file changed between preflight and writing.
+- Migrate the exact beta14 inline main-menu registration title from
+  `EyZEE® Home` to `EyZEE® Core` for Core entitlements. Preserve custom titles,
+  comments, other dashboards and unrelated configuration, with journalled
+  rollback if Home Assistant validation fails.
+- Add one codebase with two customer editions: `core` displays EyZEE® Core and
+  `home` displays EyZEE® Home. Internal `/eyzee-home/` routes, `eyzee_home`
+  identifiers, dashboard IDs and file paths are unchanged.
+- Add `edition.py` with `plan_for`, `product_name` and `render`. The installer
+  and signed updater render downloaded themes, dashboards, static UI and managed
+  integration files for the activated entitlement plan.
+- Extend managed update scope to `eyzee/dashboards.yaml` and static files under
+  `eyzee/ui/`. Exclude generated/mutable room and setup pages, installation
+  state, credentials, subscription state and other customer-generated data.
+- On a fresh installation only, render `eyzee/state/rooms.yaml` for the edition
+  (`project: My EyZEE Core` or `project: My EyZEE Home`). Preserve an existing
+  customer-edited `rooms.yaml` byte-for-byte and keep it outside managed updates.
+- Add an Advanced Controls **Updates & Support** button (`mdi:update`) opening
+  the production Setup ingress `/config/app/eba672c4_eyzee_setup/ingress`.
+- Preserve the beta14 activation service, pinned release public key, Ed25519
+  signature checks, payload hashes and subscription-independent operation.
+- Retain the explicit `User-Agent: EyZEE-Setup/0.1` header required by LiteSpeed.
+- Update the signed release to version 0.1.0-beta.15 with required Setup version
+  0.1.0-beta.15.
+
+Beta.14 remains published and immutable. Beta.15 is released for fresh-install
+acceptance before customer promotion.
+
+# 0.1.0-beta.14 — unpublished subscriptions candidate
+
+- Add the separate official activation, Shopify entitlement and release service.
+- Add activation, update checks and a confirmed update/restart flow to Setup.
+- Download signed official packages; exclude the payload from the Setup image.
+- Preserve local operation independently of subscription state.
+- Back up before updates, preserve home data and local edits, and restore files
+  when validation fails or a file-writing update is interrupted.
+- Reload changed Zigbee2MQTT converters and check they loaded before completing
+  an update. Network configuration is not changed by the updater.
+- Proposed annual prices: Core A$27; Home A$49.95, subject to GST confirmation.
+
+See `subscription_service/DEPLOYMENT.md`. Hosting, live Shopify checkout/renewal,
+email delivery and real HAOS upgrade acceptance remain required. Do not publish
+the new Setup image until the download service and public key are configured.
+
 # 0.1.0-beta.13
 
 - Set the current Home Assistant form-background variables to keep EyZEE dropdowns readable when the phone switches to dark mode. This correction passed the live phone test.

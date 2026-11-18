@@ -1,0 +1,25 @@
+{
+  "currency": "AUD",
+  "status": "proposed_launch_prices_not_published_to_Shopify",
+  "tax_treatment": "confirm_before_checkout_publication",
+  "plans": {
+    "core": {
+      "name": "EyZEE Core Updates & Support",
+      "annual_price_cents": 2700,
+      "billing_interval": "year",
+      "support": ["Standard email support without priority"],
+      "updates": ["New product compatibility", "New features", "Improvements", "Bug fixes"]
+    },
+    "home": {
+      "name": "EyZEE Home Updates & Support",
+      "annual_price_cents": 4995,
+      "billing_interval": "year",
+      "included_months_with_hardware": 12,
+      "support": ["Priority email support", "Limited phone support through Sophie, trained in common troubleshooting", "Callback within 24 hours, during business hours"],
+      "updates": ["New product compatibility", "New features", "Improvements", "Bug fixes"]
+    }
+  },
+  "public_help": "https://eyzee.au/eyzee-home/support/",
+  "expiry_policy": "The installed system continues working; new official updates and direct support require renewal.",
+  "founding_beta": "Testing access followed by 12 months from public launch. No payment card required."
+}

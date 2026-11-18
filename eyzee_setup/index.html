@@ -4,6 +4,16 @@
 </style><main><div class="brand">EyZEE® CORE</div><h1>Let’s prepare your home.</h1><p>Plug your EyZEE MG24 Zigbee gateway into Ethernet and power it on. We’ll prepare the home services, find it and setup it for you. If you have a different Zigbee Dongle you will need to install it yourself later.</p>
 <div class="card"><div class="label">Home setup · test version</div><p id="message" role="status" aria-live="polite">Ready to prepare your home.</p><div id="setup-progress" hidden><p id="progress-label" class="progress-label"></p><progress id="progress-bar" max="11" value="0" aria-label="EyZEE Core setup progress" aria-describedby="progress-label progress-note"></progress><p id="progress-note" class="progress-note">Shows setup stages, not time remaining. To complete all stages takes about 5 minutes.</p></div><p id="error" role="alert"></p><div id="reconnecting" hidden><p>Home Assistant may be restarting or reconnecting. Please wait while we reconnect. If this screen doesn't update, refresh your browser.</p><a class="button secondary" href="/" target="_top">Reopen Home Assistant</a><p class="footnote">If you changed the address, open eyzee-core.local and sign in, then reopen EyZEE Setup.</p><a class="button secondary" id="reconnect-new-address" target="_top" hidden>Open eyzee-core.local</a></div><div id="address-choice"><label><input id="use-core-address" type="checkbox" checked> Use eyzee-core.local for this new system</label><p class="footnote">Selected by default for a fresh installation. Untick to keep your current Home Assistant address. The new name must not already be in use on your network.</p></div><button id="prepare" hidden>Prepare My Home</button><div id="gateways"></div><button id="find" class="secondary" hidden>Find Again</button><div id="ready"><a id="open-core" class="button" href="/eyzee-main-menu/home" target="_top">Open EyZEE Core</a><p id="completion-address" class="footnote"></p><button id="check" class="secondary">Check Connection Again</button></div></div>
 <p class="footnote">Preparation saves a recovery copy, installs the required services and checks the connection. Home Assistant restarts during setup. Keep this screen open.</p>
+<section class="card" id="subscription-panel" hidden aria-labelledby="subscription-heading">
+<h2 id="subscription-heading">Updates &amp; Support</h2>
+<p id="subscription-status" role="status" aria-live="polite"></p>
+<form id="activation-form"><label for="activation-code">Your EyZEE activation code</label>
+<input id="activation-code" type="text" maxlength="100" autocomplete="off" autocapitalize="characters" spellcheck="false" required style="display:block;width:100%;padding:14px;margin-top:10px;background:#fff;color:#111;border:1px solid #888;border-radius:8px;font:inherit">
+<button id="activate" type="submit">Activate EyZEE</button></form>
+<button id="check-updates" class="secondary" hidden>Check for Updates</button>
+<button id="apply-update" hidden>Install Update &amp; Restart</button>
+<p class="footnote">Your subscription provides EyZEE updates and support. Your installed home keeps working if you do not renew. <a href="https://eyzee.au/eyzee-home/support/" target="_blank" rel="noopener noreferrer" style="color:#D6AD60">Help and guides</a> remain available. <a href="https://eyzee.au/eyzee-core/licence/" target="_blank" rel="noopener noreferrer" style="color:#D6AD60">Software licence</a>.</p>
+</section>
 <details><summary>Setup progress & help</summary><p>Keep Home Assistant and your gateway powered on. Downloads can take several minutes.</p><p>If the new address does not open, use your current IP address. Existing hostname bookmarks may need updating. The link keeps your current browser protocol and port.</p><a class="button secondary" href="/eyzee-main-menu/home" target="_top">Open Using Current Address</a><ol id="events"></ol><button class="secondary" id="report">Download Setup Report</button></details><footer>EyZEE — Making Smart Easy™</footer></main>
 <script>
 let token='__CSRF__';let installed=false,busy=false,phase='',renderKey='',preparePending=false,addressChoiceLoaded=false,refreshPending=false,connectionLost=false;
@@ -83,6 +93,7 @@ async function action(name,data={}) {
     if (!(r.headers.get('Content-Type') || '').includes('application/json')) { showReconnect(); return; }
     const d=await r.json();
     if(!r.ok)throw Error(d.error||'Please try again.');
+    if(name==='activate')document.querySelector('#activation-code').value='';
     busy=true;await refresh();
   } catch(e) {
     if (e instanceof TypeError || e.name === 'AbortError' || e instanceof SyntaxError) showReconnect();
@@ -101,6 +112,7 @@ async function refresh() {
     connectionLost=false;
     document.querySelector('#reconnecting').hidden=true;
     installed=!!s.installed;busy=!!s.busy;phase=s.phase;
+    renderSubscription(s);
     if(!addressChoiceLoaded){document.querySelector('#use-core-address').checked=s.use_core_address!==false;addressChoiceLoaded=true;}
     document.querySelector('#message').textContent=s.message;renderProgress(s);
     const p=document.querySelector('#prepare');
@@ -142,4 +154,32 @@ document.querySelector('#prepare').onclick=async()=>{
     await refresh();
   }
 };document.querySelector('#find').onclick=()=>action('discover');document.querySelector('#check').onclick=()=>action('check');document.querySelector('#report').onclick=async()=>{try{const r=await setupFetch('api/report');if(!r.ok || !(r.headers.get('Content-Type')||'').includes('application/json')){showReconnect();return;}const b=await r.blob();const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='EyZEE-setup-report.json';a.click();URL.revokeObjectURL(u)}catch(e){showReconnect();}};refresh();setInterval(refresh,2500);
+function renderSubscription(s) {
+  const sub=s.subscription;
+  document.querySelector('#subscription-panel').hidden=!sub;
+  if(!sub)return;
+  document.querySelector('#message').closest('.card').hidden=!sub.activated&&!s.installed;
+  const details=document.querySelector('#subscription-status');
+  details.textContent=!sub.configured?'Official downloads are awaiting EyZEE configuration.':
+    !sub.activated?'Enter the activation code from your purchase or Beta invitation.':
+    (sub.plan==='home'?'EyZEE\u00ae Home':'EyZEE\u00ae Core')+' · '+
+    (sub.active?'Updates and support active':'Updates and support expired')+
+    (sub.expires_at?' · '+new Date(sub.expires_at).toLocaleDateString():' · Founding Beta access');
+  document.querySelector('#activation-form').hidden=sub.activated;
+  document.querySelector('#activate').disabled=busy||!sub.configured;
+  document.querySelector('#activation-code').disabled=busy||!sub.configured;
+  document.querySelector('#check-updates').hidden=!sub.activated;
+  document.querySelector('#check-updates').disabled=busy;
+  document.querySelector('#apply-update').hidden=!s.installed||!sub.activated||!s.available_release||s.available_release===s.installed_release;
+  document.querySelector('#apply-update').disabled=busy;
+}
+document.querySelector('#activation-form').onsubmit=async(event)=>{
+  event.preventDefault();if(busy||connectionLost)return;
+  await action('activate',{code:document.querySelector('#activation-code').value.trim()});
+};
+document.querySelector('#check-updates').onclick=()=>action('updates/check');
+document.querySelector('#apply-update').onclick=()=>{
+  if(!busy&&!connectionLost&&window.confirm('Save a recovery backup, install the EyZEE update and restart Home Assistant?'))action('updates/apply',{confirm:true});
+};
+document.querySelector('#message').closest('.card').before(document.querySelector('#subscription-panel'));
 </script></html>

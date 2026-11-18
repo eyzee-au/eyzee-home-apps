@@ -5,10 +5,13 @@ from pathlib import Path
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError, URLError
 import yaml
+import edition
+from subscription import SubscriptionError, MUTABLE_UI_PATHS
 from ruamel.yaml import YAML
 from ruamel.yaml.comments import TaggedScalar
 
-VERSION = '0.1.0-beta.13'
+VERSION = '0.1.0-beta.15'
+MUTABLE_STATE_PATHS = frozenset({'eyzee/generated_smart_behaviours.yaml','eyzee/templates/fans.yaml'})
 Z2M_SLUG = '45df7312_zigbee2mqtt'  # Existing proven MG24 service expects this official repository.
 REPOSITORIES = ['https://github.com/zigbee2mqtt/hassio-zigbee2mqtt', 'https://github.com/hassio-addons/repository']
 CARD_URL = 'https://raw.githubusercontent.com/thomasloven/lovelace-card-mod/v4.2.0/card-mod.js'
@@ -199,10 +202,14 @@ def mqtt_snapshot(service:dict,timeout=12):
         sock.sendall(b'\xe0\x00');return result
 
 class Installer:
-    def __init__(self,config=Path('/config'),data=Path('/data'),payload=Path('/app/payload'),api=None,sleeper=time.sleep):
+    def __init__(self,config=Path('/config'),data=Path('/data'),payload=Path('/app/payload'),api=None,sleeper=time.sleep,subscription=None):
         self.config,self.data,self.payload=config,data,payload;self.api=api or API();self.sleep=sleeper
         self.lock=threading.Lock();self.busy=False;self.data.mkdir(parents=True,exist_ok=True)
         self.state=self.read_state();self.state.setdefault('events',[])
+        self.subscription=subscription
+        self.edition=edition.plan_for(subscription)
+        from update_engine import recover
+        recover(self)
         if self.existing_installation():
             self.show_existing_installation()
         elif self.state.get('busy') or self.state.get('ready'):
@@ -232,6 +239,10 @@ class Installer:
             result = {k:copy.deepcopy(v) for k,v in self.state.items() if k in {'phase','message','busy','events','gateways','release','backup','ready','support_code','checks','app_versions','diagnostic','home_hostname','use_core_address'}}
             result['installed'] = self.existing_installation()
             result['can_check_connection'] = bool(self.state.get('vscode_slug'))
+            if self.subscription is not None:
+                result['subscription']=self.subscription.summary()
+                result['installed_release']=self.state.get('installed_release')
+                result['available_release']=self.subscription.state.get('available_release')
             return result
     def stage(self,phase,message):
         with self.lock:
@@ -246,7 +257,7 @@ class Installer:
             try:task(*args)
             except Exception as err:
                 failed=self.state.get('phase','unknown')
-                self.stage('failed',str(err) if isinstance(err,SetupError) else 'Preparation stopped safely. Please share the setup report with support.')
+                self.stage('failed',str(err) if isinstance(err,(SetupError,SubscriptionError)) else 'Preparation stopped safely. Please share the setup report with support.')
                 with self.lock:
                     self.state['support_code']=failed
                     if getattr(err,'diagnostic',None):self.state['diagnostic']=err.diagnostic
@@ -263,16 +274,32 @@ class Installer:
             except RetryableError:pass
             self.sleep(3)
         raise SetupError('This step took longer than expected. Check power and network, then try again.')
-    def write_owned(self,relative,content,replace=False):
+    def write_owned(self,relative,content,replace=False,verified_hash=None):
         dest=inside(self.config,relative);b=content.encode() if isinstance(content,str) else content
         if dest.exists():
             old=dest.read_bytes()
             if old==b:return
-            if not replace or self.state['files'].get(relative)!=sha(old):
+            old_hash=sha(old)
+            if not replace or (self.state['files'].get(relative)!=old_hash and verified_hash!=old_hash):
                 raise SetupError('Existing home files need an installer review. Your current files have been preserved.')
             backup=inside(self.data/'file-backups',relative);backup.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(dest,backup)
         atomic(dest,b,0o600 if relative.endswith('configuration.yaml') else 0o644)
         self.state['files'][relative]=sha(b);self.save()
+    def payload_text(self,relative):
+        """Read a payload text file rendered for the activated edition."""
+        return edition.render((self.payload/relative).read_text(encoding='utf-8'),self.edition)
+    def write_payload(self,relative,data):
+        """Write one config payload file using the edition rendering rules."""
+        # Generated homeowner state is never overwritten. On a fresh
+        # installation only, rooms.yaml gets its default project name rendered
+        # for the edition. An existing customer-edited rooms.yaml is preserved
+        # byte-for-byte and is excluded from managed updates.
+        generated_state=relative.startswith('eyzee/state/') or relative in MUTABLE_STATE_PATHS
+        preserve=generated_state or relative in MUTABLE_UI_PATHS
+        if preserve and (self.config/relative).exists():return
+        if relative=='eyzee/state/rooms.yaml' or not generated_state:
+            data=edition.render(data,self.edition)
+        self.write_owned(relative,data,replace=True)
     def config_plan(self):
         self.pending_packages={};self.theme_target=None
         p=self.config/'configuration.yaml'
@@ -298,9 +325,9 @@ class Installer:
                 directory=inside(self.config,packages.value)
                 for key,value in entries.items():
                     target=directory/(key+'.yaml')
-                    if target.exists() and str(target.relative_to(self.config)) not in self.state['files']:raise SetupError('EyZEE configuration already exists and needs an installer review.')
+                    if target.exists() and target.relative_to(self.config).as_posix() not in self.state['files']:raise SetupError('EyZEE configuration already exists and needs an installer review.')
                     self.pending_packages=getattr(self,'pending_packages',{})
-                    self.pending_packages[str(target.relative_to(self.config))]=dump(self.core_package()) if key=='eyzee_setup_core' else '!include /config/eyzee/generated_smart_behaviours.yaml\n'
+                    self.pending_packages[target.relative_to(self.config).as_posix()]=dump(self.core_package()) if key=='eyzee_setup_core' else '!include /config/eyzee/generated_smart_behaviours.yaml\n'
             else:raise SetupError('Your package configuration needs an installer review before adding EyZEE.')
         # Keep the active theme directory available for the owner's other themes.
         frontend=c.setdefault('frontend',{}) or {};c['frontend']=frontend
@@ -308,17 +335,19 @@ class Installer:
         if themes is None:
             frontend['themes']=inc('themes','!include_dir_merge_named')
             self.theme_target='themes/eyzee_home.yaml'
-        elif isinstance(themes,dict):themes.setdefault('EyZEE Home',yaml.safe_load((self.payload/'config/eyzee/themes/eyzee_home.yaml').read_text())['EyZEE Home'])
+        elif isinstance(themes,dict):
+            theme=edition.product_name(self.edition)
+            themes.setdefault(theme,yaml.safe_load(self.payload_text('config/eyzee/themes/eyzee_home.yaml'))[theme])
         elif isinstance(themes,Tagged) and themes.tag=='!include_dir_merge_named':
             dest=inside(self.config,themes.value)/'eyzee_home.yaml'
-            self.theme_target=str(dest.relative_to(self.config))
+            self.theme_target=dest.relative_to(self.config).as_posix()
         else:raise SetupError('Your theme configuration needs an installer review.')
         modules=frontend.setdefault('extra_module_url',[])
         if not isinstance(modules,list):raise SetupError('Your dashboard resources need an installer review.')
         if '/local/eyzee/card-mod.js' not in modules:modules.append('/local/eyzee/card-mod.js')
         lovelace=c.setdefault('lovelace',{}) or {};c['lovelace']=lovelace
         dashboards=lovelace.setdefault('dashboards',{})
-        supplied=yaml.safe_load((self.payload/'config/eyzee/dashboards.yaml').read_text())
+        supplied=yaml.safe_load(self.payload_text('config/eyzee/dashboards.yaml'))
         if isinstance(dashboards,dict):
             for key,value in supplied.items():
                 if key in dashboards and dashboards[key]!=value:raise SetupError('An existing dashboard needs an installer review.')
@@ -382,14 +411,28 @@ class Installer:
         if self.existing_installation():
             self.show_existing_installation()
             return
+        if self.subscription is not None:
+            # No HA configuration/app mutations occur before authorisation and
+            # signature verification. The public Setup container has no payload.
+            self.stage('checking_access','Checking your EyZEE updates and support access.')
+            manifest=self.subscription.release()
+            # release() refreshes the signed entitlement before any file work.
+            self.edition=edition.plan_for(self.subscription)
+            stage,release=self.subscription.download(manifest)
+            self.payload=stage/'payload'
+            self.state['installed_release']=manifest['version']
+            self.state['expected_converters']=[p.name for p in (self.payload/'device-support/zigbee2mqtt/external_converters').glob('*') if p.is_file()]
+            self.save()
         self.state["use_core_address"] = use_core_address
         self.save()
         self.stage('checking','Checking your home.')
         self.api.call('/supervisor/info');self.api.call('/os/info');self.api.ha('/config');self.verify_payload()
         if shutil.disk_usage(self.config).free<3*1024**3:raise SetupError('Your system needs at least 3 GB of free storage before preparation.')
+        config_path=self.config/'configuration.yaml'
+        original_bytes=config_path.read_bytes() if config_path.exists() else None
         original,planned=self.config_plan()  # Refuse incompatible layouts before app or file writes.
         # Check shared device-support filenames before any backup/app mutation.
-        support = [(src, str(src.relative_to(self.payload/'config')))
+        support = [(src, src.relative_to(self.payload/'config').as_posix())
                    for src in (self.payload/'config/custom_zha_quirks').rglob('*') if src.is_file()]
         support += [(src, 'zigbee2mqtt/external_converters/'+src.name)
                     for src in (self.payload/'device-support/zigbee2mqtt/external_converters').glob('*') if src.is_file()]
@@ -400,8 +443,9 @@ class Installer:
                 raise SetupError('An existing device-support file conflicts with EyZEE: '+relative+'. Your files have been preserved.')
         # Unknown prior EyZEE code is preserved. This is an installer, not an unreviewed upgrade.
         for src in (self.payload/'config/custom_components/eyzee_dashboard').glob('*'):
+            if not src.is_file():continue
             dest=self.config/'custom_components/eyzee_dashboard'/src.name
-            if dest.exists() and dest.read_bytes()!=src.read_bytes() and self.state['files'].get(str(dest.relative_to(self.config)))!=sha(dest.read_bytes()):
+            if dest.exists() and dest.read_bytes()!=src.read_bytes() and self.state['files'].get(dest.relative_to(self.config).as_posix())!=sha(dest.read_bytes()):
                 raise SetupError('An earlier EyZEE version is installed. Please use a fresh test system or ask your installer to review the update.')
         zpath=self.config/'zigbee2mqtt/configuration.yaml'
         zdata=yaml.safe_load(zpath.read_text()) or {} if zpath.exists() else {}
@@ -479,17 +523,14 @@ class Installer:
         self.verify_payload()
         for src in sorted((self.payload/'config').rglob('*')):
             if not src.is_file():continue
-            rel=str(src.relative_to(self.payload/'config'))
-            # All mutable installation data and generated pages are create-only.
-            preserve=rel.startswith('eyzee/state/') or rel in {'eyzee/generated_smart_behaviours.yaml','eyzee/templates/fans.yaml','eyzee/ui/eyzee-room.yaml','eyzee/ui/eyzee-master.yaml','eyzee/ui/setup/add_device.yaml','eyzee/ui/setup/device_setup.yaml'}
-            if preserve and (self.config/rel).exists():continue
-            self.write_owned(rel,src.read_bytes(),replace=True)
+            rel=src.relative_to(self.payload/'config').as_posix()
+            self.write_payload(rel,src.read_bytes())
         theme_source = 'eyzee/themes/eyzee_home.yaml'
         if self.theme_target and self.theme_target != theme_source:
-            theme_reference = os.path.relpath(
+            theme_reference = Path(os.path.relpath(
                 self.config / theme_source,
                 (self.config / self.theme_target).parent,
-            )
+            )).as_posix()
             self.write_owned(self.theme_target, dump(inc(theme_reference)), replace=True)
         for src in (self.payload/'device-support/zigbee2mqtt/external_converters').glob('*'):
             self.write_owned('zigbee2mqtt/external_converters/'+src.name,src.read_bytes(),replace=True)
@@ -500,14 +541,15 @@ class Installer:
         for rel,content in getattr(self,'pending_packages',{}).items():self.write_owned(rel,content)
         # configuration.yaml has its own recovery copy; installation data never gets reset.
         config_path=self.config/'configuration.yaml'
-        if config_path.exists() and config_path.read_text()!=original:
+        original_content=original_bytes if original_bytes is not None else original.encode()
+        if config_path.exists() and config_path.read_bytes()!=original_content:
             raise SetupError('Your home configuration changed during preparation. It has been preserved; retry preparation.')
-        atomic(self.data/'configuration-before.yaml',original.encode())
+        atomic(self.data/'configuration-before.yaml',original_content)
         atomic(config_path,planned.encode())
         self.stage('checking_configuration','Checking EyZEE Core before restarting.')
         try:self.api.call('/core/check','POST',{},timeout=180)
         except Exception:
-            atomic(config_path,original.encode());raise SetupError('The home configuration check failed. Your previous configuration has been restored. Share the setup report.')
+            atomic(config_path,original_content);raise SetupError('The home configuration check failed. Your previous configuration has been restored. Share the setup report.')
         self.stage('restarting','Starting EyZEE Core. Please keep this screen open.')
         try:self.api.call('/core/restart','POST',{},timeout=180)
         except RetryableError:pass  # Core may close its connection once restart is accepted.
@@ -549,6 +591,21 @@ class Installer:
         for rel,expected in manifest.items():
             p=inside(self.payload,rel)
             if not p.is_file() or sha(p.read_bytes())!=expected:raise SetupError('The EyZEE download could not be verified. Please reinstall the Setup app.')
+    def activate_subscription(self,code):
+        if self.subscription is None:raise SubscriptionError('Official downloads are not configured.')
+        self.subscription.activate(code)
+        self.stage('installed' if self.existing_installation() else 'idle','Your EyZEE installation is activated.')
+    def check_updates(self):
+        if self.subscription is None:raise SubscriptionError('Official downloads are not configured.')
+        self.subscription.check()
+        manifest=self.subscription.release()
+        current=self.state.get('installed_release')
+        self.stage('installed' if self.existing_installation() else 'idle',
+                   'Your authorised EyZEE release is already installed.' if current==manifest['version'] else
+                   'EyZEE release '+manifest['version']+' is available for this installation.')
+    def apply_update(self):
+        from update_engine import apply
+        apply(self)
     def has_service(self,name):
         return any(s.get('domain')=='eyzee_dashboard' and name in s.get('services',{}) for s in self.api.ha('/services'))
     def discover(self):
@@ -597,7 +654,7 @@ class Installer:
         if not online or not serial or serial!=configured:raise SetupError('The Zigbee gateway is not connected yet. Check its power and network, then retry.')
         converters=snapshot.get('zigbee2mqtt/bridge/converters',[])
         loaded={c.get('name') for c in converters if isinstance(c,dict)} if isinstance(converters,list) else set()
-        expected={p.name for p in (self.payload/'device-support/zigbee2mqtt/external_converters').glob('*')}
+        expected=set(self.state['expected_converters']) if 'expected_converters' in self.state else {p.name for p in (self.payload/'device-support/zigbee2mqtt/external_converters').glob('*') if p.is_file()}
         if not expected<=loaded:raise SetupError('Some device support files did not load. Share the setup report so we can match them to this Zigbee version.')
         for slug in ['core_mosquitto','core_ssh',Z2M_SLUG,self.state['vscode_slug']]:
             if self.app_info(slug).get('state')!='started':raise SetupError('A supporting app has stopped. Please retry preparation.')

@@ -647,6 +647,18 @@ views:
                 ha-card { min-height:110px; border-radius:16px; }
                 ha-state-icon { color:#D6AD60 !important; }
 
+          - type: button
+            name: Updates & Support
+            icon: mdi:update
+            show_state: false
+            tap_action:
+              action: url
+              url_path: /config/app/eba672c4_eyzee_setup/ingress
+            card_mod:
+              style: |
+                ha-card { min-height:110px; border-radius:16px; }
+                ha-state-icon { color:#D6AD60 !important; }
+
           - type: grid
             columns: 3
             square: false

@@ -4,8 +4,10 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlsplit
 from installer import Installer, SetupError, RetryableError
+from subscription import SubscriptionClient, SubscriptionError
 
-APP = Installer(config=Path(os.environ.get('EYZEE_CONFIG','/config')),data=Path(os.environ.get('EYZEE_DATA','/data')),payload=Path(__file__).parent/'payload')
+APP_DATA=Path(os.environ.get('EYZEE_DATA','/data'))
+APP = Installer(config=Path(os.environ.get('EYZEE_CONFIG','/config')),data=APP_DATA,payload=Path(__file__).parent/'payload',subscription=SubscriptionClient.configured(APP_DATA))
 CSRF=secrets.token_urlsafe(32)
 INGRESS_IP='172.30.32.2'
 ADMIN_CACHE={}
@@ -58,7 +60,16 @@ class Handler(BaseHTTPRequestHandler):
             body=json.loads(self.rfile.read(length) or b'{}')
             if not isinstance(body,dict):raise ValueError()
             path=urlsplit(self.path).path
-            if path=='/api/prepare':
+            if path=='/api/activate':
+                code=body.get('code')
+                if not isinstance(code,str) or not 10<=len(code)<=100:raise ValueError()
+                APP.start(APP.activate_subscription,code)
+            elif path=='/api/updates/check':
+                APP.start(APP.check_updates)
+            elif path=='/api/updates/apply':
+                if body.get('confirm') is not True:raise ValueError()
+                APP.start(APP.apply_update)
+            elif path=='/api/prepare':
                 use_core_address=body.get('use_core_address',False)
                 if type(use_core_address) is not bool:raise ValueError()
                 APP.start(APP.prepare,use_core_address)
@@ -79,7 +90,7 @@ class Handler(BaseHTTPRequestHandler):
                 APP.start(APP.verify_ready)
             else:return self.send(404,{'error':'Action not found.'})
             self.send(202,{'accepted':True})
-        except SetupError as err:self.send(409,{'error':str(err)})
+        except (SetupError,SubscriptionError) as err:self.send(409,{'error':str(err)})
         except (ValueError,TypeError):self.send(400,{'error':'The selection could not be read. Please try again.'})
         except Exception:self.send(500,{'error':'Setup could not continue. Please reopen this screen.'})
 

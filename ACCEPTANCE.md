@@ -1,6 +1,36 @@
-# Fresh HAOS acceptance — 0.1.0-beta.12 pending
+# Fresh HAOS acceptance — 0.1.0-beta.15 pending
 
 Record HAOS, Supervisor, Core and installed app versions with the setup report. Start with a fresh backed-up `.201` and a default MG24 on Ethernet/PoE. Do not use `.200` for this run.
+
+## Beta.15 editions and update-rendering acceptance
+
+The beta.14 activation, subscription and signed-update flow passed an end-to-end
+HAOS test. Re-run those checks below and add the edition checks on a backed-up
+HAOS test machine before publication.
+
+- [ ] A `core` entitlement installs EyZEE® Core page titles, headings and theme name.
+- [ ] A `home` entitlement retains EyZEE® Home page titles, headings and theme name.
+- [ ] Lowercase `/eyzee-home/` support URLs, `eyzee_home` identifiers, dashboard IDs and file paths are unchanged.
+- [ ] Advanced Controls shows **Updates & Support** (`mdi:update`) and opens `/config/app/eba672c4_eyzee_setup/ingress`.
+- [ ] A signed update changes `eyzee/dashboards.yaml` and static `eyzee/ui/` files for the activated edition.
+- [ ] A fresh Core install creates `eyzee/state/rooms.yaml` with `project: My EyZEE Core`; a fresh Home install keeps `project: My EyZEE Home`.
+- [ ] Re-prepare or restart with a customer-edited `eyzee/state/rooms.yaml`; the file remains byte-for-byte unchanged.
+- [ ] An update leaves `eyzee/ui/eyzee-room.yaml`, `eyzee/ui/eyzee-master.yaml`, `eyzee/ui/setup/add_device.yaml`, `eyzee/ui/setup/device_setup.yaml`, room state and other customer-generated data untouched.
+- [ ] An expired subscription still starts and runs the installed home; only official updates and support are unavailable.
+- [ ] The release package and Setup image contain no activation codes, customer credentials, installation state or signing private keys.
+
+## Beta.14 activation and release delivery
+
+- [ ] Setup first shows the activation screen and makes no Home Assistant changes before activation succeeds.
+- [ ] An invalid code shows a useful message and leaves the home unchanged.
+- [ ] The retained Founding Beta test code activates once and binds to this HAOS installation.
+- [ ] Setup downloads the published release only from `https://subscriptions.eyzee.au`.
+- [ ] A changed signature, package hash or payload hash is rejected before installation.
+- [ ] After activation, **Prepare My Home** appears and completes the existing fresh-install flow.
+- [ ] Reopening Setup does not request the activation code again.
+- [ ] The administrator page shows the entitlement as active and records the installation and activation time.
+- [ ] An expired or unavailable subscription service never disables an already installed home.
+- [ ] Setup status and downloaded reports contain no activation code, installation credential or release signing secret.
 
 - [ ] EyZEE Setup image builds and its admin-only ingress opens.
 - [ ] A non-admin account cannot open or start setup.

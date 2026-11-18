@@ -1,14 +1,33 @@
-# EyZEE Setup — 0.1.0-beta.13
+# EyZEE Setup — 0.1.0-beta.15
+
+This release candidate adds the two customer editions (EyZEE Core and EyZEE
+Home) to the single beta14 activation, subscription and signed-update stream.
+Read [`subscription_service/DEPLOYMENT.md`](subscription_service/DEPLOYMENT.md)
+first. It includes deployment instructions, current test coverage and launch
+blockers. The proposed prices are Core A$27/year and Home A$49.95/year, with GST
+treatment still to confirm. The activation service and signed beta15 Core
+release are deployed; the live Shopify purchase-to-code flow remains a launch
+acceptance step.
+
+**Do not promote this candidate to customers yet.** The Setup image no longer
+bundles EyZEE application files. Its official HTTPS service origin, pinned
+release public key and approved release are configured for the beta test.
+The integration source remains public. Subscription checks apply to official
+downloads and support; existing homes never require subscription permission to run.
+
+The sections below retain the original beta.13 onboarding background. For the
+new activation, hosted service and update flow, use the deployment document.
 
 A candidate Home Assistant OS app repository for the EyZEE Home onboarding flow. This is a lab release: automated tests and incremental HAOS/MG24 tests have passed. A fresh installation of this consolidated version and the remaining recovery checks are required before customer distribution.
 
 ## Customer flow after repository publication
 
-1. Follow **Install EyZEE Home** to add this app repository.
+1. Follow **Install EyZEE Core** to add this app repository.
 2. Install and start **EyZEE Setup**.
-3. Open its screen and press **Prepare My Home**.
+3. Open its screen, activate updates and support, then press **Prepare My Home**.
 4. Choose an available Zigbee gateway by MAC address and IP when prompted.
-5. Open **EyZEE Home** when all connection checks pass.
+5. Open **EyZEE Core** or **EyZEE Home**, according to the activated entitlement,
+   when all connection checks pass.
 
 The customer does not edit YAML or call Home Assistant actions. Setup invokes the existing EyZEE MG24 services; the bundled `zigbee_coordinator.py` is unchanged from the supplied integration.
 
@@ -40,7 +59,7 @@ Terminal & SSH and Studio Code Server are included because the current Sue insta
 
 1. Add `https://github.com/eyzee-au/eyzee-home-apps` through the Install EyZEE Home link.
 2. Search the Home Assistant app store for **EyZEE Setup**.
-3. Confirm the offered version is **0.1.0-beta.13**, then install and start it.
+3. Confirm **0.1.0-beta.15** before installing.
 4. Open its screen, press **Prepare My Home**, and select the intended Zigbee gateway when prompted.
 5. Follow `ACCEPTANCE.md`.
 
@@ -71,13 +90,53 @@ python3 make_install_link.py https://github.com/YOUR-ACCOUNT/YOUR-REPOSITORY
 
 Use the resulting URL behind **Install EyZEE Home**. Replace the app/repository website metadata if `https://eyzee.au` is not the desired product website. A website URL is not an app repository URL.
 
-The source archive is not itself a Home Assistant repository URL. This delivery does not create or host a Git repository, or create a public install link.
+The source archive is not itself a Home Assistant repository URL. HAOS installs
+from the published repository URL above.
 
 ## Release delivery
 
-For this candidate, the versioned EyZEE bundle is included in the Setup app download and verified against bundled SHA-256 hashes before installation. No release-server URL was supplied, so arbitrary server downloads are not implemented. The pinned card-mod resource is downloaded over HTTPS from upstream and verified independently. A later release-server manifest can replace the bundled-payload source without changing the homeowner flow.
+Beta.13 bundled the versioned EyZEE payload. This beta.15 release candidate
+downloads it from the configured official service after activation, verifies an
+Ed25519-signed release manifest and the package/file SHA-256 hashes, then uses
+the existing preparation engine. The activated entitlement plan renders the
+Core or Home edition of the downloaded themes, dashboards, static UI files and
+managed integration files. The pinned card-mod resource is still downloaded over
+HTTPS from upstream and verified independently. The source payload remains in Git
+for development and release packaging, but is excluded from the Setup image.
 
 The supplied converter set may still contain experimental versions. Tidy and approve it before the final customer release, then regenerate `payload-hashes.json`. External JavaScript is enabled only to support this supplied code.
+
+## Customer editions (beta.15)
+
+There is one codebase and one version stream. The activated entitlement plan
+selects the customer-visible edition:
+
+- `core` displays **EyZEE® Core** (DIY product on customer-supplied hardware).
+- `home` displays **EyZEE® Home** (complete supplied hardware and software).
+
+`eyzee_setup/edition.py` renders product wording only. Lowercase internal
+identifiers and routes such as `/eyzee-home/`, `eyzee_home`, dashboard IDs and
+file paths are never renamed. The installer renders downloaded themes,
+dashboards and static UI files for the activated plan; the signed updater renders
+the same way before comparing and writing files. Home rendering leaves content
+unchanged.
+
+Managed updates include `eyzee/dashboards.yaml` and static files under
+`eyzee/ui/`. These generated or mutable files are explicitly excluded from
+managed updates: `eyzee/ui/eyzee-room.yaml`, `eyzee/ui/eyzee-master.yaml`,
+`eyzee/ui/setup/add_device.yaml` and `eyzee/ui/setup/device_setup.yaml`.
+Installation state, credentials, subscription state, rooms and other
+customer-generated data remain excluded.
+
+On a fresh installation only, `eyzee/state/rooms.yaml` is edition-rendered so a
+Core home starts with `project: My EyZEE Core` and a Home home keeps
+`project: My EyZEE Home`. If `rooms.yaml` already exists, it is preserved
+byte-for-byte and remains outside managed updates.
+
+Advanced Controls includes an **Updates & Support** button (`mdi:update`) that
+opens the production Setup ingress at
+`/config/app/eba672c4_eyzee_setup/ingress`. The local test add-on may use
+`local_eyzee_setup`; the committed production dashboard uses the GitHub slug.
 
 ## Preservation and recovery
 

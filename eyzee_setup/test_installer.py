@@ -269,6 +269,15 @@ homeassistant:
         self.i.write_owned('eyzee/owned.yaml',b'initial');q=self.config/'eyzee/owned.yaml';q.write_bytes(b'customer edit')
         with self.assertRaises(m.SetupError):self.i.write_owned('eyzee/owned.yaml',b'updated',replace=True)
         self.assertEqual(b'customer edit',q.read_bytes())
+    def test_preflight_verified_hash_allows_exact_file_but_blocks_a_race(self):
+        p=self.config/'eyzee/migration.yaml';m.atomic(p,b'official predecessor')
+        verified=m.sha(b'official predecessor')
+        self.i.write_owned('eyzee/migration.yaml',b'new release',replace=True,verified_hash=verified)
+        self.assertEqual(b'new release',p.read_bytes())
+        p.write_bytes(b'changed after preflight')
+        with self.assertRaises(m.SetupError):
+            self.i.write_owned('eyzee/migration.yaml',b'another release',replace=True,verified_hash=m.sha(b'new release'))
+        self.assertEqual(b'changed after preflight',p.read_bytes())
     def test_path_escape_is_rejected(self):
         with self.assertRaises(m.SetupError):self.i.write_owned('../outside',b'unsafe')
     def test_stale_gateway_selection_cannot_call_setup(self):
