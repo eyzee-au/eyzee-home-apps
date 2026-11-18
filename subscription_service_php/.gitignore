@@ -1,0 +1,3 @@
+private/config.php
+private/releases/*.zip
+private/generated-secrets.txt
